@@ -1,0 +1,4 @@
+i'm building a pwa app with angular called bible-audio2.
+the user will download audio files (aprox 2Gb) from my website (my rails server) and the app will mount a playlist for the user.
+the main goal is to allow the user to hear these files offline (hence saving it to the device), and enable the user to listen for over an hour even with the screen locked
+the user may be able to pause, play, navigate through tracks (previous and next) using his car's buttons just like he's be able to do with spotify

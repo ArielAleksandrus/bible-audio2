@@ -1,0 +1,44 @@
+<div>
+  <bible-picker
+    [bible]="bibleData"
+    [select]="'verse'"
+    (onSelected)="onVerseSelected($event)">
+  </bible-picker>
+</div>
+
+<div>
+  <button (click)="downloadAll()" [disabled]="downloading">
+    {{downloading ? 'Downloading...' : 'Download Test Audio tracks'}}
+  </button>
+</div>
+
+<div *ngFor="let track of tracks; let i = index">
+  <strong>{{ track.title }}</strong>
+  <span *ngIf="track.status === 'done'" style="color:green;">&#10004; Downloaded</span>
+  <span *ngIf="track.status === 'downloading'">
+    Downloading...
+  </span>
+  <span *ngIf="track.status === 'error'" style="color: red;">❌ Error!</span>
+  <span *ngIf="track.status === 'pending'">Not Started</span>
+</div>
+
+<hr>
+
+<div>
+  <label>
+    Completed: <strong>{{ completedCount }}</strong>
+    Remaining: <strong>{{ remainingCount }}</strong>
+    Total: <strong>{{ tracks.length }}</strong>
+  </label>
+</div>
+
+<div *ngIf="tracks.length > 0">
+  <div>
+    <button (click)="prev()" [disabled]="tracks[currentTrackIndex].status !== 'done'">Previous</button>
+    <button (click)="play()" [disabled]="tracks[currentTrackIndex].status !== 'done'">Play</button>
+    <button (click)="pause()">Pause</button>
+    <button (click)="resume()">Resume</button>
+    <button (click)="next()" [disabled]="tracks[currentTrackIndex].status !== 'done'">Next</button>
+  </div>
+  <p>Current track: <strong>{{ tracks[currentTrackIndex].title }}</strong></p>
+</div>
