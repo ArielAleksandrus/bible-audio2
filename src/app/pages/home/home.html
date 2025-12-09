@@ -1,10 +1,17 @@
-<div>
-  <bible-picker
-    [bible]="bibleData"
-    [select]="'verse'"
-    (onSelected)="onVerseSelected($event)">
-  </bible-picker>
-</div>
+<p>As limitações do seu dispositivo podem afetar quantos capítulos ou livros você pode baixar simultaneamente</p>
+<p>Caso você não esteja inscrito em um <a href="/plans">PLANO</a>, recomendamos você <a href="/settings">INFORMAR</a> em qual dispositivo você está (Iphone, Android, Computador ou Outro)</p>
+
+<hr/>
+<div>Capítulos baixados</div>
+
+<bible-picker
+  [bible]="bibleData"
+  [select]="'chapters'">
+</bible-picker>
+
+<hr/>
+---------------------------------------------
+<hr/>
 
 <div>
   <button (click)="downloadAll()" [disabled]="downloading">

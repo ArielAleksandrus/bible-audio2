@@ -4,7 +4,7 @@ import { AudioService } from '../../services/audio.service';
 import { AudioDownloaderService } from '../../services/audio-downloader.service';
 import { Track } from '../../models/track';
 
-import { BiblePicker, BibleARA } from 'bible-picker';
+import { BiblePicker, Bible, BibleSelection, BibleARA, BibleKJV } from 'bible-picker';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +19,8 @@ export class Home implements OnInit {
   currentTrackIndex = 0;
   downloading = false;
 
+  bibleBR = BibleARA;
+  bibleEN = BibleKJV;
   bibleData = BibleARA;
 
   constructor(
