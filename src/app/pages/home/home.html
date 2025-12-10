@@ -1,51 +1,53 @@
-<p>As limitações do seu dispositivo podem afetar quantos capítulos ou livros você pode baixar simultaneamente</p>
-<p>Caso você não esteja inscrito em um <a href="/plans">PLANO</a>, recomendamos você <a href="/settings">INFORMAR</a> em qual dispositivo você está (Iphone, Android, Computador ou Outro)</p>
+<p>
+  As limitações do seu dispositivo podem afetar quantos capítulos ou livros você pode baixar simultaneamente
+</p>
+<p>
+  Caso você não esteja inscrito em um <a routerLink="/plans">PLANO</a>, recomendamos você
+  <a routerLink="/settings">INFORMAR</a> em qual dispositivo você está
+  (iPhone, Android, Computador ou Outro)
+</p>
 
-<hr/>
-<div>Capítulos baixados</div>
+<hr />
+
+<h2>Capítulos baixados</h2>
 
 <bible-picker
   [bible]="bibleData"
-  [select]="'chapters'">
+  [select]="'chapters'"
+  [customCSS]="customCSS"
+  (onSelecting)="bpSelecting($event)">
 </bible-picker>
 
-<hr/>
----------------------------------------------
-<hr/>
-
-<div>
-  <button (click)="downloadAll()" [disabled]="downloading">
-    {{downloading ? 'Downloading...' : 'Download Test Audio tracks'}}
-  </button>
+<hr />
+<div class="summary">
+  <strong>{{ completedCount }}</strong> concluídos •
+  <strong>{{ remainingCount }}</strong> pendentes •
+  Total: <strong>{{ tracks.length }}</strong>
 </div>
+<hr />
 
-<div *ngFor="let track of tracks; let i = index">
-  <strong>{{ track.title }}</strong>
-  <span *ngIf="track.status === 'done'" style="color:green;">&#10004; Downloaded</span>
-  <span *ngIf="track.status === 'downloading'">
-    Downloading...
-  </span>
-  <span *ngIf="track.status === 'error'" style="color: red;">❌ Error!</span>
-  <span *ngIf="track.status === 'pending'">Not Started</span>
-</div>
+<!-- LISTA DE CAPÍTULOS – agora com clique para tocar -->
+<div class="track-list">
+  <div
+    *ngFor="let track of tracks; let i = index"
+    class="track-item"
+    (click)="playTrackFromHere(track, i)"
+    [class.playing]="i === currentTrackIndex && tracks[currentTrackIndex]">
 
-<hr>
+    <div class="track-title">
+      <strong>{{ track.title }}</strong>
+    </div>
 
-<div>
-  <label>
-    Completed: <strong>{{ completedCount }}</strong>
-    Remaining: <strong>{{ remainingCount }}</strong>
-    Total: <strong>{{ tracks.length }}</strong>
-  </label>
-</div>
+    <div class="track-status">
+      <span class="status done" *ngIf="track.status === 'done'">Baixado</span>
+      <span class="status downloading" *ngIf="track.status === 'downloading'">Baixando...</span>
+      <span class="status error" *ngIf="track.status === 'error'">Erro</span>
+      <span class="status pending" *ngIf="track.status === 'pending'">Pendente</span>
+    </div>
 
-<div *ngIf="tracks.length > 0">
-  <div>
-    <button (click)="prev()" [disabled]="tracks[currentTrackIndex].status !== 'done'">Previous</button>
-    <button (click)="play()" [disabled]="tracks[currentTrackIndex].status !== 'done'">Play</button>
-    <button (click)="pause()">Pause</button>
-    <button (click)="resume()">Resume</button>
-    <button (click)="next()" [disabled]="tracks[currentTrackIndex].status !== 'done'">Next</button>
+    <!-- Ícone de play só aparece se já estiver baixado -->
+    <mat-icon *ngIf="track.status === 'done'" class="play-icon">
+      play_circle
+    </mat-icon>
   </div>
-  <p>Current track: <strong>{{ tracks[currentTrackIndex].title }}</strong></p>
 </div>

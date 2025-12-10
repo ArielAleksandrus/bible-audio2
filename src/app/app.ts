@@ -1,6 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
+import { AudioPlayer } from './components/audio-player/audio-player';
+
 // Material components (MDC-based tab nav bar)
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,10 +11,11 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-root',
   imports: [
     // Material modules
-    MatTabNav, MatTabLink, MatTabNavPanel,
+    MatTabNav, MatTabLink, MatTabNavPanel, MatIconModule,
     RouterLink, RouterLinkActive, RouterOutlet,
-    // Optional: for icons
-    MatIconModule
+
+    // My components:
+    AudioPlayer
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'

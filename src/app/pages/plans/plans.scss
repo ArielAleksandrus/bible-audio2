@@ -1,0 +1,21 @@
+.plan-header { margin-bottom: 24px; }
+mat-table { width: 100%; margin-bottom: 16px; }
+.completed {
+  color: #4caf50;
+  font-weight: 500;
+  position: relative;
+  top: 5px;
+  .mini-icon {
+    font-size: 1em;
+    position: relative;
+    top: 5px;
+  }
+}
+.section { margin-top: 48px; }
+.plan-card {
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+.actions { margin-top: 12px; }

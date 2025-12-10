@@ -1,1 +1,100 @@
-<p>plans works!</p>
+<div *ngIf="!!currentPlan">
+  <div class="plan-header">
+    <h3>Plano atual:</h3>
+    <div>
+      {{ currentPlan.title }}
+      <small *ngIf="currentPlan.author"> (por: {{ currentPlan.author }})</small>
+    </div>
+    <div *ngIf="currentPlan.description">
+      {{ currentPlan.description }}
+    </div>
+    <div>
+      {{ currentPlan.days }} Dias ({{ currentPlan.daysRemaining }} restantes)
+    </div>
+  </div>
+
+  <!-- Tabela com MatTable + Paginação -->
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+
+    <!-- Coluna do Título/Dia -->
+    <ng-container matColumnDef="title">
+      <td mat-cell *matCellDef="let goal; let i = index">
+        <div>
+          {{ goal.title || 'Dia ' + (paginator.pageIndex * paginator.pageSize + i + 1) }}
+          <span class="completed" *ngIf="goal.completed">
+            <mat-icon>check_circle_outline</mat-icon>
+          </span>
+        </div>
+      </td>
+    </ng-container>
+
+    <!-- Coluna das Leituras -->
+    <ng-container matColumnDef="portions">
+      <td mat-cell *matCellDef="let goal">
+        <div *ngFor="let portion of goal.portions">
+          {{ bibleData.books[portion.bookIdx].abbrev }} {{ portion.chapter }}
+          <span class="completed" *ngIf="portion.completed">
+            <mat-icon class="mini-icon">check_circle_outline</mat-icon>
+          </span>
+        </div>
+      </td>
+    </ng-container>
+
+    <!-- Coluna do Play -->
+    <ng-container matColumnDef="actions">
+      <td mat-cell *matCellDef="let goal">
+        <button mat-icon-button (click)="playGoal(goal)">
+          <mat-icon>play_circle</mat-icon>
+        </button> &nbsp;&nbsp;
+        <button *ngIf="!goal.completed" mat-icon-button (click)="setGoalCompleted(goal, true)">
+          <mat-icon>check_circle_outline</mat-icon>
+        </button>
+        <button *ngIf="goal.completed" mat-icon-button (click)="setGoalCompleted(goal, false)">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- Linhas da tabela -->
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <!-- Paginator -->
+  <mat-paginator #paginator
+                 [pageSize]="5"
+                 [pageSizeOptions]="[5, 10, 20]"
+                 showFirstLastButtons
+                 aria-label="Paginação do plano de leitura">
+  </mat-paginator>
+</div>
+
+<!-- ============================================= -->
+<!-- PLANOS INICIADOS -->
+<!-- ============================================= -->
+<div *ngIf="startedPlans.length > 0" class="section">
+  <h3>Planos iniciados</h3>
+  <div *ngFor="let plan of startedPlans" class="plan-card">
+    <div><strong>{{ plan.title }}</strong> <small *ngIf="plan.author">(por: {{ plan.author }})</small></div>
+    <div *ngIf="plan.description">{{ plan.description }}</div>
+    <div>{{ plan.days }} Dias ({{ plan.daysRemaining }} restantes)</div>
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="openPlan(plan)">Abrir</button>&nbsp;&nbsp;
+      <button mat-raised-button (click)="resumePlan(plan)">Retomar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================= -->
+<!-- PLANOS DISPONÍVEIS -->
+<!-- ============================================= -->
+<div class="section">
+  <h3>Planos disponíveis</h3>
+  <div *ngFor="let plan of availablePlans" class="plan-card">
+    <div><strong>{{ plan.title }}</strong> <small *ngIf="plan.author">(por: {{ plan.author }})</small></div>
+    <div *ngIf="plan.description">{{ plan.description }}</div>
+    <div>{{ plan.days }} Dias</div>
+    <div class="actions">
+      <button mat-raised-button color="accent" (click)="startPlan(plan)">Começar</button>
+    </div>
+  </div>
+</div>

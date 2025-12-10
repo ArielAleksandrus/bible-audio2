@@ -1,17 +1,21 @@
 .page-content {
-  padding-bottom: 70px; /* space for the fixed bottom bar */
+  // Reserva espaço para o player (90px) + bottom nav (56px ou 70px no seu caso)
+  padding-bottom: 160px;        // ← AUMENTEI para caber player + nav
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
+
+// A BOTTOM NAV continua como você já tinha, só aumentei um pouco o z-index
 .bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 1000;                // ← sempre por cima do player
   border-top: 1px solid rgba(0,0,0,0.12);
+  height: 70px;                 // ← confirma que é 70px (você já usa isso no padding)
 
-  // Style the links
   a[mat-tab-link] {
     display: flex;
     flex-direction: column;
@@ -30,9 +34,14 @@
     }
   }
 
-  // Active tab indicator color
   ::ng-deep .mat-tab-link-active {
     opacity: 1;
     color: var(--mat-tab-nav-bar-active-link-color, #3f51b5);
   }
+}
+
+// Garante que o player não apareça quando não tem áudio
+app-audio-player:empty,
+app-audio-player:not(:has(.audio-player)) {
+  display: none;
 }

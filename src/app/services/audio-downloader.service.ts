@@ -1,46 +1,28 @@
 import { Injectable } from '@angular/core';
-import { openDB } from 'idb';
-import { BibleBooks } from '../data/bible-books';
+import { dbPromise, AvailableSpace } from '../storage/my-db';
 import { Track } from '../models/track';
 
 @Injectable({ providedIn: 'root' })
 export class AudioDownloaderService {
-  private db = openDB('audio-db', 1, {
-    upgrade(db) {
-      if (!db.objectStoreNames.contains('files')) {
-        db.createObjectStore('files', { keyPath: 'id' });
-      }
-    },
-  });
+  private tracks: Track[] = [];
 
-  async getAllTracks(): Promise<Track[]> {
-    const tracks: Track[] = [];
-
-    for (const book of BibleBooks) {
-      for (let chapter = 1; chapter <= book.chapterCount; chapter++) {
-        const title = `${book.title} ${chapter}`;
-        let track: Track = {
-          book: book.title,
-          chapter,
-          title,
-          fileName: `${title}.mp3`,
-          url: `https://nlabs.live:3003/assets/bible/audio/${encodeURIComponent(book.title)}/${encodeURIComponent(title)}.mp3`,
-          status: 'pending'
-        };
-
-        let downloaded = await this.isDownloaded(track);
-
-        if(downloaded) track.status = "done";
-
-        tracks.push(track);
-      }
-    }
-
-    return tracks;
+  setTracks(tracks: Track[]) {
+    this.tracks = tracks;
+  }
+  getTracks(): Track[] {
+    return this.tracks;
   }
 
-  /** Download a single chapter */
+  /** Download a single track */
   async download(track: Track): Promise<void> {
+    let downloaded = await this.isDownloaded(track);
+    if(downloaded) {
+      track.status = "done";
+      return;
+    }
+
+    await this.ensureFreeDiskSpace();
+
     track.status = 'downloading';
     const response = await fetch(track.url, { mode: 'cors' });
     if (!response.ok) {
@@ -50,9 +32,9 @@ export class AudioDownloaderService {
     }
 
     const blob = new Blob([await response.blob()], { type: 'audio/mpeg' });
-    const db = await this.db;
+    const db = await dbPromise;
     await db.put('files', {
-      id: track.fileName,
+      id: track.id || track.fileName,
       blob,
       url: track.url,
       downloadedAt: Date.now()
@@ -61,32 +43,75 @@ export class AudioDownloaderService {
     track.status = "done";
   }
 
+  async ensureFreeDiskSpace(): Promise<void> {
+    const space = new AvailableSpace();
+
+    while(!await space.isSafe()) {
+      console.warn(`AudioDownloaderService::ensureFreeDiskSpace -> You have only ${await space.inMB()}Mb of storage left. Removing 3 oldest audios`);
+      await this.removeOldest(3); // remove the oldest three tracks
+      // little pause to ensure Safari updates our usage
+      await new Promise(r => setTimeout(r, 100));
+    }
+  }
+
+  async downloadTracks(tracks: Track[]): Promise<void> {
+    for(let track of tracks)
+      await this.download(track);
+  }
+
+  async removeById(trackId: string): Promise<void> {
+    const db = await dbPromise;
+    await db.delete('files', trackId);
+    console.log(`Removed file ${trackId} from cache`);
+  }
+
+  async removeOldest(count: number = 1): Promise<string[]> {
+    const db = await dbPromise;
+    const tx = db.transaction('files', 'readwrite');
+    const store = tx.objectStore('files');
+
+    // Get all entries, sort by downloadedAt (oldest first)
+    const all = await store.getAll();
+    const sorted = all.sort((a, b) => a.downloadedAt - b.downloadedAt);
+
+    const removedIds: string[] = [];
+
+    for (let i = 0; i < count && i < sorted.length; i++) {
+      const oldest = sorted[i];
+      await store.delete(oldest.id);
+      removedIds.push(oldest.id);
+    }
+
+    await tx.done;
+    console.log(`Removed ${removedIds.length} oldest file(s):`, removedIds);
+    return removedIds;
+  }
+
   /** Check if already downloaded */
   async isDownloaded(track: Track): Promise<boolean> {
-    const db = await this.db;
-    return !!(await db.get('files', track.fileName));
+    const db = await dbPromise;
+    return !!(await db.get('files', track.id) ||
+              await db.get('files', track.fileName));
+  }
+
+  async areDownloaded(tracks: Track[]): Promise<{total: number, pendingCount: number, pending: string[]}> {
+    const db = await dbPromise;
+    let res: {total: number, pendingCount: 0, pending: string[]} = {total: 0, pendingCount: 0, pending: []};
+    for(let track of tracks) {
+      const done = await this.isDownloaded(track);
+      if(done)
+        res.total += 1;
+      else {
+        res.pendingCount += 1;
+        res.pending.push(track.id);
+      }
+    }
+    return res;
   }
 
   /** Total downloaded chapters */
   async getDownloadedCount(): Promise<number> {
-    const db = await this.db;
+    const db = await dbPromise;
     return (await db.getAllKeys('files')).length;
-  }
-
-  async downloadEntireBible(onProgress?: (done: number, total: number) => void) {
-    const tracks = await this.getAllTracks();
-    let done = 0;
-
-    for (const track of tracks) {
-      if (!(await this.isDownloaded(track))) {
-        try {
-          await this.download(track);
-        } catch (e) {
-          console.warn('Ignorado (baixará sob demanda):', track.title);
-        }
-      }
-      done++;
-      onProgress?.(done, tracks.length);
-    }
   }
 }

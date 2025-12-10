@@ -1,0 +1,44 @@
+<div class="fixed-player-wrapper" *ngIf="currentTrack">
+  <div class="audio-player">
+    <button mat-icon-button class="close-btn" (click)="close()" aria-label="Fechar player">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <div class="track-info">
+      <div class="title">{{ currentTrack.title }}</div>
+      <div class="subtitle">Bíblia em áudio</div>
+    </div>
+
+    <div class="controls">
+      <button mat-icon-button (click)="rewind()">
+        <mat-icon>replay_10</mat-icon>
+      </button>
+      <button mat-icon-button (click)="prev()" [disabled]="!audioService.hasPrevious()">
+        <mat-icon>skip_previous</mat-icon>
+      </button>
+      <button mat-fab color="accent" class="play-btn" (click)="togglePlayPause()">
+        <mat-icon *ngIf="!isPlaying" class="large">play_arrow</mat-icon>
+        <mat-icon *ngIf="isPlaying" class="large">pause</mat-icon>
+      </button>
+      <button mat-icon-button (click)="next()" [disabled]="!audioService.hasNext()">
+        <mat-icon>skip_next</mat-icon>
+      </button>
+      <button mat-icon-button (click)="forward()">
+        <mat-icon>forward_10</mat-icon>
+      </button>
+    </div>
+
+    <!-- Seek bar embaixo dos controles -->
+    <div class="progress-container">
+      <span class="time">{{ formatTime(currentTime) }}</span>
+      <mat-slider class="full-width-slider">
+        <input matSliderThumb
+               [value]="(currentTime * 100) / duration"
+               (valueChange)="seek($event)"
+               min="0"
+               max="100">
+      </mat-slider>
+      <span class="time">{{ formatTime(duration) }}</span>
+    </div>
+  </div>
+</div>

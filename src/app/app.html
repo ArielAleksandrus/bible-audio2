@@ -1,36 +1,32 @@
 <div class="app-container">
-  <mat-tab-nav-panel #tabPanel class="page-content">
-    <router-outlet></router-outlet>
-  </mat-tab-nav-panel>
 
-  <!-- Bottom fixed navigation bar -->
+  <!-- Conteúdo principal + player -->
+  <div class="main-content">
+    <mat-tab-nav-panel #tabPanel class="page-content">
+      <router-outlet></router-outlet>
+
+    </mat-tab-nav-panel>
+
+    <!-- PLAYER GLOBAL – aparece em todas as páginas -->
+    <app-audio-player></app-audio-player>
+  </div>
+
+  <!-- Bottom navigation – sempre visível e por cima do conteúdo -->
   <nav mat-tab-nav-bar
        [tabPanel]="tabPanel"
        class="bottom-nav"
        backgroundColor="primary"
        color="accent">
-
-    <a mat-tab-link
-       routerLink="/home"
-       routerLinkActive #home="routerLinkActive"
-       [active]="home.isActive">
-      <span class="material-icons">home</span>
+    <a mat-tab-link routerLink="/home" routerLinkActive #home="routerLinkActive" [active]="home.isActive">
+      <mat-icon>home</mat-icon>
       <span>Home</span>
     </a>
-
-    <a mat-tab-link
-       routerLink="/plans"
-       routerLinkActive #plans="routerLinkActive"
-       [active]="plans.isActive">
-      <span class="material-icons">list</span>
+    <a mat-tab-link routerLink="/plans" routerLinkActive #plans="routerLinkActive" [active]="plans.isActive">
+      <mat-icon>format_list_bulleted</mat-icon>
       <span>Planos</span>
     </a>
-
-    <a mat-tab-link
-       routerLink="/settings"
-       routerLinkActive #settings="routerLinkActive"
-       [active]="settings.isActive">
-      <span class="material-icons">settings</span>
+    <a mat-tab-link routerLink="/settings" routerLinkActive #settings="routerLinkActive" [active]="settings.isActive">
+      <mat-icon>settings</mat-icon>
       <span>Configs</span>
     </a>
   </nav>

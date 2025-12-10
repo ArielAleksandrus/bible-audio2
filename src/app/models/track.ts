@@ -1,4 +1,6 @@
 export interface Track {
+  // for bibles, we'll use ${version}-${bookAbbrev}-${chapter}
+  id: string;          // e.g. "ara-jr-1"
   book: string;        // e.g. "Jeremias"
   chapter: number;     // 1 to 52
   title: string;       // "Jeremias 1"
