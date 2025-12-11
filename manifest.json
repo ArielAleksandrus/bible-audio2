@@ -1,9 +1,11 @@
 {
   "name": "bible-audio2",
   "short_name": "BibleAudio",
+  "start_url": "https://bible-audio2.vercel.app/",
+  "scope": "/",
   "display": "standalone",
-  "scope": "./home,./plans,./settings",
-  "start_url": "https://bible-audio2.vercel.app",
+  "background_color": "#f9f9f9",
+  "theme_color": "#41696a",
   "icons": [
     {
       "src": "/icons/android/android-launchericon-48-48.png",
@@ -42,25 +44,23 @@
     },
     {
       "src": "/icons/windows11/LargeTile.scale-100.png",
-      "sizes": "100x100",
+      "sizes": "310x310",
       "type": "image/png"
     },
     {
       "src": "/icons/windows11/SmallTile.scale-100.png",
-      "sizes": "100x100",
+      "sizes": "71x71",
       "type": "image/png"
     },
     {
       "src": "/icons/windows11/LargeTile.scale-400.png",
-      "sizes": "400x400",
+      "sizes": "1240x1240",
       "type": "image/png"
     },
     {
       "src": "/icons/windows11/SmallTile.scale-400.png",
-      "sizes": "400x400",
+      "sizes": "284x284",
       "type": "image/png"
     }
-  ],
-  "theme_color": "#41696a",
-  "background_color": "#f9f9f9"
+  ]
 }
