@@ -1,53 +1,27 @@
-<p>
-  As limitações do seu dispositivo podem afetar quantos capítulos ou livros você pode baixar simultaneamente
-</p>
-<p>
-  Caso você não esteja inscrito em um <a routerLink="/plans">PLANO</a>, recomendamos você
-  <a routerLink="/settings">INFORMAR</a> em qual dispositivo você está
-  (iPhone, Android, Computador ou Outro)
-</p>
+<h2>
+  Selecione o que você quer ouvir
+  <br/>
+  <small *ngIf="painting">
+    Verificando itens baixados
+    <mat-icon class="mat-spinner">autorenew</mat-icon>
+  </small>
+</h2>
 
-<hr />
-
-<h2>Capítulos baixados</h2>
-
+<div class="picker">
 <bible-picker
   [bible]="bibleData"
   [select]="'chapters'"
   [customCSS]="customCSS"
-  (onSelecting)="bpSelecting($event)">
+  (onSelecting)="bpSelecting($event)"
+  (onSelected)="bpSelected($event)">
 </bible-picker>
-
-<hr />
-<div class="summary">
-  <strong>{{ completedCount }}</strong> concluídos •
-  <strong>{{ remainingCount }}</strong> pendentes •
-  Total: <strong>{{ tracks.length }}</strong>
 </div>
-<hr />
 
-<!-- LISTA DE CAPÍTULOS – agora com clique para tocar -->
-<div class="track-list">
-  <div
-    *ngFor="let track of tracks; let i = index"
-    class="track-item"
-    (click)="playTrackFromHere(track, i)"
-    [class.playing]="i === currentTrackIndex && tracks[currentTrackIndex]">
-
-    <div class="track-title">
-      <strong>{{ track.title }}</strong>
-    </div>
-
-    <div class="track-status">
-      <span class="status done" *ngIf="track.status === 'done'">Baixado</span>
-      <span class="status downloading" *ngIf="track.status === 'downloading'">Baixando...</span>
-      <span class="status error" *ngIf="track.status === 'error'">Erro</span>
-      <span class="status pending" *ngIf="track.status === 'pending'">Pendente</span>
-    </div>
-
-    <!-- Ícone de play só aparece se já estiver baixado -->
-    <mat-icon *ngIf="track.status === 'done'" class="play-icon">
-      play_circle
-    </mat-icon>
-  </div>
+<br/>
+<div class="color-explanation">
+  <span class="square-color partial-dl"></span>
+  <span class="text">Download Parcial</span> &nbsp; &nbsp; &nbsp;
+  <span class="square-color full-dl"></span>
+  <span class="text">Download Completo</span>
 </div>
+<br/>

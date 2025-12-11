@@ -1,6 +1,7 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AudioService } from '../../services/audio.service';
+import { AudioDownloaderService } from '../../services/audio-downloader.service';
 import { BibleService, BookDownloadStatus } from '../../services/bible.service';
 import { Track } from '../../models/track';
 
@@ -15,8 +16,9 @@ import { BiblePicker, Bible, BibleSelection, OverridableCSS as BibleCSS, BibleAR
   imports: [CommonModule,
       BiblePicker,
       MatIconModule
-],
-  standalone: true
+  ],
+  standalone: true,
+  encapsulation: ViewEncapsulation.None // faz o css definido em home.scss penetrar o bible-picker
 })
 export class Home implements OnInit {
   // Our two test tracks: Jeremias 49 and 50
@@ -24,6 +26,7 @@ export class Home implements OnInit {
   booksDownloadStatus: BookDownloadStatus[] = [];
   currentTrackIndex = 0;
   downloading = false;
+  painting = false;
 
   bibleData = BibleARA;
 
@@ -32,6 +35,7 @@ export class Home implements OnInit {
 
   constructor(
     private audioService: AudioService,
+    private dlServ: AudioDownloaderService,
     private bibleServ: BibleService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -52,6 +56,7 @@ export class Home implements OnInit {
   }
 
   checkDownloaded() {
+    this.painting = true;
     this.customCSS = {"b": {}, "c": {}, "v": {}};
     this.bibleServ.booksDownloadStatus(this.bibleData).then((booksStatus: BookDownloadStatus[]) => {
       this.booksDownloadStatus = booksStatus;
@@ -60,6 +65,7 @@ export class Home implements OnInit {
   }
 
   paintBooks() {
+    this.painting = true;
     const booksStatus = this.booksDownloadStatus;
 
     for(let i = 0; i < booksStatus.length; i++) {
@@ -73,8 +79,11 @@ export class Home implements OnInit {
         // do nothing
       }
     }
+    this.painting = false;
+    this.cdr.detectChanges();
   }
   paintChapters(bookAbbrev: string) {
+    this.painting = true;
     this.customCSS = {"b": {}, "c": {}, "v": {}};
     const booksStatus = this.booksDownloadStatus;
     const stats = booksStatus.find(item => item.abbrev === bookAbbrev);
@@ -85,14 +94,23 @@ export class Home implements OnInit {
       if(stats.pending.indexOf(`${this.bibleData.version}-${bookAbbrev}-${i}`) == -1) // chapter was downloaded
         this.customCSS["c"][i - 1] = "background-color: lightgreen";
     }
+    this.painting = false;
+    this.cdr.detectChanges();
   }
 
   bpSelecting(sel: BibleSelection) {
-    console.log(sel);
     if(sel.books[0]) // book was selected
       this.paintChapters(sel.books[0].abbrev);
     else // book was not selected
       this.paintBooks();
+  }
+  async bpSelected(sel: BibleSelection) {
+    this.tracks = await this.bibleServ.genTracks(this.bibleData, sel.books[0].abbrev, sel.chapters);
+    await this.dlServ.download(this.tracks[0]);
+    this.audioService.playTrack(this.tracks[0]).then(_ => {});
+    this.dlServ.downloadTracks(this.tracks).then(_ => {
+      this.audioService.setPlaylist(this.tracks);
+    });
   }
 
   async playTrackFromHere(track: Track, index: number) {

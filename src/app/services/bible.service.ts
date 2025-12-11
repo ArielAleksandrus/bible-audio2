@@ -36,7 +36,7 @@ export class BibleService {
     return res;
   }
 
-  async genTracks(bible: Bible, bookAbbrev?: string): Promise<Track[]> {
+  async genTracks(bible: Bible, bookAbbrev?: string, chapters?: number[]): Promise<Track[]> {
     const tracks: Track[] = [];
     let bibleBooks = bible.books;
     if(bookAbbrev) {
@@ -51,6 +51,8 @@ export class BibleService {
 
     for (const book of bibleBooks) {
       for (let chapter = 1; chapter <= book.chapters.length; chapter++) {
+        if(chapters && chapters.indexOf(chapter) == -1) continue;
+
         const title = `${book.name} ${chapter}`;
         let track: Track = {
           id: `${bible.version}-${book.abbrev}-${chapter}`,

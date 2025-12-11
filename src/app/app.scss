@@ -1,26 +1,32 @@
+.main-content {
+  background-color: var(--mat-sys-neutral);
+}
+
 .page-content {
-  // Reserva espaço para o player (90px) + bottom nav (56px ou 70px no seu caso)
-  padding-bottom: 160px;        // ← AUMENTEI para caber player + nav
+  padding-bottom: 160px;
   min-height: 100vh;
   box-sizing: border-box;
 }
 
 
-// A BOTTOM NAV continua como você já tinha, só aumentei um pouco o z-index
 .bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 1000;                // ← sempre por cima do player
+  z-index: 1000;
   border-top: 1px solid rgba(0,0,0,0.12);
-  height: 70px;                 // ← confirma que é 70px (você já usa isso no padding)
+  height: 70px;
+
+  background-color: var(--mat-sys-primary) !important;
 
   a[mat-tab-link] {
     display: flex;
     flex-direction: column;
     min-width: 80px;
+    height: 70px;
     padding: 8px 0;
+    color: #fafafa;
 
     span.material-icons {
       font-size: 24px;
@@ -32,11 +38,6 @@
     span:not(.material-icons) {
       font-size: 12px;
     }
-  }
-
-  ::ng-deep .mat-tab-link-active {
-    opacity: 1;
-    color: var(--mat-tab-nav-bar-active-link-color, #3f51b5);
   }
 }
 

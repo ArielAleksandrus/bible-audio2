@@ -1,0 +1,34 @@
+h2 {
+  color: var(--mat-sys-primary);
+  text-align: center;
+}
+.picker {
+  color: var(--mat-sys-primary);
+  mat-card {
+    margin: 0 auto;
+  }
+}
+.color-explanation {
+  background-color: #222;
+  color: #fafafa;
+  padding: 0.5em;
+  text-align: center;
+  .text {
+    position: relative;
+    top: -1em;
+  }
+}
+.square-color{
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin: 0.5em;
+  &.partial-dl {
+    background-color: lightyellow;
+  }
+  &.full-dl {
+    background-color: lightgreen;
+  }
+}

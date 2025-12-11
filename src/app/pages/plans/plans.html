@@ -79,7 +79,8 @@
     <div>{{ plan.days }} Dias ({{ plan.daysRemaining }} restantes)</div>
     <div class="actions">
       <button mat-raised-button color="primary" (click)="openPlan(plan)">Abrir</button>&nbsp;&nbsp;
-      <button mat-raised-button (click)="resumePlan(plan)">Retomar</button>
+      <button mat-raised-button (click)="resumePlan(plan)">Retomar</button>&nbsp;&nbsp;
+      <button mat-raised-button (click)="deletePlan(plan)">Excluir</button>
     </div>
   </div>
 </div>

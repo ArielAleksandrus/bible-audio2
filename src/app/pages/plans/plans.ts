@@ -134,6 +134,14 @@ export class Plans {
     }
   }
 
+  deletePlan(plan: Plan) {
+    if((prompt("Tem certeza? Digite: sim") || "").toLowerCase() == "sim") {
+      this.planServ.delete(plan.id);
+      this._loadPlans();
+    }
+
+  }
+
   startPlan(plan: Plan) {
     plan.startedAt = new Date().toISOString();
     plan.status = "started";
@@ -147,7 +155,8 @@ export class Plans {
         });
       }
     });
-
+    this.openPlan(plan);
+    this.playGoal(plan.goals[0]);
   }
 
   openPlan(plan: Plan, day?: number) {
