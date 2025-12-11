@@ -2,6 +2,7 @@
   "name": "bible-audio2",
   "short_name": "BibleAudio",
   "start_url": "https://bible-audio2.vercel.app/",
+  "description": "Bible in Audio for Offline usage",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f9f9f9",
@@ -35,11 +36,6 @@
     {
       "src": "/icons/android/android-launchericon-512-512.png",
       "sizes": "512x512",
-      "type": "image/png"
-    },
-    {
-      "src": "/icons/windows11/Square150x150Logo.png",
-      "sizes": "150x150",
       "type": "image/png"
     },
     {
