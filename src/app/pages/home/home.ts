@@ -6,6 +6,7 @@ import { BibleService, BookDownloadStatus } from '../../services/bible.service';
 import { Track } from '../../models/track';
 
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { BiblePicker, Bible, BibleSelection, OverridableCSS as BibleCSS, BibleARA, BibleKJV } from 'bible-picker';
 
@@ -15,7 +16,8 @@ import { BiblePicker, Bible, BibleSelection, OverridableCSS as BibleCSS, BibleAR
   styleUrls: ['./home.scss'],
   imports: [CommonModule,
       BiblePicker,
-      MatIconModule
+      MatIconModule,
+      MatProgressSpinnerModule
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None // faz o css definido em home.scss penetrar o bible-picker

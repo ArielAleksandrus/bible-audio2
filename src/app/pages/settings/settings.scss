@@ -1,0 +1,157 @@
+.settings-container {
+  padding: 40px 20px 100px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e0e8f5 100%);
+}
+
+.settings-header {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+.header-icon {
+  font-size: 4rem;
+  height: 4rem;
+  width: 4rem;
+  color: var(--mat-sys-primary, #667eea);
+  margin-bottom: 16px;
+}
+
+.settings-header h1 {
+  font-size: 2.4rem;
+  margin: 0 0 12px;
+  font-weight: 400;
+}
+
+.settings-header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.storage-card {
+  background: white;
+  border-radius: 16px;
+}
+
+mat-card-header {
+  margin-bottom: 20px;
+}
+
+mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.4rem;
+}
+
+.storage-info {
+  margin-bottom: 24px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 1.1rem;
+}
+
+.info-row.sub {
+  padding-left: 20px;
+  font-size: 1rem;
+  color: #555;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.progress-container {
+  margin: 24px 0;
+}
+
+.progress-label {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.actions {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.delete-button {
+  padding: 12px 24px !important;
+  font-size: 1.1rem !important;
+  font-weight: 500;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3); /* sombra vermelha suave */
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #d32f2f !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(211, 47, 47, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  .button-icon {
+    margin-right: 10px;
+    font-size: 1.4rem;
+    position: relative;
+    top: 5px;
+  }
+
+  .button-icon-end {
+    margin-left: 10px;
+    font-size: 1.4rem;
+  }
+
+  .button-text {
+    letter-spacing: 0.5px;
+  }
+}
+
+.loading-section {
+  text-align: center;
+  padding: 80px 20px;
+  color: #666;
+}
+
+.loading-section p {
+  margin-top: 20px;
+  font-size: 1.1rem;
+}
+
+.coming-soon {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  margin-top: 60px;
+  font-size: 1.1rem;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .settings-header h1 {
+    font-size: 2rem;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .info-row strong {
+    align-self: flex-end;
+  }
+}

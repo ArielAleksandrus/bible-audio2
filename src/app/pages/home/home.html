@@ -1,27 +1,48 @@
-<h2>
-  Selecione o que você quer ouvir
-  <br/>
-  <small *ngIf="painting">
-    Verificando itens baixados
-    <mat-icon class="mat-spinner">autorenew</mat-icon>
-  </small>
-</h2>
+<div class="home-container">
 
-<div class="picker">
-<bible-picker
-  [bible]="bibleData"
-  [select]="'chapters'"
-  [customCSS]="customCSS"
-  (onSelecting)="bpSelecting($event)"
-  (onSelected)="bpSelected($event)">
-</bible-picker>
-</div>
+  <!-- ============================================= -->
+  <!-- HERO / TÍTULO -->
+  <!-- ============================================= -->
+  <header class="hero-header">
+    <mat-icon class="hero-icon">menu_book</mat-icon>
+    <h1>Ouça a Palavra de Deus</h1>
+    <p>Selecione o livro e capítulo que deseja ouvir. Áudios são baixados automaticamente para ouvir offline.</p>
 
-<br/>
-<div class="color-explanation">
-  <span class="square-color partial-dl"></span>
-  <span class="text">Download Parcial</span> &nbsp; &nbsp; &nbsp;
-  <span class="square-color full-dl"></span>
-  <span class="text">Download Completo</span>
+    <div class="loading-hint" *ngIf="painting">
+      <mat-spinner diameter="24"></mat-spinner>
+      <span>Verificando itens baixados...</span>
+    </div>
+  </header>
+
+  <!-- ============================================= -->
+  <!-- BIBLE PICKER -->
+  <!-- ============================================= -->
+  <section class="picker-section">
+    <div class="picker-wrapper">
+      <bible-picker
+        [bible]="bibleData"
+        [select]="'chapters'"
+        [customCSS]="customCSS"
+        (onSelecting)="bpSelecting($event)"
+        (onSelected)="bpSelected($event)">
+      </bible-picker>
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- LEGENDA DE CORES -->
+  <!-- ============================================= -->
+  <section class="legend-section">
+    <div class="legend-items">
+      <div class="legend-item">
+        <span class="square-color partial-dl"></span>
+        <span class="label">Download Parcial</span>
+      </div>
+      <div class="legend-item">
+        <span class="square-color full-dl"></span>
+        <span class="label">Download Completo</span>
+      </div>
+    </div>
+  </section>
+
 </div>
-<br/>

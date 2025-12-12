@@ -1,21 +1,260 @@
-.plan-header { margin-bottom: 24px; }
-mat-table { width: 100%; margin-bottom: 16px; }
-.completed {
-  color: #4caf50;
+.plans-container {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f9f9fc;
+  min-height: 100vh;
+  padding-bottom:70px;
+}
+
+/* ============================================= */
+/* PLANO ATUAL - Header */
+/* ============================================= */
+.current-plan-section {
+  margin-bottom: 40px;
+}
+
+.plan-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.plan-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  font-size: 2rem;
+  height: 2rem;
+  width: 2rem;
+}
+
+.plan-subtitle,
+.plan-description {
+  font-size: 1rem;
+  opacity: 0.95;
+  margin: 8px 0;
+}
+
+.progress-text {
+  margin: 16px 0 8px;
+  font-size: 1.2rem;
   font-weight: 500;
-  position: relative;
-  top: 5px;
-  .mini-icon {
-    font-size: 1em;
-    position: relative;
-    top: 5px;
+}
+
+.progress-bar-container {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #ffffff;
+  transition: width 0.6s ease;
+  border-radius: 6px;
+}
+
+/* ============================================= */
+/* Tabela de Metas/Dias */
+/* ============================================= */
+.goals-table {
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+.goals-table th {
+  background: #f0f2f5;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.8px;
+  color: #555;
+  padding: 16px;
+}
+
+.goals-table td {
+  padding: 16px;
+  vertical-align: top;
+}
+
+.header-day,
+.header-actions {
+  width: 20%;
+}
+
+.cell-day {
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.day-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.completed-icon {
+  color: #4caf50;
+  font-size: 1.4rem;
+}
+
+.portion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.portion-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.book-abbrev {
+  font-weight: 500;
+  color: #333;
+}
+
+.mini-check {
+  color: #4caf50;
+  font-size: 1.1rem;
+}
+
+.cell-actions button {
+  margin-right: 8px;
+}
+
+.completed-row {
+  background-color: #e8f5e9 !important;
+  opacity: 0.95;
+}
+
+/* ============================================= */
+/* Sem plano ativo */
+/* ============================================= */
+.no-plan-section {
+  text-align: center;
+  padding: 30px 20px;
+  color: #666;
+}
+
+.big-icon {
+  font-size: 3rem;
+  height: 3rem;
+  width: 3rem;
+  color: #bbb;
+}
+
+.no-plan-section h3 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.no-plan-section p {
+  font-size: 0.8rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ============================================= */
+/* Seções de Planos Iniciados e Disponíveis */
+/* ============================================= */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 40px 0 20px;
+  color: #333;
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+
+.plans-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.plan-item {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  flex-wrap: wrap;
+}
+
+.plan-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+.plan-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.plan-info strong {
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.plan-desc {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 8px 0;
+}
+
+.plan-days {
+  color: #444;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.plan-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .plan-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .plan-buttons {
+    justify-content: center;
+  }
+
+  .plan-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .goals-table th,
+  .goals-table td {
+    padding: 12px 8px;
+    font-size: 0.9rem;
   }
 }
-.section { margin-top: 48px; }
-.plan-card {
-  padding: 16px;
-  margin-bottom: 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-}
-.actions { margin-top: 12px; }

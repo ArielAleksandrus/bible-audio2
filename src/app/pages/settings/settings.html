@@ -1,1 +1,77 @@
-<p>settings works!</p>
+<div class="settings-container">
+
+  <header class="settings-header">
+    <mat-icon class="header-icon">settings</mat-icon>
+    <h1>Configurações</h1>
+    <p>Gerencie o armazenamento e preferências do app</p>
+  </header>
+
+  <section class="storage-section" *ngIf="!loading; else loadingBlock">
+    <mat-card class="storage-card mat-elevation-z4">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon color="primary">storage</mat-icon>
+          Armazenamento
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+
+        <div class="storage-info">
+          <div class="info-row">
+            <span>Usado pelo app (áudios + planos):</span>
+            <strong>{{ totalUsedMB }} MB</strong>
+          </div>
+          <div class="info-row sub">
+            <span>→ Áudios baixados:</span>
+            <strong>{{ usedByAudiosMB }} MB</strong>
+          </div>
+          <div class="info-row sub">
+            <span>→ Planos de leitura:</span>
+            <strong>{{ usedByPlansMB }} MB</strong>
+          </div>
+          <div class="info-row">
+            <span>Disponível no dispositivo:</span>
+            <strong>{{ availableMB }} MB</strong>
+          </div>
+        </div>
+
+        <div class="progress-container">
+          <mat-progress-bar
+            mode="determinate"
+            [value]="percentageUsed"
+            color="accent">
+          </mat-progress-bar>
+          <div class="progress-label">
+            {{ percentageUsed }}% usado ({{ totalUsedMB }} de {{ totalUsedMB + availableMB }} MB)
+          </div>
+        </div>
+
+        <div class="actions">
+          <button mat-raised-button color="warn" class="delete-button" (click)="clearAllAudios()">
+            <mat-icon class="button-icon">delete_forever</mat-icon>
+            <span class="button-text">Limpar Todos os Áudios Baixados</span>
+          </button>
+
+          <p class="warning-note">
+            <mat-icon class="note-icon">info</mat-icon>
+            Isso removerá permanentemente todos os áudios baixados ({{ usedByAudiosMB }} MB), mas não afeta seus planos de leitura.
+          </p>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <ng-template #loadingBlock>
+    <div class="loading-section">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Calculando uso de armazenamento...</p>
+    </div>
+  </ng-template>
+
+  <!-- Futuras configurações podem vir aqui -->
+  <section class="future-sections">
+    <p class="coming-soon">Mais opções em breve...</p>
+  </section>
+
+</div>

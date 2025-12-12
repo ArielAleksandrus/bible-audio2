@@ -1,34 +1,180 @@
-h2 {
-  color: var(--mat-sys-primary);
-  text-align: center;
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e0e8f5 100%);
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Roboto', sans-serif;
 }
-.picker {
-  color: var(--mat-sys-primary);
+
+/* ============================================= */
+/* HERO HEADER */
+/* ============================================= */
+.hero-header {
+  text-align: center;
+  max-width: 800px;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+.hero-icon {
+  font-size: 4.5rem;
+  height: 4.5rem;
+  width: 4.5rem;
+  color: var(--mat-sys-primary, #667eea);
+  margin-bottom: 16px;
+  opacity: 0.9;
+}
+
+.hero-header h1 {
+  font-size: 2.6rem;
+  font-weight: 400;
+  margin: 0 0 16px 0;
+  color: #222;
+}
+
+.hero-header p {
+  font-size: 1.2rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.loading-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  color: #666;
+  font-size: 1rem;
+
+  mat-spinner {
+    margin: 0;
+  }
+}
+
+/* ============================================= */
+/* PICKER SECTION */
+/* ============================================= */
+.picker-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 1000px;
+  margin-bottom: 40px;
+}
+
+.picker-wrapper {
+  width: 100%;
+  max-width: 900px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  padding: 20px;
+}
+
+/* Melhora o visual interno do bible-picker (graças ao ViewEncapsulation.None) */
+bible-picker {
   mat-card {
     margin: 0 auto;
+    max-width: 900px;   // opcional, ajusta pro seu gosto
+    width: 100%;
+    box-sizing: border-box;
   }
 }
-.color-explanation {
-  background-color: #222;
-  color: #fafafa;
-  padding: 0.5em;
+
+/* ============================================= */
+/* LEGENDA */
+/* ============================================= */
+.legend-section {
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
   text-align: center;
-  .text {
-    position: relative;
-    top: -1em;
-  }
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 40px;
 }
-.square-color{
+
+.legend-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.legend-items {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+}
+
+.square-color {
   display: inline-block;
   width: 2em;
   height: 2em;
-  border-radius: 2px;
+  border-radius: 8px;
   flex-shrink: 0;
-  margin: 0.5em;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+
   &.partial-dl {
     background-color: lightyellow;
   }
+
   &.full-dl {
     background-color: lightgreen;
+  }
+}
+
+.label {
+  font-weight: 500;
+}
+
+/* ============================================= */
+/* RESPONSIVO */
+/* ============================================= */
+@media (max-width: 768px) {
+  .hero-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero-header p {
+    font-size: 0.8rem;
+  }
+
+  .hero-icon {
+    font-size: 3.5rem;
+    height: 3.5rem;
+    width: 3.5rem;
+  }
+
+  .picker-wrapper {
+    padding: 12px;
+  }
+
+  .legend-items {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .legend-item {
+    justify-content: center;
   }
 }

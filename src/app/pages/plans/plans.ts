@@ -15,6 +15,7 @@ import { Bible, BibleARA, BibleKJV } from 'bible-picker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
 
 const PRELOAD_DAYS = 10;
 
@@ -23,7 +24,8 @@ const PRELOAD_DAYS = 10;
   imports: [CommonModule,
     MatIconModule,
     MatTableModule,
-    MatPaginatorModule],
+    MatPaginatorModule,
+    MatButtonModule],
   templateUrl: './plans.html',
   styleUrl: './plans.scss',
 })
