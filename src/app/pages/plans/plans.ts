@@ -1,5 +1,6 @@
 import { Component, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { AudioDownloaderService } from '../../services/audio-downloader.service';
 import { AudioService } from '../../services/audio.service';
@@ -16,6 +17,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 const PRELOAD_DAYS = 10;
 
@@ -25,7 +28,9 @@ const PRELOAD_DAYS = 10;
     MatIconModule,
     MatTableModule,
     MatPaginatorModule,
-    MatButtonModule],
+    MatButtonModule,
+    MatTooltipModule,
+    TranslateModule],
   templateUrl: './plans.html',
   styleUrl: './plans.scss',
 })
@@ -53,7 +58,9 @@ export class Plans {
     private dlServ: AudioDownloaderService,
     private bibleServ: BibleService,
     private audioService: AudioService,
-    private cdr: ChangeDetectorRef) {
+    private cdr: ChangeDetectorRef,
+    private translate: TranslateService
+  ) {
 
     if(!localStorage.getItem("selectedBible")) {
       location.href = "/home";
@@ -62,6 +69,12 @@ export class Plans {
 
     let json = JSON.parse(localStorage.getItem("selectedBible") || "");
     this.bibleData = <Bible>json;
+
+    const savedLang = this.bibleData.language;
+    if(savedLang) {
+      this.translate.use(savedLang);
+    }
+
   }
 
   ngOnInit() {

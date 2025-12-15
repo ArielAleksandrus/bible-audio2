@@ -1,0 +1,68 @@
+{
+  "hero.title": "Listen to the Word of God",
+  "hero.subtitle": "Select the book and chapter you want to hear. Audios are downloaded automatically for offline listening.",
+  "loading.checking": "Checking downloaded items...",
+
+  "legend.partial": "Partial Download",
+  "legend.full": "Full Download",
+
+  "menu.home": "Home",
+  "menu.plans": "Plans",
+  "menu.settings": "Settings",
+
+  "plans.title": "Reading Plans",
+  "plans.subtitle": "Choose a plan to read the Bible in an organized way",
+
+  "settings.title": "Settings",
+  "settings.voice": "Audio Voice",
+  "settings.speed": "Playback Speed",
+  "settings.download": "Manage Downloads",
+
+  "plans": {
+    "current.title": "Current Plan",
+    "by": "by",
+    "of": "of",
+    "days_remaining": "days remaining",
+    "day": "Day",
+    "table.day": "Day",
+    "table.readings": "Readings",
+    "table.actions": "Actions",
+    "play": "Play goal",
+    "mark_complete": "Mark as completed",
+    "reset": "Reset",
+    "no_active.title": "No active plan",
+    "no_active.subtitle": "Choose one of the available plans below to start your Bible reading with audio!",
+    "started.title": "Started Plans",
+    "available.title": "Available Plans",
+    "resume": "Resume",
+    "open": "Open",
+    "delete": "Delete",
+    "start": "Start Plan",
+    "days": "days"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage app storage and preferences",
+
+    "storage": {
+      "title": "Storage",
+      "used_by_app": "Used by the app (audios + plans):",
+      "audios": "Downloaded audios:",
+      "plans": "Reading plans:",
+      "available": "Available on device:",
+      "used": "used",
+      "of": "of",
+      "clear_audios": "Clear All Downloaded Audios",
+      "clear_warning": "This will permanently delete all downloaded audios ({{size}} MB), but will not affect your reading plans.",
+      "calculating": "Calculating storage usage..."
+    },
+
+    "coming_soon": "More options coming soon...",
+    "language": {
+      "title": "Language",
+      "current": "Current language",
+      "reset_button": "Reset Language",
+      "reset_note": "This will show the language selection screen again on the next app start."
+    }
+  }
+}

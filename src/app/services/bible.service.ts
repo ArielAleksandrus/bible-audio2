@@ -45,6 +45,10 @@ export class BibleService {
     return undefined;
   }
 
+  removeBibleVersion() {
+    localStorage.removeItem("selectedBible");
+  }
+
   async booksDownloadStatus(bible: Bible): Promise<BookDownloadStatus[]> {
     let res: BookDownloadStatus[] = [];
 

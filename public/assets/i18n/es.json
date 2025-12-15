@@ -1,0 +1,68 @@
+{
+  "hero.title": "Escucha la Palabra de Dios",
+  "hero.subtitle": "Selecciona el libro y capítulo que deseas oír. Los audios se descargan automáticamente para escuchar sin conexión.",
+  "loading.checking": "Verificando elementos descargados...",
+
+  "legend.partial": "Descarga Parcial",
+  "legend.full": "Descarga Completa",
+
+  "menu.home": "Inicio",
+  "menu.plans": "Planes",
+  "menu.settings": "Configuraciones",
+
+  "plans.title": "Planes de Lectura",
+  "plans.subtitle": "Elige un plan para leer la Biblia de forma organizada",
+
+  "settings.title": "Configuraciones",
+  "settings.voice": "Voz del audio",
+  "settings.speed": "Velocidad de reproducción",
+  "settings.download": "Gestionar descargas",
+
+  "plans": {
+    "current.title": "Plan Actual",
+    "by": "por",
+    "of": "de",
+    "days_remaining": "días restantes",
+    "day": "Día",
+    "table.day": "Día",
+    "table.readings": "Lecturas",
+    "table.actions": "Acciones",
+    "play": "Reproducir meta",
+    "mark_complete": "Marcar como completado",
+    "reset": "Restablecer",
+    "no_active.title": "Ningún plan en curso",
+    "no_active.subtitle": "¡Elige uno de los planes disponibles abajo para comenzar tu lectura de la Biblia con audio!",
+    "started.title": "Planes Iniciados",
+    "available.title": "Planes Disponibles",
+    "resume": "Reanudar",
+    "open": "Abrir",
+    "delete": "Eliminar",
+    "start": "Comenzar Plan",
+    "days": "días"
+  },
+  "settings": {
+    "title": "Configuraciones",
+    "subtitle": "Gestiona el almacenamiento y preferencias de la app",
+
+    "storage": {
+      "title": "Almacenamiento",
+      "used_by_app": "Usado por la app (audios + planes):",
+      "audios": "Audios descargados:",
+      "plans": "Planes de lectura:",
+      "available": "Disponible en el dispositivo:",
+      "used": "usado",
+      "of": "de",
+      "clear_audios": "Eliminar Todos los Audios Descargados",
+      "clear_warning": "Esto eliminará permanentemente todos los audios descargados ({{size}} MB), pero no afectará tus planes de lectura.",
+      "calculating": "Calculando uso de almacenamiento..."
+    },
+
+    "coming_soon": "Más opciones pronto...",
+    "language": {
+      "title": "Idioma",
+      "current": "Idioma actual",
+      "reset_button": "Restablecer Idioma",
+      "reset_note": "Esto volverá a mostrar la pantalla de selección de idioma al iniciar la app."
+    }
+  }
+}

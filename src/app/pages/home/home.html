@@ -5,12 +5,12 @@
   <!-- ============================================= -->
   <header class="hero-header">
     <mat-icon class="hero-icon">menu_book</mat-icon>
-    <h1>Ouça a Palavra de Deus</h1>
-    <p>Selecione o livro e capítulo que deseja ouvir. Áudios são baixados automaticamente para ouvir offline.</p>
+    <h1>{{ 'hero.title' | translate }}</h1>
+    <p>{{ 'hero.subtitle' | translate }}</p>
 
     <div class="loading-hint" *ngIf="painting">
       <mat-spinner diameter="24"></mat-spinner>
-      <span>Verificando itens baixados...</span>
+      <span>{{ 'loading.checking' | translate }}</span>
     </div>
   </header>
 
@@ -36,11 +36,11 @@
     <div class="legend-items">
       <div class="legend-item">
         <span class="square-color partial-dl"></span>
-        <span class="label">Download Parcial</span>
+        <span class="label">{{ 'legend.partial' | translate }}</span>
       </div>
       <div class="legend-item">
         <span class="square-color full-dl"></span>
-        <span class="label">Download Completo</span>
+        <span class="label">{{ 'legend.full' | translate }}</span>
       </div>
     </div>
   </section>

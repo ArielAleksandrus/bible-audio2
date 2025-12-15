@@ -1,5 +1,7 @@
 import { Component, ChangeDetectorRef, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+
 import { AudioService } from '../../services/audio.service';
 import { AudioDownloaderService } from '../../services/audio-downloader.service';
 import { BibleService, BookDownloadStatus } from '../../services/bible.service';
@@ -13,6 +15,7 @@ import { BiblePicker, Bible, BibleSelection, OverridableCSS as BibleCSS } from '
 import { MatDialog } from '@angular/material/dialog';
 import { LanguageSelectorDialog } from '../../language-selector-dialog/language-selector-dialog';
 
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.html',
@@ -20,7 +23,8 @@ import { LanguageSelectorDialog } from '../../language-selector-dialog/language-
   imports: [CommonModule,
       BiblePicker,
       MatIconModule,
-      MatProgressSpinnerModule
+      MatProgressSpinnerModule,
+      TranslateModule
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None // faz o css definido em home.scss penetrar o bible-picker
@@ -43,7 +47,8 @@ export class Home implements OnInit {
     private dlServ: AudioDownloaderService,
     private bibleServ: BibleService,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -55,8 +60,11 @@ export class Home implements OnInit {
   }
 
   init() {
-    console.log(localStorage.getItem("selectedBible"));
     this.bibleData = <Bible>JSON.parse(localStorage.getItem("selectedBible") || "");
+    const savedLang = this.bibleData.language;
+    if(savedLang) {
+      this.translate.use(savedLang);
+    }
     this.checkDownloaded();
   }
 

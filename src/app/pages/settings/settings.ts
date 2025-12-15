@@ -3,9 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { dbPromise, AvailableSpace } from '../../storage/my-db';
-import { Plan } from '../../models/plan';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+
+import { BibleService } from '../../services/bible.service';
+import { Bible } from 'bible-picker';
 
 @Component({
   selector: 'app-settings',
@@ -15,7 +19,9 @@ import { Plan } from '../../models/plan';
     MatIconModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatCardModule
+    MatCardModule,
+    MatButtonModule,
+    TranslateModule
   ],
   templateUrl: './settings.html',
   styleUrl: './settings.scss'
@@ -30,11 +36,39 @@ export class Settings {
   loading = true;
 
   private availableSpace = new AvailableSpace();
+  private bibleData?: Bible;
+
+  currentLanguageName: string = "Português";
+  languageMap = {
+    "pt": "Português",
+    "en": "English",
+    "es": "Español",
+    "zh": "中文 (Chinese)"
+  };
+
+  constructor(
+    private translate: TranslateService,
+    private bibleServ: BibleService
+  ) {
+    let bibleJson = localStorage.getItem("selectedBible");
+    if(!bibleJson) {
+      location.href = "/home";
+    }
+    let json = JSON.parse(bibleJson || "");
+    this.bibleData = <Bible>json;
+    //@ts-ignore
+    this.currentLanguageName = this.languageMap[this.bibleData.language || "pt"] || "Português";
+  }
 
   ngOnInit() {
     this.calculateStorage().then(() => {
       this.loading = false;
     });
+  }
+
+  resetLanguage() {
+    this.bibleServ.removeBibleVersion();
+    location.href = "/home";
   }
 
   async calculateStorage() {

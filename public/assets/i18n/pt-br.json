@@ -1,0 +1,68 @@
+{
+  "hero.title": "Ouça a Palavra de Deus",
+  "hero.subtitle": "Selecione o livro e capítulo que deseja ouvir. Áudios são baixados automaticamente para ouvir offline.",
+  "loading.checking": "Verificando itens baixados...",
+
+  "legend.partial": "Download Parcial",
+  "legend.full": "Download Completo",
+
+  "menu.home": "Início",
+  "menu.plans": "Planos",
+  "menu.settings": "Configs",
+
+  "plans.title": "Planos de Leitura",
+  "plans.subtitle": "Escolha um plano para ler a Bíblia de forma organizada",
+
+  "settings.title": "Configurações",
+  "settings.voice": "Voz do áudio",
+  "settings.speed": "Velocidade de reprodução",
+  "settings.download": "Gerenciar downloads",
+
+  "plans": {
+    "current.title": "Plano Atual",
+    "by": "por",
+    "of": "de",
+    "days_remaining": "dias restantes",
+    "day": "Dia",
+    "table.day": "Dia",
+    "table.readings": "Leituras",
+    "table.actions": "Ações",
+    "play": "Reproduzir meta",
+    "mark_complete": "Marcar como concluído",
+    "reset": "Redefinir",
+    "no_active.title": "Nenhum plano em andamento",
+    "no_active.subtitle": "Escolha um dos planos disponíveis abaixo para começar sua leitura da Bíblia com áudio!",
+    "started.title": "Planos Iniciados",
+    "available.title": "Planos Disponíveis",
+    "resume": "Retomar",
+    "open": "Abrir",
+    "delete": "Excluir",
+    "start": "Começar Plano",
+    "days": "dias"
+  },
+  "settings": {
+    "title": "Configurações",
+    "subtitle": "Gerencie o armazenamento e preferências do app",
+
+    "storage": {
+      "title": "Armazenamento",
+      "used_by_app": "Usado pelo app (áudios + planos):",
+      "audios": "Áudios baixados:",
+      "plans": "Planos de leitura:",
+      "available": "Disponível no dispositivo:",
+      "used": "usado",
+      "of": "de",
+      "clear_audios": "Limpar Todos os Áudios Baixados",
+      "clear_warning": "Isso removerá permanentemente todos os áudios baixados ({{size}} MB), mas não afeta seus planos de leitura.",
+      "calculating": "Calculando uso de armazenamento..."
+    },
+
+    "coming_soon": "Mais opções em breve...",
+    "language": {
+      "title": "Idioma",
+      "current": "Idioma atual",
+      "reset_button": "Redefinir Idioma",
+      "reset_note": "Isso abrirá novamente a tela de seleção de idioma na próxima inicialização do app."
+    }
+  }
+}
