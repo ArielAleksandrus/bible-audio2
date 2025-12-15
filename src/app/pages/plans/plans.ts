@@ -10,7 +10,7 @@ import { Plan, DailyGoal } from '../../models/plan';
 import { Track } from '../../models/track';
 import { SamplePlan } from '../../data/my-plans';
 
-import { Bible, BibleARA, BibleKJV } from 'bible-picker';
+import { Bible } from 'bible-picker';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -38,7 +38,7 @@ export class Plans {
   currentDay: number = 1;
   stoppedAt: {day: number, portionIdx: number} = {day: 0, portionIdx: 0};
 
-  bibleData = BibleARA;
+  bibleData?: Bible;
 
   tracks: Track[] = [];
   curTrackIdx: number = 0;
@@ -55,13 +55,18 @@ export class Plans {
     private audioService: AudioService,
     private cdr: ChangeDetectorRef) {
 
+    if(!localStorage.getItem("selectedBible")) {
+      location.href = "/home";
+      return;
+    }
+
+    let json = JSON.parse(localStorage.getItem("selectedBible") || "");
+    this.bibleData = <Bible>json;
   }
 
   ngOnInit() {
     this._loadPlans();
-    if(localStorage.getItem("bible-version") == "kjv") {
-      this.bibleData = BibleKJV;
-    }
+
 
     this.audioService.trackEnded$.subscribe(finishedTrack => {
       if(finishedTrack) {
@@ -79,7 +84,7 @@ export class Plans {
     this.updatePlan();
   }
   setTrackCompleted(track: Track, completed: boolean) {
-    if(!this.currentPlan)
+    if(!this.currentPlan || !this.bibleData)
       return;
 
     const bookIdx = this.bibleData.books.findIndex(book => book.name === track.book);
@@ -209,6 +214,8 @@ export class Plans {
 
 
   async buildTracks(plan: Plan, day: number, preloadDays: number = 0): Promise<Track[]> {
+    if(!this.bibleData) return [];
+
     let tracks: Track[] = await this.bibleServ.genDailyPlanTracks(this.bibleData, plan, day);
     if(preloadDays > 0) {
       for(let i = 1; i <= preloadDays; i++) {

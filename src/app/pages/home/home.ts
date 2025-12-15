@@ -8,7 +8,10 @@ import { Track } from '../../models/track';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { BiblePicker, Bible, BibleSelection, OverridableCSS as BibleCSS, BibleARA, BibleKJV } from 'bible-picker';
+import { BiblePicker, Bible, BibleSelection, OverridableCSS as BibleCSS } from 'bible-picker';
+
+import { MatDialog } from '@angular/material/dialog';
+import { LanguageSelectorDialog } from '../../language-selector-dialog/language-selector-dialog';
 
 @Component({
   selector: 'app-home',
@@ -30,7 +33,7 @@ export class Home implements OnInit {
   downloading = false;
   painting = false;
 
-  bibleData = BibleARA;
+  bibleData?: Bible;
 
   // we use indexes, so if we want to paint chapter 1, we'll use this.customCSS = {"b": {}, "c": {0: "..."} "v": {}}
   customCSS: BibleCSS = {"b": {}, "c": {}, "v": {}};
@@ -39,25 +42,29 @@ export class Home implements OnInit {
     private audioService: AudioService,
     private dlServ: AudioDownloaderService,
     private bibleServ: BibleService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
-    // Build Ageu (ag) tracks for testing purposes
-    this.bibleServ.downloadBook(this.bibleData, 'Ag').then(tracks => {
-      this.tracks = tracks;
-      this.tracks.sort((a, b) => a.chapter - b.chapter);
-      this.cdr.detectChanges();
-    });
+    // force language selection if not found
+    if(!localStorage.getItem("selectedBible"))
+      this.openLanguageSelector();
+    else
+      this.init();
+  }
 
-    // Check downloaded files
+  init() {
+    console.log(localStorage.getItem("selectedBible"));
+    this.bibleData = <Bible>JSON.parse(localStorage.getItem("selectedBible") || "");
     this.checkDownloaded();
-
-    if(!localStorage.getItem("bible-version"))
-      localStorage.setItem("bible-version", "ara");
   }
 
   checkDownloaded() {
+    if(!this.bibleData) {
+      console.error("home.ts::checkDownloaded -> no bibleData found");
+      return;
+    }
     this.painting = true;
     this.customCSS = {"b": {}, "c": {}, "v": {}};
     this.bibleServ.booksDownloadStatus(this.bibleData).then((booksStatus: BookDownloadStatus[]) => {
@@ -65,6 +72,28 @@ export class Home implements OnInit {
       this.paintBooks();
     });
   }
+
+  openLanguageSelector() {
+    const dialogRef = this.dialog.open(LanguageSelectorDialog, {
+      width: '320px',
+      disableClose: true,     // can't close by clicking outside
+      hasBackdrop: true,
+      backdropClass: 'dark-backdrop'
+    });
+
+    dialogRef.afterClosed().subscribe(async (langVersion: string) => {
+      if (langVersion) {
+        let bible: Bible|undefined = await this.bibleServ.loadBibleVersion(langVersion);
+        if(!bible) {
+          alert("Error fetching bible version. Select another language");
+          this.openLanguageSelector();
+          return;
+        }
+        this.init();
+      }
+    });
+  }
+
 
   paintBooks() {
     this.painting = true;
@@ -85,6 +114,10 @@ export class Home implements OnInit {
     this.cdr.detectChanges();
   }
   paintChapters(bookAbbrev: string) {
+    if(!this.bibleData) {
+      console.error("home.ts::paintChapters -> No bible data found");
+      return;
+    }
     this.painting = true;
     this.customCSS = {"b": {}, "c": {}, "v": {}};
     const booksStatus = this.booksDownloadStatus;
@@ -107,6 +140,10 @@ export class Home implements OnInit {
       this.paintBooks();
   }
   async bpSelected(sel: BibleSelection) {
+    if(!this.bibleData) {
+      console.error("home.ts::bpSelected -> No bible data found");
+      return;
+    }
     this.tracks = await this.bibleServ.genTracks(this.bibleData, sel.books[0].abbrev, sel.chapters);
     await this.dlServ.download(this.tracks[0]);
     this.audioService.playTrack(this.tracks[0]).then(_ => {});

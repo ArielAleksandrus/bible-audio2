@@ -20,6 +20,31 @@ export class BibleService {
 
   }
 
+  async loadBibleVersion(versionCode: string): Promise<Bible|undefined> {
+    const baseUrl = 'https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/';
+    const url = `${baseUrl}${versionCode}.json`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Falha ao carregar');
+      const jsonData = await response.json();
+      if(!jsonData) {
+        console.error("BibleService::loadBibleVersion -> invalid format", response);
+        throw new Error("BibleService::loadBibleVersion -> invalid format");
+      }
+
+
+      console.log(`Bíblia carregada: ${versionCode}`);
+      localStorage.setItem('selectedBible', JSON.stringify(jsonData));
+      return <Bible>jsonData;
+    } catch (error) {
+      console.error("BibleService::loadBibleVersion -> error fetching", error);
+      console.error("BibleService::loadBibleVersion -> error fetching", error);
+    }
+
+    return undefined;
+  }
+
   async booksDownloadStatus(bible: Bible): Promise<BookDownloadStatus[]> {
     let res: BookDownloadStatus[] = [];
 
