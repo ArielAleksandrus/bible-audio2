@@ -50,14 +50,25 @@ export class Settings {
     private translate: TranslateService,
     private bibleServ: BibleService
   ) {
+
     let bibleJson = localStorage.getItem("selectedBible");
     if(!bibleJson) {
       location.href = "/home";
     }
-    let json = JSON.parse(bibleJson || "");
-    this.bibleData = <Bible>json;
-    //@ts-ignore
-    this.currentLanguageName = this.languageMap[this.bibleData.language || "pt"] || "Português";
+
+    let selected = localStorage.getItem("selectedBible") || "";
+    this.bibleServ.loadBibleVersion(selected.split("-")[0], selected.split("-")[1]).then(res => {
+      if(res) {
+        this.bibleData = res;
+        const savedLang = this.bibleData.language;
+        if(savedLang) {
+          this.translate.use(savedLang);
+        }
+        //@ts-ignore
+        this.currentLanguageName = this.languageMap[this.bibleData.language || "pt"] || "Português";
+      }
+    });
+
   }
 
   ngOnInit() {

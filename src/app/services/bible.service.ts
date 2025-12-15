@@ -4,6 +4,8 @@ import { Bible, BibleBook } from 'bible-picker';
 import { Plan, DailyGoal, ReadingPortion } from "../models/plan";
 import { AudioDownloaderService } from './audio-downloader.service';
 
+import { saveBibleVersion, getBibleVersion, AvailableSpace } from '../storage/my-db';
+
 
 export const BIBLE_CDN_URL = "https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev";
 export const BIBLE_ABBREV_ISO = [
@@ -33,47 +35,46 @@ export class BibleService {
 
   }
 
-  buildURL(bookIdx: number, chapter: number) {
-    if(!this.bible) {
-      const bibleJSON = localStorage.getItem("selectedBible");
-      if(!bibleJSON) {
-        console.error("BibleService::buildURL -> no selected bible");
-        return "";
-      }
-      this.bible = <Bible>JSON.parse(bibleJSON);
-    }
-
-    let lang = this.bible.language;
+  buildURL(lang: string, version: string, bookIdx: number, chapter: number) {
     lang = lang.split("-")[0]; // to make 'pt-br' be 'pt' only
-    const version = this.bible.version.toUpperCase();
     const abbrevISO = BIBLE_ABBREV_ISO[bookIdx];
 
-    return `${BIBLE_CDN_URL}/audios/${lang}/${version}/${abbrevISO}/${abbrevISO} ${chapter}.mp3`;
+    return `${BIBLE_CDN_URL}/audios/${lang}/${version.toUpperCase()}/${abbrevISO.toUpperCase()}/${abbrevISO.toUpperCase()} ${chapter}.mp3`;
   }
 
-  async loadBibleVersion(versionCode: string): Promise<Bible|undefined> {
-    const baseUrl = ``;
-    const url = `${BIBLE_CDN_URL}/jsons/${versionCode}.json`;
+  async downloadAndSaveBible(language: string, versionName: string): Promise<Bible|undefined> {
+    const url = `${BIBLE_CDN_URL}/jsons/${language}-${versionName}.json`;
+    let found = await this.loadBibleVersion(language, versionName);
+    if(found)
+      return found;
+
+    const space = new AvailableSpace();
+    if (!(await space.isSafe(50))) { // deixa 50MB livres
+      alert('Espaço insuficiente no dispositivo');
+      return;
+    }
 
     try {
       const response = await fetch(url);
-      if (!response.ok) throw new Error('Falha ao carregar');
-      const jsonData = await response.json();
-      if(!jsonData) {
-        console.error("BibleService::loadBibleVersion -> invalid format", response);
-        throw new Error("BibleService::loadBibleVersion -> invalid format");
-      }
+      const bibleData = await response.json();
 
-
-      console.log(`Bíblia carregada: ${versionCode}`);
-      localStorage.setItem('selectedBible', JSON.stringify(jsonData));
-      return <Bible>jsonData;
-    } catch (error) {
-      console.error("BibleService::loadBibleVersion -> error fetching", error);
-      console.error("BibleService::loadBibleVersion -> error fetching", error);
+      await saveBibleVersion(language + "-" + versionName, versionName, language, language + "-" + versionName, bibleData);
+      return <Bible>bibleData;
+    } catch (err) {
+      console.error('Erro ao baixar Bíblia:', err);
     }
-
     return undefined;
+  }
+
+  async loadBibleVersion(language: string, versionName: string): Promise<Bible|undefined> {
+    const id = language + "-" + versionName;
+
+    let obj = await getBibleVersion(id);
+
+    if(obj)
+      return obj.data;
+    else
+      return undefined;
   }
 
   removeBibleVersion() {
@@ -122,7 +123,7 @@ export class BibleService {
           chapter,
           title,
           fileName: `${title}.mp3`,
-          url: this.buildURL(bookIdx, chapter),
+          url: this.buildURL(bible.language, bible.version, bookIdx, chapter),
           status: 'pending'
         };
 
@@ -156,7 +157,7 @@ export class BibleService {
         chapter,
         title,
         fileName: `${title}.mp3`,
-        url: this.buildURL(portion.bookIdx, chapter),
+        url: this.buildURL(bible.language, bible.version, portion.bookIdx, chapter),
         status: 'pending'
       };
       let downloaded = await this.ads.isDownloaded(track);

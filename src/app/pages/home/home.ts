@@ -60,13 +60,25 @@ export class Home implements OnInit {
   }
 
   init() {
-    this.bibleData = <Bible>JSON.parse(localStorage.getItem("selectedBible") || "");
-    this.cdr.detectChanges();
-    const savedLang = this.bibleData.language;
-    if(savedLang) {
-      this.translate.use(savedLang);
+    let selected = localStorage.getItem("selectedBible");
+    if(!selected) {
+      this.openLanguageSelector();
+      return;
     }
-    this.checkDownloaded();
+    this.bibleServ.loadBibleVersion(selected.split("-")[0], selected.split("-")[1]).then(res => {
+      if(res) {
+        this.bibleData = res;
+        const savedLang = this.bibleData.language;
+        if(savedLang) {
+          this.translate.use(savedLang);
+        }
+        this.checkDownloaded();
+
+        this.cdr.detectChanges();
+      }
+    });
+
+
   }
 
   checkDownloaded() {
@@ -92,9 +104,11 @@ export class Home implements OnInit {
 
     dialogRef.afterClosed().subscribe(async (langVersion: string) => {
       if (langVersion) {
-        let bible: Bible|undefined = await this.bibleServ.loadBibleVersion(langVersion);
+        localStorage.setItem("selectedBible", langVersion);
+        let bible: Bible|undefined = await this.bibleServ.downloadAndSaveBible(langVersion.split("-")[0], langVersion.split("-")[1]);
         if(!bible) {
           alert("Error fetching bible version. Select another language");
+          localStorage.removeItem("selectedBible");
           this.openLanguageSelector();
           return;
         }

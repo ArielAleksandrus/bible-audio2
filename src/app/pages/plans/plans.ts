@@ -67,13 +67,16 @@ export class Plans {
       return;
     }
 
-    let json = JSON.parse(localStorage.getItem("selectedBible") || "");
-    this.bibleData = <Bible>json;
-
-    const savedLang = this.bibleData.language;
-    if(savedLang) {
-      this.translate.use(savedLang);
-    }
+    let selected = localStorage.getItem("selectedBible") || "";
+    this.bibleServ.loadBibleVersion(selected.split("-")[0], selected.split("-")[1]).then(res => {
+      if(res) {
+        this.bibleData = res;
+        const savedLang = this.bibleData.language;
+        if(savedLang) {
+          this.translate.use(savedLang);
+        }
+      }
+    });
 
   }
 

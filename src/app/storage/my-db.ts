@@ -24,10 +24,29 @@ interface AudioAppDB extends DBSchema {
       'by-startedAt': string;
     };
   };
+
+  // Store para as bíblias
+  bibles: {
+    key: string; // ex: "pt-ara", "en-niv", "zh-cnvs"
+    value: {
+      id: string;           // "pt-ara"
+      version: string;      // "Almeida Revista e Atualizada"
+      language: string;     // "pt"
+      fullName: string;     // "Bíblia Sagrada - ARA"
+      data: any;            // O JSON completo da Bíblia (estrutura que você usa)
+      downloadedAt: number; // timestamp
+      sizeInBytes?: number; // opcional: para controle de espaço
+    };
+    indexes: {
+      'by-language': string;
+      'by-version': string;
+      'by-downloadedAt': number;
+    };
+  };
 }
 
 // Versão atual do banco – aumente só quando precisar de novas migrações
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 export const dbPromise = openDB<AudioAppDB>('audio-db', DB_VERSION, {
   upgrade(db, oldVersion, newVersion, transaction) {
@@ -45,8 +64,17 @@ export const dbPromise = openDB<AudioAppDB>('audio-db', DB_VERSION, {
       plansStore.createIndex('by-startedAt', 'startedAt');
     }
 
+    if (oldVersion < 3) {
+      const biblesStore = db.createObjectStore('bibles', { keyPath: 'id' });
+
+      // Índices úteis
+      biblesStore.createIndex('by-language', 'language');
+      biblesStore.createIndex('by-version', 'version');
+      biblesStore.createIndex('by-downloadedAt', 'downloadedAt');
+    }
+
     // Futuras versões:
-    // if (oldVersion < 3) { ... }
+    // if (oldVersion < 4) { ... }
   },
 
   blocked(currentVersion, blockedVersion, event) {
@@ -60,6 +88,48 @@ export const dbPromise = openDB<AudioAppDB>('audio-db', DB_VERSION, {
     // location.reload();
   },
 });
+
+export async function saveBibleVersion(
+  id: string,
+  versionName: string,
+  language: string,
+  fullName: string,
+  bibleData: any
+) {
+  const db = await dbPromise;
+
+  const sizeInBytes = new Blob([JSON.stringify(bibleData)]).size;
+
+  await db.put('bibles', {
+    id,
+    version: versionName,
+    language,
+    fullName,
+    data: bibleData,
+    downloadedAt: Date.now(),
+    sizeInBytes
+  });
+
+  console.log(`Bíblia ${fullName} salva offline (${(sizeInBytes / 1024 / 1024).toFixed(1)} MB)`);
+}
+
+// Carregar uma versão salva
+export async function getBibleVersion(id: string) {
+  const db = await dbPromise;
+  return await db.get('bibles', id);
+}
+
+// Listar todas as versões disponíveis offline
+export async function getAllSavedBibles() {
+  const db = await dbPromise;
+  return await db.getAll('bibles');
+}
+
+export async function deleteBibleVersion(id: string) {
+  const db = await dbPromise;
+  await db.delete('bibles', id);
+  console.log(`Bíblia ${id} removida do armazenamento`);
+}
 
 export class AvailableSpace {
   private readonly ONE_MB = 1024 * 1024;
