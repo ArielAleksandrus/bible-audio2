@@ -1,9 +1,28 @@
 import { Injectable } from '@angular/core';
 import { dbPromise } from '../storage/my-db';
 import { Plan } from '../models/plan';
+import { HttpClient } from '@angular/common/http';
+
+const AVAILABLE_PLANS = ['first-steps', 'new-testament', 'christmas', 'easter'];
 
 @Injectable({ providedIn: 'root' })
 export class PlanService {
+
+  constructor(private http: HttpClient) {}
+
+  async fetchPlans(): Promise<Plan[]> {
+    let res: Plan[] = [];
+    for(let str of AVAILABLE_PLANS) {
+      const url = `/assets/plans/${str}.json`;
+      try {
+        const plan = await this.http.get<Plan>(url).toPromise();
+        if(plan) res.push(plan);
+      } catch(error) {
+        console.error("PlanService::fetchPlans -> Erro ao carregar plano " + str, error);
+      }
+    }
+    return res;
+  }
 
   stoppedAt(plan: Plan): {day: number, portionIdx: number} {
     let res = {day: -1, portionIdx: 0};

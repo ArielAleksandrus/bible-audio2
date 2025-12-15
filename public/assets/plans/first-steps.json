@@ -1,0 +1,59 @@
+{
+  "id": "iniciante-7-dias",
+  "title": "Primeiros Passos na Bíblia",
+  "author": "Feito para você",
+  "description": "Plano de 7 dias para quem está começando – passagens simples e essenciais para conhecer Jesus e o amor de Deus",
+  "days": 7,
+  "goals": [
+    {
+      "day": 1,
+      "portions": [
+        {"bookIdx": 0, "chapter": 1},
+        {"bookIdx": 18, "chapter": 23}
+      ]
+    },
+    {
+      "day": 2,
+      "portions": [
+        {"bookIdx": 43, "chapter": 3},
+        {"bookIdx": 18, "chapter": 139}
+      ]
+    },
+    {
+      "day": 3,
+      "portions": [
+        {"bookIdx": 43, "chapter": 16},
+        {"bookIdx": 45, "chapter": 10}
+      ]
+    },
+    {
+      "day": 4,
+      "portions": [
+        {"bookIdx": 42, "chapter": 3},
+        {"bookIdx": 42, "chapter": 4}
+      ]
+    },
+    {
+      "day": 5,
+      "portions": [
+        {"bookIdx": 43, "chapter": 19},
+        {"bookIdx": 43, "chapter": 20}
+      ]
+    },
+    {
+      "day": 6,
+      "portions": [
+        {"bookIdx": 49, "chapter": 1},
+        {"bookIdx": 49, "chapter": 2}
+      ]
+    },
+    {
+      "day": 7,
+      "portions": [
+        {"bookIdx": 18, "chapter": 1},
+        {"bookIdx": 18, "chapter": 100},
+        {"bookIdx": 18, "chapter": 150}
+      ]
+    }
+  ]
+}

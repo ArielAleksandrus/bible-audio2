@@ -1,0 +1,60 @@
+{
+  "id": "natal-7-dias",
+  "title": "Natal em 7 Dias",
+  "author": "Feito para você",
+  "description": "Uma leitura devocional de 7 dias para celebrar o nascimento de Jesus – profecias, nascimento, anúncio e adoração",
+  "days": 7,
+  "goals": [
+    {
+      "day": 1,
+      "portions": [
+        {"bookIdx": 22, "chapter": 7},
+        {"bookIdx": 33, "chapter": 6},
+        {"bookIdx": 23, "chapter": 9}
+      ]
+    },
+    {
+      "day": 2,
+      "portions": [
+        {"bookIdx": 40, "chapter": 1},
+        {"bookIdx": 40, "chapter": 2}
+      ]
+    },
+    {
+      "day": 3,
+      "portions": [
+        {"bookIdx": 42, "chapter": 1},
+        {"bookIdx": 42, "chapter": 2}
+      ]
+    },
+    {
+      "day": 4,
+      "portions": [
+        {"bookIdx": 23, "chapter": 2},
+        {"bookIdx": 18, "chapter": 103}
+      ]
+    },
+    {
+      "day": 5,
+      "portions": [
+        {"bookIdx": 43, "chapter": 1},
+        {"bookIdx": 43, "chapter": 2}
+      ]
+    },
+    {
+      "day": 6,
+      "portions": [
+        {"bookIdx": 41, "chapter": 1},
+        {"bookIdx": 41, "chapter": 2}
+      ]
+    },
+    {
+      "day": 7,
+      "portions": [
+        {"bookIdx": 43, "chapter": 2},
+        {"bookIdx": 18, "chapter": 96},
+        {"bookIdx": 18, "chapter": 98}
+      ]
+    }
+  ]
+}

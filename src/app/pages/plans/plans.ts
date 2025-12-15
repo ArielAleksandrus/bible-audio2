@@ -249,7 +249,12 @@ export class Plans {
   private _loadPlans() {
     // we'll use this sample plan for now, for testing purposes
     this.availablePlans = [SamplePlan];
-
+    this.planServ.fetchPlans().then(plans => {
+      let res = [SamplePlan];
+      for(let plan of plans)
+        this.availablePlans.push(plan);
+      this.cdr.detectChanges();
+    });
     this.planServ.getAll().then(plans => {
       this.startedPlans = [];
       this.completedPlans = [];

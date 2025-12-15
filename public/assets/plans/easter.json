@@ -1,0 +1,63 @@
+{
+  "id": "pascoa-7-dias",
+  "title": "Páscoa em 7 Dias",
+  "author": "Feito para você",
+  "description": "Leitura devocional de 7 dias sobre a Paixão, Morte e Ressurreição de Jesus – a verdadeira Páscoa",
+  "days": 7,
+  "goals": [
+    {
+      "day": 1,
+      "portions": [
+        {"bookIdx": 38, "chapter": 14},
+        {"bookIdx": 40, "chapter": 21},
+        {"bookIdx": 18, "chapter": 118}
+      ]
+    },
+    {
+      "day": 2,
+      "portions": [
+        {"bookIdx": 43, "chapter": 13},
+        {"bookIdx": 43, "chapter": 14},
+        {"bookIdx": 43, "chapter": 15}
+      ]
+    },
+    {
+      "day": 3,
+      "portions": [
+        {"bookIdx": 43, "chapter": 26},
+        {"bookIdx": 41, "chapter": 14}
+      ]
+    },
+    {
+      "day": 4,
+      "portions": [
+        {"bookIdx": 43, "chapter": 27},
+        {"bookIdx": 23, "chapter": 53}
+      ]
+    },
+    {
+      "day": 5,
+      "portions": [
+        {"bookIdx": 40, "chapter": 27},
+        {"bookIdx": 41, "chapter": 15},
+        {"bookIdx": 42, "chapter": 23}
+      ]
+    },
+    {
+      "day": 6,
+      "portions": [
+        {"bookIdx": 43, "chapter": 27},
+        {"bookIdx": 18, "chapter": 22}
+      ]
+    },
+    {
+      "day": 7,
+      "portions": [
+        {"bookIdx": 40, "chapter": 28},
+        {"bookIdx": 41, "chapter": 16},
+        {"bookIdx": 42, "chapter": 24},
+        {"bookIdx": 43, "chapter": 20}
+      ]
+    }
+  ]
+}
