@@ -1,3 +1,13 @@
+<div *ngIf="!bibleData">
+  <div class="loading-hint">
+    <mat-spinner diameter="24"></mat-spinner>
+    <span>Loading the Bible in your language</span>
+    <br/>
+    <span>Carregando a bíblia no seu idioma</span>
+    <br/>
+    <span>正在加载您语言的圣经</span>
+  </div>
+</div>
 <div class="home-container" *ngIf="bibleData">
 
   <!-- ============================================= -->

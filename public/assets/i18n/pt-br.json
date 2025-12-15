@@ -2,6 +2,7 @@
   "hero.title": "Ouça a Palavra de Deus",
   "hero.subtitle": "Selecione o livro e capítulo que deseja ouvir. Áudios são baixados automaticamente para ouvir offline.",
   "loading.checking": "Verificando itens baixados...",
+  "loading.bible": "Carregando a bíblia no seu idioma",
 
   "legend.partial": "Download Parcial",
   "legend.full": "Download Completo",

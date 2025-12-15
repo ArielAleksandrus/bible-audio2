@@ -5,7 +5,19 @@ import { Plan, DailyGoal, ReadingPortion } from "../models/plan";
 import { AudioDownloaderService } from './audio-downloader.service';
 
 
-export const BIBLE_AUDIO_URL = "https://nlabs.live:3003/assets/bible/audio";
+export const BIBLE_CDN_URL = "https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev";
+export const BIBLE_ABBREV_ISO = [
+  "GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT",
+  "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST",
+  "JOB", "PSA", "PRO", "ECC", "SNG", "ISA", "JER", "LAM",
+  "EZK", "DAN", "HOS", "JOL", "AMO", "OBA", "JON", "MIC",
+  "NAM", "HAB", "ZEP", "HAG", "ZEC", "MAL",
+  "MAT", "MRK", "LUK", "JHN", "ACT", "ROM",
+  "1CO", "2CO", "GAL", "EPH", "PHP", "COL",
+  "1TH", "2TH", "1TI", "2TI", "TIT", "PHM",
+  "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN",
+  "JUD", "REV"
+];
 export type BookDownloadStatus = {
   abbrev: string,
   total: number,
@@ -15,14 +27,33 @@ export type BookDownloadStatus = {
 
 @Injectable({ providedIn: 'root' })
 export class BibleService {
+  private bible?: Bible;
 
   constructor(private ads: AudioDownloaderService) {
 
   }
 
+  buildURL(bookIdx: number, chapter: number) {
+    if(!this.bible) {
+      const bibleJSON = localStorage.getItem("selectedBible");
+      if(!bibleJSON) {
+        console.error("BibleService::buildURL -> no selected bible");
+        return "";
+      }
+      this.bible = <Bible>JSON.parse(bibleJSON);
+    }
+
+    let lang = this.bible.language;
+    lang = lang.split("-")[0]; // to make 'pt-br' be 'pt' only
+    const version = this.bible.version.toUpperCase();
+    const abbrevISO = BIBLE_ABBREV_ISO[bookIdx];
+
+    return `${BIBLE_CDN_URL}/audios/${lang}/${version}/${abbrevISO}/${abbrevISO} ${chapter}.mp3`;
+  }
+
   async loadBibleVersion(versionCode: string): Promise<Bible|undefined> {
-    const baseUrl = 'https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/';
-    const url = `${baseUrl}${versionCode}.json`;
+    const baseUrl = `${BIBLE_CDN_URL}/jsons`;
+    const url = `${baseUrl}/${versionCode}.json`;
 
     try {
       const response = await fetch(url);
@@ -79,8 +110,10 @@ export class BibleService {
     }
 
     for (const book of bibleBooks) {
+      const bookIdx = bible.books.indexOf(book);
       for (let chapter = 1; chapter <= book.chapters.length; chapter++) {
         if(chapters && chapters.indexOf(chapter) == -1) continue;
+
 
         const title = `${book.name} ${chapter}`;
         let track: Track = {
@@ -89,7 +122,7 @@ export class BibleService {
           chapter,
           title,
           fileName: `${title}.mp3`,
-          url: `${BIBLE_AUDIO_URL}/${encodeURIComponent(book.name)}/${encodeURIComponent(title)}.mp3`,
+          url: this.buildURL(bookIdx, chapter),
           status: 'pending'
         };
 
@@ -123,7 +156,7 @@ export class BibleService {
         chapter,
         title,
         fileName: `${title}.mp3`,
-        url: `${BIBLE_AUDIO_URL}/${encodeURIComponent(book.name)}/${encodeURIComponent(title)}.mp3`,
+        url: this.buildURL(portion.bookIdx, chapter),
         status: 'pending'
       };
       let downloaded = await this.ads.isDownloaded(track);

@@ -2,6 +2,7 @@
   "hero.title": "Listen to the Word of God",
   "hero.subtitle": "Select the book and chapter you want to hear. Audios are downloaded automatically for offline listening.",
   "loading.checking": "Checking downloaded items...",
+  "loading.bible": "Loading the Bible in your language",
 
   "legend.partial": "Partial Download",
   "legend.full": "Full Download",

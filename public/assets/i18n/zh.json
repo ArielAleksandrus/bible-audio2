@@ -2,6 +2,7 @@
   "hero.title": "聆听上帝的话语",
   "hero.subtitle": "选择您想听的书卷和章节。音频会自动下载，支持离线聆听。",
   "loading.checking": "正在检查已下载项目...",
+  "loading.bible": "正在加载您语言的圣经",
 
   "legend.partial": "部分下载",
   "legend.full": "完整下载",

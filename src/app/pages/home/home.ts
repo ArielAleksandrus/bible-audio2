@@ -61,6 +61,7 @@ export class Home implements OnInit {
 
   init() {
     this.bibleData = <Bible>JSON.parse(localStorage.getItem("selectedBible") || "");
+
     const savedLang = this.bibleData.language;
     if(savedLang) {
       this.translate.use(savedLang);
