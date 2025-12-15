@@ -52,8 +52,8 @@ export class BibleService {
   }
 
   async loadBibleVersion(versionCode: string): Promise<Bible|undefined> {
-    const baseUrl = `${BIBLE_CDN_URL}/jsons`;
-    const url = `${baseUrl}/${versionCode}.json`;
+    const baseUrl = ``;
+    const url = `${BIBLE_CDN_URL}/jsons/${versionCode}.json`;
 
     try {
       const response = await fetch(url);
