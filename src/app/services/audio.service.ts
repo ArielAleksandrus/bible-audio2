@@ -36,8 +36,16 @@ export class AudioService {
     });
 
     // Atualiza estado de play/pause
-    this.audio.addEventListener('play', () => this.isPlaying$.next(true));
-    this.audio.addEventListener('pause', () => this.isPlaying$.next(false));
+    this.audio.addEventListener('play', () => {
+      this.isPlaying$.next(true);
+      if('mediaSession' in navigator)
+        navigator.mediaSession.playbackState = 'playing';
+    });
+    this.audio.addEventListener('pause', () => {
+      this.isPlaying$.next(false);
+      if('mediaSession' in navigator)
+        navigator.mediaSession.playbackState = 'paused';
+    });
     this.audio.addEventListener('ended', () => {
       if(this.playlist[this.index])
         this.trackEndedSource.next(this.playlist[this.index]);
@@ -81,6 +89,7 @@ export class AudioService {
 
     this.currentTrack$.next(track);
     this.updateMediaSession(track);
+    this.setupMediaSession();
   }
 
   // === CONTROLES ===
@@ -162,10 +171,12 @@ export class AudioService {
     if ('mediaSession' in navigator) {
       navigator.mediaSession.setActionHandler('play', () => this.play());
       navigator.mediaSession.setActionHandler('pause', () => this.pause());
-      navigator.mediaSession.setActionHandler('previoustrack', () => this.previous());
+      navigator.mediaSession.setActionHandler('previoustrack', () => this.previous()); // ← CORRIGIDO
       navigator.mediaSession.setActionHandler('nexttrack', () => this.next());
+
       navigator.mediaSession.setActionHandler('seekforward', () => this.skip(10));
       navigator.mediaSession.setActionHandler('seekbackward', () => this.skip(-10));
+
       navigator.mediaSession.setActionHandler('seekto', (details) => {
         if (details.seekTime != null) this.seekTo(details.seekTime);
       });
