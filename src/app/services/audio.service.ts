@@ -171,11 +171,11 @@ export class AudioService {
     if ('mediaSession' in navigator) {
       navigator.mediaSession.setActionHandler('play', () => this.play());
       navigator.mediaSession.setActionHandler('pause', () => this.pause());
-      navigator.mediaSession.setActionHandler('previoustrack', () => this.previous()); // ← CORRIGIDO
+      navigator.mediaSession.setActionHandler('previoustrack', () => this.previous());
       navigator.mediaSession.setActionHandler('nexttrack', () => this.next());
 
-      navigator.mediaSession.setActionHandler('seekforward', () => this.skip(10));
-      navigator.mediaSession.setActionHandler('seekbackward', () => this.skip(-10));
+      //navigator.mediaSession.setActionHandler('seekforward', () => this.skip(10));
+      //navigator.mediaSession.setActionHandler('seekbackward', () => this.skip(-10));
 
       navigator.mediaSession.setActionHandler('seekto', (details) => {
         if (details.seekTime != null) this.seekTo(details.seekTime);

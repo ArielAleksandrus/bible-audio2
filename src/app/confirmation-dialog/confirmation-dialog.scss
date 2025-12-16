@@ -1,0 +1,66 @@
+.hold-confirm-dialog {
+  position: relative;
+  text-align: center;
+  padding: 20px;
+
+  .close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      color: rgba(0, 0, 0, 0.54);
+    }
+
+    &:hover mat-icon {
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  .title-with-close {
+    padding-right: 40px;
+    text-align: center;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .button-container {
+    position: relative;
+    display: inline-block;
+    margin: 40px 0;
+  }
+
+  .hold-button {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    background-color: #f44336 !important;
+
+    mat-progress-spinner {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .button-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+    }
+
+    &.holding {
+      transform: scale(0.95);
+      transition: transform 0.1s;
+    }
+  }
+}

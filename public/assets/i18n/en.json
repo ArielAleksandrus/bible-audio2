@@ -20,6 +20,7 @@
   "settings.download": "Manage Downloads",
 
   "plans": {
+    "plans": "Plans",
     "current.title": "Current Plan",
     "by": "by",
     "of": "of",
@@ -49,6 +50,7 @@
       "title": "Storage",
       "used_by_app": "Used by the app (audios + plans):",
       "audios": "Downloaded audios:",
+      "bibles": "Bible Texts:",
       "plans": "Reading plans:",
       "available": "Available on device:",
       "used": "used",
@@ -65,5 +67,9 @@
       "reset_button": "Reset Language",
       "reset_note": "This will show the language selection screen again on the next app start."
     }
+  },
+  "DIALOG": {
+    "HOLD_CONFIRM_TITLE": "Are you sure?",
+    "HOLD_CONFIRM_MESSAGE": "To confirm, hold this button for 5 seconds"
   }
 }

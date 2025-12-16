@@ -75,6 +75,8 @@ export class Home implements OnInit {
         this.checkDownloaded();
 
         this.cdr.detectChanges();
+      } else {
+        this.openLanguageSelector();
       }
     });
 

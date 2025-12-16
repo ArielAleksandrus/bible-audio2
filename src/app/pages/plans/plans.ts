@@ -75,6 +75,8 @@ export class Plans {
         if(savedLang) {
           this.translate.use(savedLang);
         }
+      } else {
+        location.href = "/home";
       }
     });
 

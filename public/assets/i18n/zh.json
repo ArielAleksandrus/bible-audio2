@@ -20,6 +20,7 @@
   "settings.download": "管理下载",
 
   "plans": {
+    "plans": "计划",
     "current.title": "当前计划",
     "by": "作者",
     "of": "共",
@@ -49,6 +50,7 @@
       "title": "存储空间",
       "used_by_app": "应用已使用（音频 + 计划）：",
       "audios": "已下载音频：",
+      "bibles": "文本圣经:",
       "plans": "阅读计划：",
       "available": "设备可用空间：",
       "used": "已使用",
@@ -65,5 +67,9 @@
       "reset_button": "重置语言",
       "reset_note": "这将在下次启动应用时再次显示语言选择界面。"
     }
+  },
+  "DIALOG": {
+    "HOLD_CONFIRM_TITLE": "你确定吗？",
+    "HOLD_CONFIRM_MESSAGE": "要确认，请按住此按钮 5 秒"
   }
 }

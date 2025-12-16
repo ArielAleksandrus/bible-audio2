@@ -1,0 +1,28 @@
+<div class="hold-confirm-dialog">
+  <!-- Botão de fechar (X) -->
+  <button mat-icon-button class="close-button" (click)="onCancel()" aria-label="Fechar">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <h2 mat-dialog-title class="title-with-close">{{ title }}</h2>
+
+  <mat-dialog-content class="text-center">
+    <p [innerHTML]="message"></p>
+
+    <div class="button-container">
+      <button mat-fab
+              color="warn"
+              class="hold-button"
+              (mousedown)="onMouseDown($event)"
+              (touchstart)="onTouchStart($event)"
+              [class.holding]="progress > 0">
+        <mat-progress-spinner mode="determinate"
+                              [value]="progress"
+                              diameter="80"
+                              strokeWidth="8">
+        </mat-progress-spinner>
+        <span class="button-label">OK</span>
+      </button>
+    </div>
+  </mat-dialog-content>
+</div>

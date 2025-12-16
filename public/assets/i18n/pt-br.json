@@ -20,6 +20,7 @@
   "settings.download": "Gerenciar downloads",
 
   "plans": {
+    "plans": "Planos",
     "current.title": "Plano Atual",
     "by": "por",
     "of": "de",
@@ -49,6 +50,7 @@
       "title": "Armazenamento",
       "used_by_app": "Usado pelo app (áudios + planos):",
       "audios": "Áudios baixados:",
+      "bibles": "Bíblias em texto:",
       "plans": "Planos de leitura:",
       "available": "Disponível no dispositivo:",
       "used": "usado",
@@ -65,5 +67,9 @@
       "reset_button": "Redefinir Idioma",
       "reset_note": "Isso abrirá novamente a tela de seleção de idioma na próxima inicialização do app."
     }
+  },
+  "DIALOG": {
+    "HOLD_CONFIRM_TITLE": "Tem certeza?",
+    "HOLD_CONFIRM_MESSAGE": "Para confirmar, segure este botão por 5 segundos"
   }
 }

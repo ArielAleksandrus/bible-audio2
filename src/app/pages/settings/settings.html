@@ -7,7 +7,7 @@
 
   <!-- LANGUAGE CARD -->
   <section class="language-section">
-    <mat-card class="language-card mat-elevation-z4">
+    <mat-card class="session-card mat-elevation-z4">
       <mat-card-header>
         <mat-card-title>
           <mat-icon color="primary">language</mat-icon>
@@ -30,7 +30,7 @@
 
   <!-- STORAGE CARD -->
   <section class="storage-section" *ngIf="!loading; else loadingBlock">
-    <mat-card class="storage-card mat-elevation-z4">
+    <mat-card class="session-card mat-elevation-z4">
       <mat-card-header>
         <mat-card-title>
           <mat-icon color="primary">storage</mat-icon>
@@ -46,6 +46,10 @@
           <div class="info-row sub">
             <span>→ {{ 'settings.storage.audios' | translate }}</span>
             <strong>{{ usedByAudiosMB }} MB</strong>
+          </div>
+          <div class="info-row sub">
+            <span>→ {{ 'settings.storage.bibles' | translate }}</span>
+            <strong>{{ usedByBiblesMB }} MB</strong>
           </div>
           <div class="info-row sub">
             <span>→ {{ 'settings.storage.plans' | translate }}</span>

@@ -23,7 +23,7 @@
     </a>
     <a mat-tab-link routerLink="/plans" routerLinkActive #plans="routerLinkActive" [active]="plans.isActive">
       <mat-icon>format_list_bulleted</mat-icon>
-      <span>Planos</span>
+      <span>{{ 'plans.plans' | translate }}</span>
     </a>
     <a mat-tab-link routerLink="/settings" routerLinkActive #settings="routerLinkActive" [active]="settings.isActive">
       <mat-icon>settings</mat-icon>

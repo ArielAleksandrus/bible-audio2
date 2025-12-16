@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -10,6 +10,9 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { BibleService } from '../../services/bible.service';
 import { Bible } from 'bible-picker';
+
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'app-settings',
@@ -29,6 +32,7 @@ import { Bible } from 'bible-picker';
 export class Settings {
   usedByAudiosMB: number = 0;
   usedByPlansMB: number = 0;
+  usedByBiblesMB: number = 0;
   totalUsedMB: number = 0;
   availableMB: number = 0;
   percentageUsed: number = 0;
@@ -48,7 +52,9 @@ export class Settings {
 
   constructor(
     private translate: TranslateService,
-    private bibleServ: BibleService
+    private bibleServ: BibleService,
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {
 
     let bibleJson = localStorage.getItem("selectedBible");
@@ -66,6 +72,8 @@ export class Settings {
         }
         //@ts-ignore
         this.currentLanguageName = this.languageMap[this.bibleData.language || "pt"] || "Português";
+      } else {
+        location.href = "/home";
       }
     });
 
@@ -74,6 +82,7 @@ export class Settings {
   ngOnInit() {
     this.calculateStorage().then(() => {
       this.loading = false;
+      this.cdr.detectChanges();
     });
   }
 
@@ -84,7 +93,7 @@ export class Settings {
 
   async calculateStorage() {
     // 1. Espaço disponível total (do dispositivo)
-    this.availableMB = await this.availableSpace.inMB();
+    this.availableMB = this.fixNumber(await this.availableSpace.inMB());
 
     // 2. Tamanho dos áudios baixados (store 'files')
     let audiosSize = 0;
@@ -98,9 +107,9 @@ export class Settings {
         audiosSize += file.blob.size;
       }
     }
-    this.usedByAudiosMB = Math.round(audiosSize / (1024 * 1024) * 100) / 100; // arredonda 2 casas
+    this.usedByAudiosMB = this.fixNumber(audiosSize / (1024 * 1024));
 
-    // 3. Tamanho dos planos (store 'plans') – geralmente insignificante
+    // 3. Tamanho dos planos (store 'plans') – geralmente menos de 1 MB
     const plansTx = db.transaction('plans', 'readonly');
     const plansStore = plansTx.objectStore('plans');
     const allPlans = await plansStore.getAll();
@@ -108,23 +117,52 @@ export class Settings {
     for (const plan of allPlans) {
       plansSize += new Blob([JSON.stringify(plan)]).size;
     }
-    this.usedByPlansMB = Math.round(plansSize / (1024 * 1024) * 100) / 100;
+    this.usedByPlansMB = this.fixNumber(plansSize / (1024 * 1024));
 
-    // 4. Total usado pelo app
-    this.totalUsedMB = this.usedByAudiosMB + this.usedByPlansMB;
+    // 4. Tamanho das bíblias em texto - geralmente poucos Mb
+    const biblesTx = db.transaction('bibles', 'readonly');
+    const biblesStore = biblesTx.objectStore('bibles');
+    const allBibles = await biblesStore.getAll();
+    let biblesSize = 0;
+    for(const bible of allBibles) {
+      biblesSize += new Blob([JSON.stringify(bible)]).size;
+    }
+    this.usedByBiblesMB = this.fixNumber(biblesSize / (1024 * 1024));
 
-    // 5. Porcentagem usada (baseado no disponível)
+    // 5. Total usado pelo app
+    this.totalUsedMB = this.fixNumber(this.usedByAudiosMB + this.usedByPlansMB + this.usedByBiblesMB);
+
+    // 6. Porcentagem usada (baseado no disponível)
     if (this.availableMB > 0) {
-      this.percentageUsed = Math.min(100, Math.round((this.totalUsedMB / (this.totalUsedMB + this.availableMB)) * 100));
+      this.percentageUsed = this.fixNumber(Math.min(100, Math.round((this.totalUsedMB / (this.totalUsedMB + this.availableMB)) * 100)));
     }
   }
 
+  fixNumber(n: number, decimals: number = 2): number {
+    return Number(n.toFixed(decimals));
+  }
+
   async clearAllAudios() {
-    if((prompt("Tem certeza que quer apagar TODOS os áudios baixados? Isso não afeta seus planos. Para prosseguir, digite: sim") || "").toLowerCase() == "sim") {
-    const db = await dbPromise;
-    await db.clear('files');
-    await this.calculateStorage();
-    alert('Áudios apagados com sucesso!');
-    }
+    const dialogRef = this.dialog.open(ConfirmationDialog, {
+      width: '380 px',
+      maxWidth: '90vw',
+      autoFocus: false,
+      disableClose: false,
+      panelClass: 'hold-confirm-dialog-panel'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result === true) {
+        dbPromise.then(db => {
+          db.clear('files').then(() => {
+            this.calculateStorage().then(() => {
+              this.cdr.detectChanges();
+              alert('Pronto/Done/Listo/好了');
+            });
+          });
+        })
+      }
+    })
+
   }
 }
