@@ -232,19 +232,22 @@ export class Plans {
   async buildTracks(plan: Plan, day: number, preloadDays: number = 0): Promise<Track[]> {
     if(!this.bibleData) return [];
 
+    console.log(preloadDays, plan);
+
     let tracks: Track[] = await this.bibleServ.genDailyPlanTracks(this.bibleData, plan, day);
     if(preloadDays > 0) {
       for(let i = 1; i <= preloadDays; i++) {
-        if(day + preloadDays > plan.days) { // we have already preloaded the end of the plan
+        if(day + i > plan.days) { // we have already preloaded the end of the plan
           break;
         } else {
           let preloaded = await this.bibleServ.genDailyPlanTracks(this.bibleData, plan, day + i);
           tracks = [...tracks, ...preloaded];
+          console.log(i, preloaded)
         }
       }
 
     }
-
+    console.log(tracks);
     return tracks;
   }
 
