@@ -15,10 +15,12 @@
         </mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p class="language-info">{{ 'settings.language.current' | translate }}: <strong>{{ currentLanguageName }}</strong></p>
+        <p class="language-info">
+          {{ 'settings.language.current' | translate }}: <strong>{{ currentLanguageName }}</strong>
+        </p>
         <button mat-raised-button color="accent" (click)="resetLanguage()">
           <mat-icon>refresh</mat-icon>
-          Resetar / Reset
+          {{ 'settings.language.reset_button' | translate }}
         </button>
         <p class="language-note">
           <mat-icon class="note-icon">info</mat-icon>
@@ -60,6 +62,7 @@
             <strong>{{ availableMB }} MB</strong>
           </div>
         </div>
+
         <div class="progress-container">
           <mat-progress-bar
             mode="determinate"
@@ -67,17 +70,19 @@
             color="accent">
           </mat-progress-bar>
           <div class="progress-label">
-            {{ percentageUsed }}% {{ 'settings.storage.used' | translate }} ({{ totalUsedMB }} {{ 'settings.storage.of' | translate }} {{ totalUsedMB + availableMB }} MB)
+            {{ percentageUsed | number:'1.0-0' }}% {{ 'settings.storage.used' | translate }}
+            ({{ totalUsedMB }} {{ 'settings.storage.of' | translate }} {{ totalUsedMB + availableMB }} MB)
           </div>
         </div>
+
         <div class="actions">
           <button mat-raised-button color="warn" class="delete-button" (click)="clearAllAudios()">
             <mat-icon class="button-icon">delete_forever</mat-icon>
             <span class="button-text">{{ 'settings.storage.clear_audios' | translate }}</span>
           </button>
           <p class="warning-note">
-            <mat-icon class="note-icon">info</mat-icon>
-            {{ 'settings.storage.clear_warning' | translate:{size: usedByAudiosMB} }}
+            <mat-icon class="note-icon">warning</mat-icon>
+            {{ 'settings.storage.clear_warning' | translate:{ size: usedByAudiosMB } }}
           </p>
         </div>
       </mat-card-content>

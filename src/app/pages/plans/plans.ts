@@ -19,6 +19,9 @@ import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialog';
+
 
 const PRELOAD_DAYS = 10;
 
@@ -59,6 +62,7 @@ export class Plans {
     private bibleServ: BibleService,
     private audioService: AudioService,
     private cdr: ChangeDetectorRef,
+    private dialog: MatDialog,
     private translate: TranslateService
   ) {
 
@@ -157,14 +161,28 @@ export class Plans {
       this.currentDay = this.stoppedAt.day;
       this.curTrackIdx = this.stoppedAt.portionIdx;
     }
+
+    // Delay slightly to ensure content has loaded
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 30);
   }
 
   deletePlan(plan: Plan) {
-    if((prompt("Tem certeza? Digite: sim") || "").toLowerCase() == "sim") {
-      this.planServ.delete(plan.id);
-      this._loadPlans();
-    }
+    const dialogRef = this.dialog.open(ConfirmationDialog, {
+      width: '380 px',
+      maxWidth: '90vw',
+      autoFocus: false,
+      disableClose: false,
+      panelClass: 'hold-confirm-dialog-panel'
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if(result === true) {
+        this.planServ.delete(plan.id);
+        this._loadPlans();
+      }
+    });
   }
 
   startPlan(plan: Plan) {
@@ -182,6 +200,10 @@ export class Plans {
     });
     this.openPlan(plan);
     this.playGoal(plan.goals[0]);
+    // Delay slightly to ensure content has loaded
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 30);
   }
 
   openPlan(plan: Plan, day?: number) {
@@ -282,4 +304,5 @@ export class Plans {
       this.cdr.detectChanges();
     });
   }
+
 }

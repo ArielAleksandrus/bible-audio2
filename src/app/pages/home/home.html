@@ -10,19 +10,16 @@
 </div>
 
 <div class="home-container" *ngIf="bibleData">
-  <!-- ============================================= -->
-  <!-- HERO / TÍTULO -->
-  <!-- ============================================= -->
   <header class="hero-header">
     <mat-icon class="hero-icon">menu_book</mat-icon>
     <h1>{{ 'hero.title' | translate }}</h1>
     <p>{{ 'hero.subtitle' | translate }}</p>
 
-    <!-- Área do botão OU progresso de download completo -->
-    <div class="download-area" *ngIf="(progress$ | async) as progress">
-      <!-- Botão: aparece só se NÃO estiver baixando e tiver espaço suficiente -->
+    <!-- ÁREA DE DOWNLOAD -->
+    <div class="download-area">
+      <!-- BOTÃO: aparece se houver espaço E NÃO estiver baixando -->
       <div class="full-download-button-wrapper"
-           *ngIf="availableMB > 1500 && progress.status !== 'running'">
+           *ngIf="availableMB > 1500 && (progress$ | async)?.status !== 'running'">
         <button mat-raised-button
                 color="primary"
                 class="full-download-button"
@@ -36,55 +33,38 @@
         </p>
       </div>
 
-      <!-- Progresso: aparece apenas durante o download da Bíblia inteira -->
-      <div class="full-download-progress"
-           *ngIf="progress.status === 'running' && progress.total > 0">
-        <p class="progress-title">
-          {{ 'hero.downloading_bible' | translate:{ downloaded: progress.downloaded, total: progress.total } }}
-        </p>
-        <mat-progress-bar
-          mode="determinate"
-          [value]="(progress.downloaded / progress.total) * 100">
-        </mat-progress-bar>
-        <small class="current-chapter">
-          {{ progress.currentTrack?.title || '-' }}
-        </small>
-      </div>
+      <!-- PROGRESSO E SUCESSO -->
+      <div *ngIf="progress$ | async as progress">
+        <!-- Progresso durante o download -->
+        <div class="full-download-progress" *ngIf="progress.status === 'running' && progress.total > 0">
+          <p class="progress-title">
+            {{ 'hero.downloading_bible' | translate:{ downloaded: progress.downloaded, total: progress.total } }}
+          </p>
+          <mat-progress-bar
+            mode="determinate"
+            [value]="(progress.downloaded / progress.total) * 100">
+          </mat-progress-bar>
+          <small class="current-chapter">
+            {{ progress.currentTrack?.title || '-' }}
+          </small>
+        </div>
 
-      <!-- Mensagem de conclusão -->
-      <div class="download-complete" *ngIf="progress.status === 'completed'">
-        <mat-icon color="primary">check_circle</mat-icon>
-        <span>{{ 'hero.download_complete' | translate }}</span>
-      </div>
-    </div>
-
-    <!-- Caso ainda não tenha iniciado nenhum download (progress$ emite inicial como idle ou null) -->
-    <div class="download-area" *ngIf="!(progress$ | async) && availableMB > 1500">
-      <div class="full-download-button-wrapper">
-        <button mat-raised-button
-                color="primary"
-                class="full-download-button"
-                (click)="fullDownload()">
-          <mat-icon>download</mat-icon>
-          {{ 'hero.full_download' | translate }}
-        </button>
-        <p class="full-download-description">
-          {{ 'hero.full_download_description' | translate }}
-          <mat-icon class="warning-icon">warning</mat-icon>
-        </p>
+        <!-- Mensagem de sucesso -->
+        <div class="download-complete" *ngIf="progress.status === 'completed'">
+          <mat-icon color="primary">check_circle</mat-icon>
+          <span>{{ 'hero.download_complete' | translate }}</span>
+        </div>
       </div>
     </div>
 
-    <!-- Verificação de itens já baixados (painting) -->
+    <!-- Painting -->
     <div class="loading-hint" *ngIf="painting">
       <mat-spinner diameter="24"></mat-spinner>
       <span>{{ 'loading.checking' | translate }}</span>
     </div>
   </header>
 
-  <!-- ============================================= -->
   <!-- BIBLE PICKER -->
-  <!-- ============================================= -->
   <section class="picker-section">
     <div class="picker-wrapper">
       <bible-picker
@@ -97,9 +77,7 @@
     </div>
   </section>
 
-  <!-- ============================================= -->
-  <!-- LEGENDA DE CORES -->
-  <!-- ============================================= -->
+  <!-- LEGENDA -->
   <section class="legend-section">
     <div class="legend-items">
       <div class="legend-item">
