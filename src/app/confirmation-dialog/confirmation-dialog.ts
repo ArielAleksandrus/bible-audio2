@@ -35,8 +35,8 @@ export class ConfirmationDialog implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setLanguageFromLocalStorage();
-    this.translate.get('DIALOG.HOLD_CONFIRM_TITLE').subscribe(res => this.title = res);
-    this.translate.get('DIALOG.HOLD_CONFIRM_MESSAGE').subscribe(res => this.message = res);
+    this.translate.get('dialog.hold_confirm.title').subscribe(res => this.title = res);
+    this.translate.get('dialog.hold_confirm.message').subscribe(res => this.message = res);
   }
 
   ngOnDestroy(): void {
