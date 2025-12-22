@@ -179,8 +179,9 @@ export class Plans {
 
     dialogRef.afterClosed().subscribe(result => {
       if(result === true) {
-        this.planServ.delete(plan.id);
-        this._loadPlans();
+        this.planServ.delete(plan.id).then(_ => {
+          this._loadPlans();
+        });
       }
     });
   }
@@ -212,6 +213,19 @@ export class Plans {
       this.currentDay = day;
       this.curTrackIdx = 0;
     }
+
+    setTimeout(() => {
+      if(this.dataSource && this.dataSource.paginator) {
+        let paginator = this.dataSource.paginator;
+        let d = plan.stoppedAt?.day || 1;
+        paginator.pageIndex = Math.floor(d / paginator.pageSize);
+        paginator.page.next({
+          pageIndex: paginator.pageIndex,
+          pageSize: paginator.pageSize,
+          length: paginator.length
+        });
+      }
+    }, 100);
   }
 
   closePlan() {
@@ -256,8 +270,6 @@ export class Plans {
   async buildTracks(plan: Plan, day: number, preloadDays: number = 0): Promise<Track[]> {
     if(!this.bibleData) return [];
 
-    console.log(preloadDays, plan);
-
     let tracks: Track[] = await this.bibleServ.genDailyPlanTracks(this.bibleData, plan, day);
     if(preloadDays > 0) {
       for(let i = 1; i <= preloadDays; i++) {
@@ -266,26 +278,17 @@ export class Plans {
         } else {
           let preloaded = await this.bibleServ.genDailyPlanTracks(this.bibleData, plan, day + i);
           tracks = [...tracks, ...preloaded];
-          console.log(i, preloaded)
         }
       }
 
     }
-    console.log(tracks);
     return tracks;
   }
 
 
   private _loadPlans() {
-    // we'll use this sample plan for now, for testing purposes
-    this.availablePlans = [SamplePlan];
-    this.planServ.fetchPlans().then(plans => {
-      let res = [SamplePlan];
-      for(let plan of plans)
-        this.availablePlans.push(plan);
-      this.cdr.detectChanges();
-    });
     this.planServ.getAll().then(plans => {
+      this.availablePlans = [];
       this.startedPlans = [];
       this.completedPlans = [];
       if(plans) {
@@ -301,7 +304,16 @@ export class Plans {
           }
         }
       }
-      this.cdr.detectChanges();
+      this.planServ.fetchPlans().then(res => {
+        res.push(SamplePlan);
+        for(let plan of res) {
+          // do not include to Available Plans the ones that are already started
+          if(!this.startedPlans.find(item => item.id === plan.id)) {
+            this.availablePlans.push(plan);
+          }
+        }
+        this.cdr.detectChanges();
+      });
     });
   }
 
