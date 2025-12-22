@@ -1,51 +1,72 @@
 {
-  "hero.title": "Escucha la Palabra de Dios",
-  "hero.subtitle": "Selecciona el libro y capítulo que deseas oír. Los audios se descargan automáticamente para escuchar sin conexión.",
-  "loading.checking": "Verificando elementos descargados...",
-  "loading.bible": "Cargando la Biblia en tu idioma",
-
-  "legend.partial": "Descarga Parcial",
-  "legend.full": "Descarga Completa",
-
-  "menu.home": "Inicio",
-  "menu.plans": "Planes",
-  "menu.settings": "Configuraciones",
-
-  "plans.title": "Planes de Lectura",
-  "plans.subtitle": "Elige un plan para leer la Biblia de forma organizada",
-
-  "settings.title": "Configuraciones",
-  "settings.voice": "Voz del audio",
-  "settings.speed": "Velocidad de reproducción",
-  "settings.download": "Gestionar descargas",
-
-  "plans": {
+  "hero": {
+    "title": "Escucha la Palabra de Dios",
+    "subtitle": "Seleccione el libro y los capítulos que desea escuchar. Los audios se descargan automáticamente para escuchar sin conexión.",
+    "full_download": "Descargar toda la Biblia",
+    "full_download_description": "Esta acción requiere aproximadamente 1.3 GB",
+    "downloading_bible": "Descargando la Biblia: {{downloaded}} de {{total}} capítulos",
+    "current_chapter": "Capítulo actual",
+    "download_complete": "¡Descarga de la Biblia completa!",
+    "confirm_mobile_data": "No estás conectado a Wi-Fi. Descargar toda la Biblia usa aproximadamente 1.3 GB de datos. ¿Deseas continuar de todos modos?"
+  },
+  "loading": {
+    "bible": "Cargando la Biblia en tu idioma",
+    "checking": "Verificando elementos descargados..."
+  },
+  "legend": {
+    "partial": "Descarga Parcial",
+    "full": "Descarga Completa"
+  },
+  "menu": {
+    "home": "Inicio",
     "plans": "Planes",
-    "current.title": "Plan Actual",
-    "by": "por",
-    "of": "de",
-    "days_remaining": "días restantes",
-    "day": "Día",
-    "table.day": "Día",
-    "table.readings": "Lecturas",
-    "table.actions": "Acciones",
-    "play": "Reproducir meta",
-    "mark_complete": "Marcar como completado",
-    "reset": "Restablecer",
-    "no_active.title": "Ningún plan en curso",
-    "no_active.subtitle": "¡Elige uno de los planes disponibles abajo para comenzar tu lectura de la Biblia con audio!",
-    "started.title": "Planes Iniciados",
-    "available.title": "Planes Disponibles",
-    "resume": "Reanudar",
-    "open": "Abrir",
-    "delete": "Eliminar",
-    "start": "Comenzar Plan",
+    "settings": "Configuraciones"
+  },
+  "plans": {
+    "title": "Planes de Lectura",
+    "subtitle": "Elige un plan para leer la Biblia de forma organizada",
+    "current": {
+      "title": "Plan Actual",
+      "by": "por",
+      "of": "de",
+      "days_remaining": "días restantes",
+      "day": "Día"
+    },
+    "table": {
+      "day": "Día",
+      "readings": "Lecturas",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "play": "Reproducir meta",
+      "mark_complete": "Marcar como completado",
+      "reset": "Restablecer"
+    },
+    "no_active": {
+      "title": "Ningún plan en curso",
+      "subtitle": "¡Elige uno de los planes disponibles abajo para comenzar tu lectura de la Biblia con audio!"
+    },
+    "started": {
+      "title": "Planes Iniciados"
+    },
+    "available": {
+      "title": "Planes Disponibles"
+    },
+    "buttons": {
+      "resume": "Reanudar",
+      "open": "Abrir",
+      "delete": "Eliminar",
+      "start": "Comenzar Plan"
+    },
     "days": "días"
   },
   "settings": {
     "title": "Configuraciones",
     "subtitle": "Gestiona el almacenamiento y preferencias de la app",
-
+    "voice": "Voz del audio",
+    "speed": "Velocidad de reproducción",
+    "download": "Gestionar descargas",
+    "coming_soon": "Más opciones pronto...",
     "storage": {
       "title": "Almacenamiento",
       "used_by_app": "Usado por la app (audios + planes):",
@@ -59,8 +80,6 @@
       "clear_warning": "Esto eliminará permanentemente todos los audios descargados ({{size}} MB), pero no afectará tus planes de lectura.",
       "calculating": "Calculando uso de almacenamiento..."
     },
-
-    "coming_soon": "Más opciones pronto...",
     "language": {
       "title": "Idioma",
       "current": "Idioma actual",
@@ -68,8 +87,10 @@
       "reset_note": "Esto volverá a mostrar la pantalla de selección de idioma al iniciar la app."
     }
   },
-  "DIALOG": {
-    "HOLD_CONFIRM_TITLE": "¿Estás seguro?",
-    "HOLD_CONFIRM_MESSAGE": "Para confirmar, mantén presionado este botón durante 5 segundos"
+  "dialog": {
+    "hold_confirm": {
+      "title": "¿Estás seguro?",
+      "message": "Para confirmar, mantén presionado este botón durante 5 segundos"
+    }
   }
 }

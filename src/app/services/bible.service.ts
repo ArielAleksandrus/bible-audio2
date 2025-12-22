@@ -3,6 +3,7 @@ import { Track } from '../models/track';
 import { Bible, BibleBook } from 'bible-picker';
 import { Plan, DailyGoal, ReadingPortion } from "../models/plan";
 import { AudioDownloaderService } from './audio-downloader.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { saveBibleVersion, getBibleVersion, AvailableSpace } from '../storage/my-db';
 
@@ -29,10 +30,21 @@ export type BookDownloadStatus = {
 
 @Injectable({ providedIn: 'root' })
 export class BibleService {
-  private bible?: Bible;
+  // Public progress observable for components
+  private progressSubject = new BehaviorSubject<{
+    downloaded: number;
+    total: number;
+    currentTrack?: Track;
+    status: 'idle' | 'running' | 'completed' | 'error';
+  }>({ downloaded: 0, total: 0, status: 'idle' });
+
+  downloadProgress$: Observable<any> = this.progressSubject.asObservable();
 
   constructor(private ads: AudioDownloaderService) {
-
+    // Forward progress from AudioDownloaderService
+    this.ads.downloadProgress$.subscribe(progress => {
+      this.progressSubject.next(progress);
+    });
   }
 
   buildURL(lang: string, version: string, bookIdx: number, chapter: number) {
@@ -168,7 +180,7 @@ export class BibleService {
     return tracks;
   }
 
-  async downloadPlanDay(bible: Bible, plan: Plan, day: number) {
+  async downloadPlanDay(bible: Bible, plan: Plan, day: number): Promise<Track[]> {
     const tracks: Track[] = await this.genDailyPlanTracks(bible, plan, day);
     const pending: Track[] = tracks.filter(item => item.status != "done");
 
@@ -191,11 +203,23 @@ export class BibleService {
   }
 
   async downloadEntireBible(bible: Bible): Promise<Track[]> {
-    let tracks: Track[] = [];
-    for(let book of bible.books) {
-      let bookTracks = await this.downloadBook(bible, book.abbrev);
-      tracks = [...tracks, ...bookTracks];
+    // Reset progress
+    this.progressSubject.next({ downloaded: 0, total: 0, status: 'running' });
+
+    const allTracks: Track[] = [];
+
+    for (const book of bible.books) {
+      const bookTracks = await this.genTracks(bible, book.abbrev);
+      allTracks.push(...bookTracks);
     }
-    return tracks;
+
+    // Filter only pending tracks (optional optimization)
+    const pendingTracks = allTracks.filter(t => t.status !== 'done');
+
+    // Start the bulk download – progress will flow automatically
+    await this.ads.downloadTracks(pendingTracks);
+
+    // Return all tracks (with updated status)
+    return allTracks;
   }
 }

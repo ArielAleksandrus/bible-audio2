@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
 import { dbPromise, AvailableSpace } from '../storage/my-db';
 import { Track } from '../models/track';
+import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AudioDownloaderService {
   private tracks: Track[] = [];
 
-  setTracks(tracks: Track[]) {
-    this.tracks = tracks;
-  }
+  private downloadProgressSubject = new Subject<{
+    downloaded: number;
+    total: number;
+    status: 'idle' | 'running' | 'completed' | 'error';
+    currentTrack?: Track;
+  }>();
+
+  // Public observable for components to subscribe
+  downloadProgress$ = this.downloadProgressSubject.asObservable();
+
   getTracks(): Track[] {
     return this.tracks;
   }
@@ -43,6 +51,44 @@ export class AudioDownloaderService {
     track.status = "done";
   }
 
+  async downloadTracks(tracks: Track[]): Promise<void> {
+    this.tracks = tracks;
+
+    const total = tracks.length;
+    let downloadedCount = 0;
+
+    // First, count how many are already downloaded
+    const alreadyDone = await this.areDownloaded(tracks);
+    downloadedCount = total - alreadyDone.pendingCount;
+
+    this.reportProgress(downloadedCount, total);
+
+    // Download only the pending ones
+    for (const track of tracks) {
+      if (await this.isDownloaded(track)) {
+        continue; // skip already downloaded
+      }
+
+      try {
+        this.reportProgress(downloadedCount, total, track); // show current track
+        await this.download(track);
+        downloadedCount++;
+        this.reportProgress(downloadedCount, total); // update downloaded count
+      } catch (err) {
+        console.error('Failed to download track', track, err);
+        // Decide: continue or stop? Here we continue
+        track.status = 'error';
+        this.reportProgress(downloadedCount, total, track);
+      }
+
+      // small yield to keep UI responsive
+      await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+
+    // Final update
+    this.reportProgress(downloadedCount, total);
+  }
+
   async ensureFreeDiskSpace(): Promise<void> {
     const space = new AvailableSpace();
 
@@ -52,11 +98,6 @@ export class AudioDownloaderService {
       // little pause to ensure Safari updates our usage
       await new Promise(r => setTimeout(r, 100));
     }
-  }
-
-  async downloadTracks(tracks: Track[]): Promise<void> {
-    for(let track of tracks)
-      await this.download(track);
   }
 
   async removeById(trackId: string): Promise<void> {
@@ -113,5 +154,21 @@ export class AudioDownloaderService {
   async getDownloadedCount(): Promise<number> {
     const db = await dbPromise;
     return (await db.getAllKeys('files')).length;
+  }
+
+  private reportProgress(downloaded: number, total: number, currentTrack?: Track) {
+    this.downloadProgressSubject.next({
+      downloaded,
+      total,
+      currentTrack,
+      status: 'running'
+    });
+  }
+  private completeProgress(downloaded: number, total: number) {
+    this.downloadProgressSubject.next({
+      downloaded,
+      total,
+      status: 'completed'
+    });
   }
 }

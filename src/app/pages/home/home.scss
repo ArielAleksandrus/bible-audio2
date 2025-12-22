@@ -55,6 +55,57 @@
   }
 }
 
+.download-area {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.full-download-button-wrapper {
+  display: inline-block;
+}
+
+.full-download-progress {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.progress-title {
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.current-chapter {
+  display: block;
+  margin-top: 8px;
+  color: #666;
+  font-style: italic;
+}
+
+.download-complete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: green;
+  font-weight: 500;
+  margin-top: 16px;
+
+  mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.warning-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
+
 /* ============================================= */
 /* PICKER SECTION */
 /* ============================================= */

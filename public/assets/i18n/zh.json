@@ -1,56 +1,77 @@
 {
-  "hero.title": "聆听上帝的话语",
-  "hero.subtitle": "选择您想听的书卷和章节。音频会自动下载，支持离线聆听。",
-  "loading.checking": "正在检查已下载项目...",
-  "loading.bible": "正在加载您语言的圣经",
-
-  "legend.partial": "部分下载",
-  "legend.full": "完整下载",
-
-  "menu.home": "首页",
-  "menu.plans": "计划",
-  "menu.settings": "设置",
-
-  "plans.title": "阅读计划",
-  "plans.subtitle": "选择一个计划，有条理地阅读圣经",
-
-  "settings.title": "设置",
-  "settings.voice": "音频声音",
-  "settings.speed": "播放速度",
-  "settings.download": "管理下载",
-
-  "plans": {
+  "hero": {
+    "title": "聆听上帝的话语",
+    "subtitle": "请选择您想听的书卷和章节。音频会自动下载，以便离线收听。",
+    "full_download": "下载整本圣经",
+    "full_download_description": "此操作需要大约 1.3 GB",
+    "downloading_bible": "正在下载圣经：{{downloaded}} / {{total}} 章",
+    "current_chapter": "当前章节",
+    "download_complete": "圣经下载完成！",
+    "confirm_mobile_data": "您未连接到 Wi-Fi。下载整本圣经将使用大约 1.3 GB 数据。您要继续吗？"
+  },
+  "loading": {
+    "bible": "正在加载您语言的圣经",
+    "checking": "正在检查已下载项目..."
+  },
+  "legend": {
+    "partial": "部分下载",
+    "full": "完整下载"
+  },
+  "menu": {
+    "home": "首页",
     "plans": "计划",
-    "current.title": "当前计划",
-    "by": "作者",
-    "of": "共",
-    "days_remaining": "天剩余",
-    "day": "第",
-    "table.day": "天数",
-    "table.readings": "阅读部分",
-    "table.actions": "操作",
-    "play": "播放目标",
-    "mark_complete": "标记为已完成",
-    "reset": "重置",
-    "no_active.title": "没有进行中的计划",
-    "no_active.subtitle": "从下面的可用计划中选择一个，开始您的圣经音频阅读吧！",
-    "started.title": "已开始的计划",
-    "available.title": "可用计划",
-    "resume": "继续",
-    "open": "打开",
-    "delete": "删除",
-    "start": "开始计划",
+    "settings": "设置"
+  },
+  "plans": {
+    "title": "阅读计划",
+    "subtitle": "选择一个计划，有条理地阅读圣经",
+    "current": {
+      "title": "当前计划",
+      "by": "作者",
+      "of": "共",
+      "days_remaining": "天剩余",
+      "day": "第"
+    },
+    "table": {
+      "day": "天数",
+      "readings": "阅读部分",
+      "actions": "操作"
+    },
+    "actions": {
+      "play": "播放目标",
+      "mark_complete": "标记为已完成",
+      "reset": "重置"
+    },
+    "no_active": {
+      "title": "没有进行中的计划",
+      "subtitle": "从下面的可用计划中选择一个，开始您的圣经音频阅读吧！"
+    },
+    "started": {
+      "title": "已开始的计划"
+    },
+    "available": {
+      "title": "可用计划"
+    },
+    "buttons": {
+      "resume": "继续",
+      "open": "打开",
+      "delete": "删除",
+      "start": "开始计划"
+    },
     "days": "天"
   },
   "settings": {
     "title": "设置",
     "subtitle": "管理应用存储空间和偏好设置",
-
+    "voice": "音频声音",
+    "speed": "播放速度",
+    "download": "管理下载",
+    "coming_soon": "更多选项即将推出...",
     "storage": {
       "title": "存储空间",
       "used_by_app": "应用已使用（音频 + 计划）：",
       "audios": "已下载音频：",
-      "bibles": "文本圣经:",
+      "bibles": "文本圣经：",
       "plans": "阅读计划：",
       "available": "设备可用空间：",
       "used": "已使用",
@@ -59,8 +80,6 @@
       "clear_warning": "这将永久删除所有已下载的音频（{{size}} MB），但不会影响您的阅读计划。",
       "calculating": "正在计算存储使用情况..."
     },
-
-    "coming_soon": "更多选项即将推出...",
     "language": {
       "title": "语言",
       "current": "当前语言",
@@ -68,8 +87,10 @@
       "reset_note": "这将在下次启动应用时再次显示语言选择界面。"
     }
   },
-  "DIALOG": {
-    "HOLD_CONFIRM_TITLE": "你确定吗？",
-    "HOLD_CONFIRM_MESSAGE": "要确认，请按住此按钮 5 秒"
+  "dialog": {
+    "hold_confirm": {
+      "title": "你确定吗？",
+      "message": "要确认，请按住此按钮 5 秒"
+    }
   }
 }

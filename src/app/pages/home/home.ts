@@ -1,14 +1,18 @@
 import { Component, ChangeDetectorRef, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 import { AudioService } from '../../services/audio.service';
 import { AudioDownloaderService } from '../../services/audio-downloader.service';
 import { BibleService, BookDownloadStatus } from '../../services/bible.service';
+import { AvailableSpace } from '../../storage/my-db';
 import { Track } from '../../models/track';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatButtonModule } from '@angular/material/button';
 
 import { BiblePicker, Bible, BibleSelection, OverridableCSS as BibleCSS } from 'bible-picker';
 
@@ -24,13 +28,14 @@ import { LanguageSelectorDialog } from '../../language-selector-dialog/language-
       BiblePicker,
       MatIconModule,
       MatProgressSpinnerModule,
+      MatProgressBarModule,
+      MatButtonModule,
       TranslateModule
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None // faz o css definido em home.scss penetrar o bible-picker
 })
 export class Home implements OnInit {
-  // Our two test tracks: Jeremias 49 and 50
   tracks: Track[] = [];
   booksDownloadStatus: BookDownloadStatus[] = [];
   currentTrackIndex = 0;
@@ -42,6 +47,10 @@ export class Home implements OnInit {
   // we use indexes, so if we want to paint chapter 1, we'll use this.customCSS = {"b": {}, "c": {0: "..."} "v": {}}
   customCSS: BibleCSS = {"b": {}, "c": {}, "v": {}};
 
+  availableMB = 0;
+
+  progress$;
+
   constructor(
     private audioService: AudioService,
     private dlServ: AudioDownloaderService,
@@ -49,9 +58,17 @@ export class Home implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private translate: TranslateService
-  ) {}
+  ) {
+    this.progress$ = this.bibleServ.downloadProgress$;
+  }
 
   ngOnInit() {
+    // calculate Storage
+    let availableSpace = new AvailableSpace();
+    availableSpace.inMB().then(res => {
+      this.availableMB = res;
+    });
+
     // force language selection if not found
     if(!localStorage.getItem("selectedBible"))
       this.openLanguageSelector();
@@ -79,8 +96,25 @@ export class Home implements OnInit {
         this.openLanguageSelector();
       }
     });
+  }
 
+  fullDownload(): Promise<Track[]> {
+    // Verifica se está em Wi-Fi
+    if (!this.isOnWifi()) {
+      const confirm = window.confirm(
+        this.translate.instant('hero.confirm_mobile_data') ||
+        'Você não está conectado ao Wi-Fi. O download da Bíblia inteira usa cerca de 1.3 GB de dados. Deseja continuar mesmo assim?'
+      );
+      if (!confirm) {
+        return new Promise(res => res([])); // Usuário cancelou
+      }
+    }
 
+    let bd = this.bibleData;
+    if(!bd)
+      return new Promise(res => res([]));
+    else
+      return new Promise(res => res(this.bibleServ.downloadEntireBible(bd)));
   }
 
   checkDownloaded() {
@@ -190,6 +224,20 @@ export class Home implements OnInit {
 
   get remainingCount(): number {
     return this.tracks.length - this.completedCount;
+  }
+
+  private isOnWifi(): boolean {
+    // Verifica a API Network Information (suportada na maioria dos navegadores modernos e PWAs)
+    // @ts-ignore – pois nem todos os tipos TypeScript incluem isso ainda
+    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+
+    if (connection) {
+      // Tipo de conexão: 'wifi', 'cellular', 'ethernet', 'none', 'unknown'
+      return connection.type !== 'cellular';
+    }
+
+    // Fallback: se a API não estiver disponível, suponha que NÃO é wifi
+    return false;
   }
 }
 export default Home;
