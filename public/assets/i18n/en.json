@@ -23,6 +23,7 @@
     "settings": "Settings"
   },
   "plans": {
+    "plans": "Plans",
     "title": "Reading Plans",
     "subtitle": "Choose a plan to read the Bible in an organized way",
     "current": {

@@ -23,6 +23,7 @@
     "settings": "设置"
   },
   "plans": {
+    "plans": "计划",
     "title": "阅读计划",
     "subtitle": "选择一个计划，有条理地阅读圣经",
     "current": {

@@ -23,6 +23,7 @@
     "settings": "Configuraciones"
   },
   "plans": {
+    "plans": "Planes",
     "title": "Planes de Lectura",
     "subtitle": "Elige un plan para leer la Biblia de forma organizada",
     "current": {
