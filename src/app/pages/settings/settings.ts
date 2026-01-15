@@ -14,6 +14,8 @@ import { Bible } from 'bible-picker';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialog';
 
+import { environment } from '../../../environments/environment';
+
 @Component({
   selector: 'app-settings',
   standalone: true,
@@ -36,6 +38,8 @@ export class Settings {
   totalUsedMB: number = 0;
   availableMB: number = 0;
   percentageUsed: number = 0;
+
+  version = environment.appVersion;
 
   loading = true;
 

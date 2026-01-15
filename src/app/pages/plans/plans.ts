@@ -23,7 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialog';
 
 
-const PRELOAD_DAYS = 10;
+const PRELOAD_DAYS = 5;
 
 @Component({
   selector: 'app-plans',
@@ -214,6 +214,20 @@ export class Plans {
       this.curTrackIdx = 0;
     }
 
+    this._goToStoppedAt(plan);
+  }
+
+  closePlan() {
+    this.setPlan(undefined);
+  }
+
+  resumePlan(plan: Plan) {
+    this.setPlan(plan);
+    this._goToStoppedAt(plan);
+    this.play().then(_ => {});
+  }
+
+  private _goToStoppedAt(plan: Plan) {
     setTimeout(() => {
       if(this.dataSource && this.dataSource.paginator) {
         let paginator = this.dataSource.paginator;
@@ -226,15 +240,6 @@ export class Plans {
         });
       }
     }, 100);
-  }
-
-  closePlan() {
-    this.setPlan(undefined);
-  }
-
-  resumePlan(plan: Plan) {
-    this.setPlan(plan);
-    this.play().then(_ => {});
   }
   //////////////////////////////////////////////////
 
