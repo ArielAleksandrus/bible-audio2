@@ -30,6 +30,12 @@ export class AudioService {
   trackEnded$ = this.trackEndedSource.asObservable();
 
   constructor(private downloader: AudioDownloaderService) {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && !this.activeAudio.paused) {
+        this.isPlaying$.next(true);  // in case browser muted/reset state
+      }
+    });
+
     const attachEvents = (el: HTMLAudioElement) => {
       el.addEventListener('timeupdate', () => {
         if (el === this.activeAudio) {
@@ -47,6 +53,12 @@ export class AudioService {
         }
       });
 
+      el.addEventListener('playing', () => {
+        if (el === this.activeAudio) {
+          this.isPlaying$.next(true);
+        }
+      });
+
       el.addEventListener('pause', () => {
         if (el === this.activeAudio) {
           this.isPlaying$.next(false);
@@ -55,6 +67,13 @@ export class AudioService {
       });
 
       el.addEventListener('ended', () => this.handleTrackEnded(el));
+
+      el.addEventListener('error', (e) => {
+        console.error('Audio error on', el === this.audio ? 'audio1' : 'audio2', e);
+      });
+      el.addEventListener('canplay', () => {
+        console.log('Can play now on', el === this.audio ? 'audio1' : 'audio2');
+      });
     };
 
     attachEvents(this.audio);
@@ -105,16 +124,21 @@ export class AudioService {
 
     try {
       await targetAudio.play();
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'playing';
+      }
       console.log('Started playing on', targetAudio === this.audio ? 'audio1' : 'audio2');
 
       this.swapAudioElements(); // now activeAudio === targetAudio
 
+      this.isPlaying$.next(true);
       this.currentTrack$.next(track);
       this.updateMediaSession(track);
       this.setupMediaSession();
-
       this.preloadNextIfPossible();
+
     } catch (err) {
+      this.isPlaying$.next(false);
       console.error('Initial play failed:', err);
     }
   }
@@ -122,10 +146,20 @@ export class AudioService {
   // === CONTROLES ===
   play() {
     this.activeAudio.play().catch(err => console.warn('Play failed:', err));
+    if ('setPositionState' in navigator.mediaSession) {
+      navigator.mediaSession.setPositionState({
+        duration: this.activeAudio.duration || 0,
+        playbackRate: 1.0,
+        position: this.activeAudio.currentTime
+      });
+    }
   }
 
   pause() {
     this.activeAudio.pause();
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = 'paused';
+    }
   }
 
   toggle() {
@@ -157,6 +191,13 @@ export class AudioService {
       currentTime: Math.floor(this.activeAudio.currentTime),
       duration: Math.floor(this.activeAudio.duration) || 0,
     });
+    if ('setPositionState' in navigator.mediaSession) {
+      navigator.mediaSession.setPositionState({
+        duration: this.activeAudio.duration || 0,
+        playbackRate: 1.0,
+        position: this.activeAudio.currentTime
+      });
+    }
   }
 
   skip(seconds: number) {
@@ -166,6 +207,13 @@ export class AudioService {
       currentTime: Math.floor(this.activeAudio.currentTime),
       duration: Math.floor(this.activeAudio.duration) || 0,
     });
+    if ('setPositionState' in navigator.mediaSession) {
+      navigator.mediaSession.setPositionState({
+        duration: this.activeAudio.duration || 0,
+        playbackRate: 1.0,
+        position: this.activeAudio.currentTime
+      });
+    }
   }
 
   // === PLAYLIST ===
@@ -247,8 +295,7 @@ export class AudioService {
 
     const endedTrack = this.currentTrack$.value;
     if (endedTrack) this.trackEndedSource.next(endedTrack);
-
-    this.isPlaying$.next(false);
+    this.isPlaying$.next(false); // temp, will flip back on success
 
     if (this.playlist.length === 0 || this.index >= this.playlist.length - 1) {
       this.stop();
@@ -256,26 +303,25 @@ export class AudioService {
     }
 
     this.index = (this.index + 1) % this.playlist.length;
+    const newTrack = this.playlist[this.index];
 
+    // Swap first (inactive now has the preloaded next track)
     this.swapAudioElements();
 
     this.activeAudio.play()
       .then(() => {
         console.log('Seamless next track started');
+        this.isPlaying$.next(true);
+        this.currentTrack$.next(newTrack);
+        this.updateMediaSession(newTrack);
+        this.preloadNextIfPossible();
       })
       .catch(err => {
-        console.warn('Next play failed after swap', err.name, err.message);
-        // Retry after small delay
-        setTimeout(() => {
-          this.activeAudio.play().catch(e => {
-            console.error('Retry failed', e);
-            // Final fallback
-            this.playTrack(this.playlist[this.index], this.playlist, this.index);
-          });
-        }, 500);
+        console.warn('Next play failed: ', err.name, err.message);
+        this.isPlaying$.next(false);
+        this.playTrack(newTrack, this.playlist, this.index);
       });
 
-    const newTrack = this.playlist[this.index];
     this.currentTrack$.next(newTrack);
     this.updateMediaSession(newTrack);
 

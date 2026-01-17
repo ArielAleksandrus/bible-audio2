@@ -23,7 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialog';
 
 
-const PRELOAD_DAYS = 5;
+const PRELOAD_DAYS = 7;
 
 @Component({
   selector: 'app-plans',

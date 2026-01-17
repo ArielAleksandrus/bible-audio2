@@ -5,6 +5,7 @@
     {
       "name": "app",
       "installMode": "prefetch",
+      "updateMode": "prefetch",
       "resources": {
         "files": [
           "/favicon.ico",
@@ -17,7 +18,18 @@
       }
     },
     {
-      "name": "assets",
+      "name": "static-assets",
+      "installMode": "prefetch",           // ← changed: prefetch these on first visit/install
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**",                     // catches /assets/i18n/*.json, /assets/locales/**/*.json etc.
+          "/assets/**/*.json"              // more explicit if you want only JSONs
+        ]
+      }
+    },
+    {
+      "name": "other-assets",
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
