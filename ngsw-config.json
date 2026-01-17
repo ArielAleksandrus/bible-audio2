@@ -19,12 +19,12 @@
     },
     {
       "name": "static-assets",
-      "installMode": "prefetch",           // ← changed: prefetch these on first visit/install
+      "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
         "files": [
-          "/assets/**",                     // catches /assets/i18n/*.json, /assets/locales/**/*.json etc.
-          "/assets/**/*.json"              // more explicit if you want only JSONs
+          "/assets/**",
+          "/assets/**/*.json"
         ]
       }
     },
