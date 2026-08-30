@@ -205,10 +205,9 @@ export class Home implements OnInit {
     }
     this.tracks = await this.bibleServ.genTracks(this.bibleData, sel.books[0].abbrev, sel.chapters);
     await this.dlServ.download(this.tracks[0]);
-    this.audioService.playTrack(this.tracks[0]).then(_ => {});
-    this.dlServ.downloadTracks(this.tracks).then(_ => {
-      this.audioService.setPlaylist(this.tracks);
-    });
+    // Playlist must be set before the first chapter ends, not after every chapter is downloaded.
+    void this.audioService.playPlaylist(this.tracks, 0);
+    void this.dlServ.downloadTracks(this.tracks);
   }
 
   async playTrackFromHere(track: Track, index: number) {

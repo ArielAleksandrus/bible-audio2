@@ -7,11 +7,14 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class AudioService {
   private audio = new Audio();
-  private audio2 = new Audio(); // for seamless next track in background/locked screen
+  private audio2 = new Audio(); // preloads the next chapter for locked-screen / background
   private activeAudio: HTMLAudioElement = this.audio;
   private inactiveAudio: HTMLAudioElement = this.audio2;
-  private nextTrackToPreload: Track | null = null;
-  private currentUrl = '';
+  private blobUrlByEl = new WeakMap<HTMLAudioElement, string>();
+  private preloaded: { track: Track; url: string } | null = null;
+  private preloadGeneration = 0;
+  /** When false, `ended` must not auto-advance (stop/load can fire spurious ended). */
+  private autoAdvance = false;
 
   // === ESTADO PÚBLICO (para o player consumir) ===
   currentTrack$ = new BehaviorSubject<Track | null>(null);
@@ -30,6 +33,9 @@ export class AudioService {
   trackEnded$ = this.trackEndedSource.asObservable();
 
   constructor(private downloader: AudioDownloaderService) {
+    this.prepareAudioElement(this.audio);
+    this.prepareAudioElement(this.audio2);
+
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible' && !this.activeAudio.paused) {
         this.isPlaying$.next(true);  // in case browser muted/reset state
@@ -71,9 +77,6 @@ export class AudioService {
       el.addEventListener('error', (e) => {
         console.error('Audio error on', el === this.audio ? 'audio1' : 'audio2', e);
       });
-      el.addEventListener('canplay', () => {
-        console.log('Can play now on', el === this.audio ? 'audio1' : 'audio2');
-      });
     };
 
     attachEvents(this.audio);
@@ -91,52 +94,30 @@ export class AudioService {
 
   // === PLAYBACK PRINCIPAL ===
   async playTrack(track: Track, playlist?: Track[], startIndex = 0) {
-    this.stop();
+    // Ignore `ended` from tearing down the previous source (Safari/Chrome fire it on load()).
+    this.autoAdvance = false;
+    this.invalidatePreload();
+    this.clearElement(this.inactiveAudio);
 
     if (playlist) {
       this.playlist = playlist;
       this.index = startIndex;
-    }
-
-    const targetAudio = this.inactiveAudio;
-
-    const db = await dbPromise;
-    let stored = await db.get('files', track.id || track.fileName);
-    let url: string;
-
-    if (stored?.blob) {
-      url = URL.createObjectURL(stored.blob);
-      console.log('Tocando offline:', track.title);
     } else {
-      console.log('Baixando:', track.title);
-      await this.downloader.download(track);
-      stored = await db.get('files', track.id || track.fileName);
-      if (stored?.blob) {
-        url = URL.createObjectURL(stored.blob);
-      } else {
-        url = track.url;
-        console.log('Download falhou... Tocando online:', track.title);
-      }
+      const idx = this.playlist.findIndex(t => t.id === track.id);
+      if (idx >= 0) this.index = idx;
     }
 
-    targetAudio.src = url;
-    this.currentUrl = url;
+    const url = await this.resolvePlayUrl(track);
+    this.setAudioSource(this.activeAudio, url);
 
     try {
-      await targetAudio.play();
+      await this.activeAudio.play();
       if ('mediaSession' in navigator) {
         navigator.mediaSession.playbackState = 'playing';
       }
-      console.log('Started playing on', targetAudio === this.audio ? 'audio1' : 'audio2');
-
-      this.swapAudioElements(); // now activeAudio === targetAudio
-
-      this.isPlaying$.next(true);
-      this.currentTrack$.next(track);
-      this.updateMediaSession(track);
-      this.setupMediaSession();
-      this.preloadNextIfPossible();
-
+      console.log('Started playing', track.title);
+      this.onStarted(track);
+      void this.preloadNextIfPossible();
     } catch (err) {
       this.isPlaying$.next(false);
       console.error('Initial play failed:', err);
@@ -171,18 +152,11 @@ export class AudioService {
   }
 
   stop() {
-    this.activeAudio.pause();
-    this.activeAudio.removeAttribute('src');
-    this.activeAudio.load();
-
-    this.inactiveAudio.pause();
-    this.inactiveAudio.removeAttribute('src');
-    this.inactiveAudio.load();
-
-    if (this.currentUrl?.startsWith('blob:')) {
-      URL.revokeObjectURL(this.currentUrl);
-    }
-    this.currentUrl = '';
+    this.autoAdvance = false;
+    this.invalidatePreload();
+    this.clearElement(this.activeAudio);
+    this.clearElement(this.inactiveAudio);
+    this.isPlaying$.next(false);
   }
 
   seekTo(seconds: number) {
@@ -232,7 +206,7 @@ export class AudioService {
   next() {
     if (this.playlist.length === 0) return;
     this.index = (this.index + 1) % this.playlist.length;
-    this.playTrack(this.playlist[this.index], this.playlist, this.index);
+    this.startNextTrack(this.playlist[this.index]);
   }
 
   previous() {
@@ -278,79 +252,176 @@ export class AudioService {
   }
 
   // === DUAL AUDIO HELPERS ===
-  private swapAudioElements() {
-    [this.activeAudio, this.inactiveAudio] = [this.inactiveAudio, this.activeAudio];
-    // Clean the NEW inactive (old active)
-    this.inactiveAudio.pause();
-    this.inactiveAudio.removeAttribute('src');
-    this.inactiveAudio.load();
-    // Revoke old blob if applicable
-    if (this.currentUrl?.startsWith('blob:')) {
-      URL.revokeObjectURL(this.currentUrl);
+  private prepareAudioElement(el: HTMLAudioElement) {
+    el.preload = 'auto';
+    el.setAttribute('playsinline', 'true');
+  }
+
+  private onStarted(track: Track) {
+    this.autoAdvance = true;
+    this.isPlaying$.next(true);
+    this.currentTrack$.next(track);
+    this.updateMediaSession(track);
+    this.setupMediaSession();
+  }
+
+  private setAudioSource(el: HTMLAudioElement, url: string) {
+    const prev = this.blobUrlByEl.get(el);
+    if (prev && prev !== url) {
+      URL.revokeObjectURL(prev);
+      this.blobUrlByEl.delete(el);
+    }
+    el.src = url;
+    el.preload = 'auto';
+    if (url.startsWith('blob:')) {
+      this.blobUrlByEl.set(el, url);
+    } else {
+      this.blobUrlByEl.delete(el);
     }
   }
 
+  private clearElement(el: HTMLAudioElement, revokeBlob = true) {
+    el.pause();
+    const blob = this.blobUrlByEl.get(el);
+    if (blob) {
+      this.blobUrlByEl.delete(el);
+      if (revokeBlob) URL.revokeObjectURL(blob);
+    }
+    el.removeAttribute('src');
+    el.load();
+  }
+
+  private invalidatePreload() {
+    this.preloadGeneration++;
+    this.preloaded = null;
+  }
+
+  /**
+   * Prefer a cached blob; otherwise stream from the CDN immediately.
+   * Never block playback on a full download — that loses the autoplay gesture.
+   */
+  private async resolvePlayUrl(track: Track): Promise<string> {
+    try {
+      const db = await dbPromise;
+      const stored = await db.get('files', track.id || track.fileName);
+      if (stored?.blob) {
+        return URL.createObjectURL(stored.blob);
+      }
+    } catch (err) {
+      console.warn('Failed to read cached audio, falling back to network:', err);
+    }
+    void this.downloader.download(track).catch(() => {});
+    return track.url;
+  }
+
   private handleTrackEnded(endedEl: HTMLAudioElement) {
+    if (!this.autoAdvance) return;
     if (endedEl !== this.activeAudio) return;
+    if (!endedEl.currentSrc) return;
 
     const endedTrack = this.currentTrack$.value;
     if (endedTrack) this.trackEndedSource.next(endedTrack);
-    this.isPlaying$.next(false); // temp, will flip back on success
 
     if (this.playlist.length === 0 || this.index >= this.playlist.length - 1) {
-      this.stop();
+      this.isPlaying$.next(false);
+      this.autoAdvance = false;
       return;
     }
 
-    this.index = (this.index + 1) % this.playlist.length;
-    const newTrack = this.playlist[this.index];
+    this.index += 1;
+    this.startNextTrack(this.playlist[this.index]);
+  }
 
-    // Swap first (inactive now has the preloaded next track)
-    this.swapAudioElements();
+  /**
+   * Start the next chapter without awaiting IndexedDB/network first.
+   * Browsers only allow autoplay continuation if play() is called
+   * synchronously from the `ended` handler (especially iOS / locked screen).
+   *
+   * Dual-element swap is used only when the next source is already loaded;
+   * otherwise we reuse the element that just ended (same-element fallback).
+   */
+  private startNextTrack(track: Track) {
+    const preloaded = this.preloaded?.track === track ? this.preloaded : null;
+
+    if (preloaded && this.inactiveAudio.src) {
+      // Cancel in-flight preload writes so they cannot clobber this element.
+      this.preloadGeneration++;
+      const playPromise = this.inactiveAudio.play();
+      playPromise
+        .then(() => {
+          console.log('Seamless next track started:', track.title);
+          this.preloaded = null;
+          this.adoptInactiveAsActive();
+          this.onStarted(track);
+          void this.preloadNextIfPossible();
+        })
+        .catch(err => {
+          console.warn('Seamless next failed, using same element:', err?.name, err?.message);
+          this.playOnActiveNow(track, preloaded.url);
+        });
+      return;
+    }
+
+    this.playOnActiveNow(track, preloaded?.url ?? track.url);
+  }
+
+  private playOnActiveNow(track: Track, url: string) {
+    const inactiveBlob = this.blobUrlByEl.get(this.inactiveAudio);
+    const transferringBlob = inactiveBlob === url;
+    this.invalidatePreload();
+    this.clearElement(this.inactiveAudio, !transferringBlob);
+    this.setAudioSource(this.activeAudio, url);
 
     this.activeAudio.play()
       .then(() => {
-        console.log('Seamless next track started');
-        this.isPlaying$.next(true);
-        this.currentTrack$.next(newTrack);
-        this.updateMediaSession(newTrack);
-        this.preloadNextIfPossible();
+        console.log('Next track started (same element):', track.title);
+        this.onStarted(track);
+        void this.preloadNextIfPossible();
       })
-      .catch(err => {
-        console.warn('Next play failed: ', err.name, err.message);
-        this.isPlaying$.next(false);
-        this.playTrack(newTrack, this.playlist, this.index);
+      .catch(async err => {
+        console.warn('Same-element next failed, trying cached blob:', err?.name, err?.message);
+        try {
+          const blobUrl = await this.resolvePlayUrl(track);
+          if (blobUrl === url) throw err;
+          this.setAudioSource(this.activeAudio, blobUrl);
+          await this.activeAudio.play();
+          this.onStarted(track);
+          void this.preloadNextIfPossible();
+        } catch (err2) {
+          console.error('Failed to start next track', err2);
+          this.isPlaying$.next(false);
+        }
       });
+  }
 
-    this.currentTrack$.next(newTrack);
-    this.updateMediaSession(newTrack);
-
-    this.preloadNextIfPossible();
+  private adoptInactiveAsActive() {
+    const oldActive = this.activeAudio;
+    this.activeAudio = this.inactiveAudio;
+    this.inactiveAudio = oldActive;
+    this.clearElement(oldActive);
   }
 
   private async preloadNextIfPossible() {
     if (this.playlist.length <= this.index + 1) return;
 
     const nextTrack = this.playlist[this.index + 1];
-    if (nextTrack === this.nextTrackToPreload) return;
+    if (this.preloaded?.track === nextTrack && this.inactiveAudio.src) return;
 
-    this.nextTrackToPreload = nextTrack;
+    const gen = ++this.preloadGeneration;
+    const url = await this.resolvePlayUrl(nextTrack);
 
-    const db = await dbPromise;
-    let stored = await db.get('files', nextTrack.id || nextTrack.fileName);
-    let url: string;
-
-    if (!stored?.blob) {
-      console.log('Pre-downloading next track for better background playback:', nextTrack.title);
-      await this.downloader.download(nextTrack).catch(() => {});
-      stored = await db.get('files', nextTrack.id || nextTrack.fileName);
+    if (gen !== this.preloadGeneration) {
+      if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+      return;
+    }
+    if (this.playlist[this.index + 1] !== nextTrack) {
+      if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+      return;
     }
 
-    url = stored?.blob ? URL.createObjectURL(stored.blob) : nextTrack.url;
-
-    this.inactiveAudio.src = url;
+    this.setAudioSource(this.inactiveAudio, url);
     this.inactiveAudio.load();
-    this.inactiveAudio.preload = 'auto';
+    this.preloaded = { track: nextTrack, url };
     console.log('Preloading next:', nextTrack.title, url.startsWith('blob:') ? '(offline)' : '(online)');
   }
 }
