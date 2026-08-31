@@ -4,7 +4,7 @@ import { dbPromise } from '../storage/my-db';
 import { Plan } from '../models/plan';
 import { HttpClient } from '@angular/common/http';
 
-const AVAILABLE_PLANS = ['first-steps', 'new-testament', 'christmas', 'easter'];
+const AVAILABLE_PLANS = ['first-steps', 'new-testament', 'christmas', 'easter', 'valley-of-shadow'];
 
 @Injectable({ providedIn: 'root' })
 export class PlanService {

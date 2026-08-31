@@ -124,28 +124,33 @@
   "plan_content": {
     "iniciante-7-dias": {
       "title": "First Steps in the Bible",
-      "author": "Made for you",
+      "author": "Unknown",
       "description": "A 7-day plan for beginners – simple, essential passages to get to know Jesus and God's love"
     },
     "novo-testamento-90": {
       "title": "New Testament in 90 Days",
-      "author": "Made for you",
+      "author": "Unknown",
       "description": "Read the entire New Testament in just 3 months – perfect for those who want to focus on the teachings of Jesus and the apostles"
     },
     "natal-7-dias": {
       "title": "Christmas in 7 Days",
-      "author": "Made for you",
+      "author": "Unknown",
       "description": "A 7-day devotional reading to celebrate the birth of Jesus – prophecies, birth, announcement, and worship"
     },
     "pascoa-7-dias": {
       "title": "Easter in 7 Days",
-      "author": "Made for you",
+      "author": "Unknown",
       "description": "A 7-day devotional reading about the Passion, Death, and Resurrection of Jesus – the true Easter"
     },
     "youversion-365": {
       "title": "Let's read the Bible together",
       "author": "Youversion",
       "description": "1-year Bible reading plan"
+    },
+    "vale-da-sombra-7-dias": {
+      "title": "Walking Through the Valley of the Shadow of Death",
+      "author": "Unknown",
+      "description": "When there is no hope: This is for the night you cannot pray without shaking — when the kind words have run out and there is still no light. For seven days Scripture will not rush you: it sits with Job on the ash heap, hides with David in the cave, waits with Paul in chains, and kneels with Christ in Gethsemane, until you are allowed to say the worst things out loud. Only then does it show you the God who does not call advice down from the rim of the valley, but walks it — who answers from the whirlwind, restores the one who lost everything, leaves a tomb empty, and promises a new earth and a new sky, where He Himself will wipe the tears from your face. Start where there is no hope. Walk. He is already there."
     }
   }
 }

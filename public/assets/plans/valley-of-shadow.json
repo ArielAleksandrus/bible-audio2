@@ -1,0 +1,68 @@
+{
+  "id": "vale-da-sombra-7-dias",
+  "title": "Caminhando pelo Vale da Sombra da Morte",
+  "author": "Desconhecido",
+  "description": "Quando não há esperança: Isto é para a noite em que você não consegue orar sem tremer — quando as palavras de consolo já se esgotaram e ainda não há luz nenhuma. Por sete dias, a Escritura não vai apressar você: ela senta com Jó no monte de cinzas, se esconde com Davi na caverna, espera com Paulo acorrentado, e se ajoelha com Cristo no Getsêmani, até que você tenha permissão para dizer em voz alta as coisas mais terríveis. Só então ela te mostra o Deus que não grita conselhos da beira do vale, mas o atravessa com você — que responde do meio do redemoinho, restaura quem perdeu tudo, deixa um túmulo vazio, e promete um novo céu e uma nova terra, onde Ele mesmo enxugará as lágrimas do seu rosto. Comece onde não há esperança. Caminhe. Ele já está lá.",
+  "days": 7,
+  "goals": [
+    {
+      "day": 1,
+      "portions": [
+        {"bookIdx": 17, "chapter": 1},
+        {"bookIdx": 17, "chapter": 2},
+        {"bookIdx": 17, "chapter": 3}
+      ]
+    },
+    {
+      "day": 2,
+      "portions": [
+        {"bookIdx": 17, "chapter": 19},
+        {"bookIdx": 18, "chapter": 22},
+        {"bookIdx": 18, "chapter": 88}
+      ]
+    },
+    {
+      "day": 3,
+      "portions": [
+        {"bookIdx": 8, "chapter": 19},
+        {"bookIdx": 8, "chapter": 22},
+        {"bookIdx": 18, "chapter": 142}
+      ]
+    },
+    {
+      "day": 4,
+      "portions": [
+        {"bookIdx": 18, "chapter": 23},
+        {"bookIdx": 18, "chapter": 34},
+        {"bookIdx": 46, "chapter": 4},
+        {"bookIdx": 54, "chapter": 1}
+      ]
+    },
+    {
+      "day": 5,
+      "portions": [
+        {"bookIdx": 22, "chapter": 53},
+        {"bookIdx": 39, "chapter": 26},
+        {"bookIdx": 39, "chapter": 27}
+      ]
+    },
+    {
+      "day": 6,
+      "portions": [
+        {"bookIdx": 17, "chapter": 38},
+        {"bookIdx": 17, "chapter": 42},
+        {"bookIdx": 39, "chapter": 28},
+        {"bookIdx": 54, "chapter": 4}
+      ]
+    },
+    {
+      "day": 7,
+      "portions": [
+        {"bookIdx": 22, "chapter": 65},
+        {"bookIdx": 45, "chapter": 15},
+        {"bookIdx": 65, "chapter": 21},
+        {"bookIdx": 65, "chapter": 22}
+      ]
+    }
+  ]
+}

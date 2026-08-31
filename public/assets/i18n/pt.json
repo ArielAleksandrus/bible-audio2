@@ -124,28 +124,33 @@
   "plan_content": {
     "iniciante-7-dias": {
       "title": "Primeiros Passos na Bíblia",
-      "author": "Feito para você",
+      "author": "Desconhecido",
       "description": "Plano de 7 dias para quem está começando – passagens simples e essenciais para conhecer Jesus e o amor de Deus"
     },
     "novo-testamento-90": {
       "title": "Novo Testamento em 90 dias",
-      "author": "Feito para você",
+      "author": "Desconhecido",
       "description": "Leia todo o Novo Testamento em apenas 3 meses – perfeito para quem quer foco no ensino de Jesus e dos apóstolos"
     },
     "natal-7-dias": {
       "title": "Natal em 7 Dias",
-      "author": "Feito para você",
+      "author": "Desconhecido",
       "description": "Uma leitura devocional de 7 dias para celebrar o nascimento de Jesus – profecias, nascimento, anúncio e adoração"
     },
     "pascoa-7-dias": {
       "title": "Páscoa em 7 Dias",
-      "author": "Feito para você",
+      "author": "Desconhecido",
       "description": "Leitura devocional de 7 dias sobre a Paixão, Morte e Ressurreição de Jesus – a verdadeira Páscoa"
     },
     "youversion-365": {
       "title": "Vamos ler a Bíblia juntos",
       "author": "Youversion",
       "description": "Plano de leitura da Bíblia em 1 ano"
+    },
+    "vale-da-sombra-7-dias": {
+      "title": "Caminhando pelo Vale da Sombra da Morte",
+      "author": "Desconhecido",
+      "description": "Quando não há esperança: Isto é para a noite em que você não consegue orar sem tremer — quando as palavras de consolo já se esgotaram e ainda não há luz nenhuma. Por sete dias, a Escritura não vai apressar você: ela senta com Jó no monte de cinzas, se esconde com Davi na caverna, espera com Paulo acorrentado, e se ajoelha com Cristo no Getsêmani, até que você tenha permissão para dizer em voz alta as coisas mais terríveis. Só então ela te mostra o Deus que não grita conselhos da beira do vale, mas o atravessa com você — que responde do meio do redemoinho, restaura quem perdeu tudo, deixa um túmulo vazio, e promete um novo céu e uma nova terra, onde Ele mesmo enxugará as lágrimas do seu rosto. Comece onde não há esperança. Caminhe. Ele já está lá."
     }
   }
 }

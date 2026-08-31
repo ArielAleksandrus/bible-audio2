@@ -124,28 +124,33 @@
   "plan_content": {
     "iniciante-7-dias": {
       "title": "Primeros Pasos en la Biblia",
-      "author": "Hecho para ti",
+      "author": "Desconocido",
       "description": "Un plan de 7 días para quienes están comenzando: pasajes sencillos y esenciales para conocer a Jesús y el amor de Dios"
     },
     "novo-testamento-90": {
       "title": "Nuevo Testamento en 90 días",
-      "author": "Hecho para ti",
+      "author": "Desconocido",
       "description": "Lee todo el Nuevo Testamento en solo 3 meses: perfecto para quienes quieren enfocarse en las enseñanzas de Jesús y los apóstoles"
     },
     "natal-7-dias": {
       "title": "Navidad en 7 Días",
-      "author": "Hecho para ti",
+      "author": "Desconocido",
       "description": "Una lectura devocional de 7 días para celebrar el nacimiento de Jesús: profecías, nacimiento, anuncio y adoración"
     },
     "pascoa-7-dias": {
       "title": "Pascua en 7 Días",
-      "author": "Hecho para ti",
+      "author": "Desconocido",
       "description": "Lectura devocional de 7 días sobre la Pasión, Muerte y Resurrección de Jesús: la verdadera Pascua"
     },
     "youversion-365": {
       "title": "Leamos la Biblia juntos",
       "author": "Youversion",
       "description": "Plan de lectura de la Biblia en 1 año"
+    },
+    "vale-da-sombra-7-dias": {
+      "title": "Caminando por el Valle de Sombra de Muerte",
+      "author": "Desconocido",
+      "description": "Cuando no hay esperanza: Esto es para la noche en la que no puedes orar sin temblar — cuando las palabras de consuelo ya se han agotado y todavía no hay luz. Durante siete días, la Escritura no te apresurará: se sienta con Job en el montón de cenizas, se esconde con David en la cueva, espera con Pablo encadenado, y se arrodilla con Cristo en Getsemaní, hasta que se te permite decir en voz alta las cosas más terribles. Solo entonces te muestra al Dios que no da consejos desde el borde del valle, sino que lo atraviesa contigo — que responde desde el torbellino, restaura al que lo perdió todo, deja una tumba vacía, y promete un cielo nuevo y una tierra nueva, donde Él mismo enjugará las lágrimas de tu rostro. Comienza donde no hay esperanza. Camina. Él ya está allí."
     }
   }
 }
