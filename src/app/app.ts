@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
@@ -6,6 +7,7 @@ import { AudioPlayer } from './components/audio-player/audio-player';
 import { InstallPrompt } from './components/install-prompt/install-prompt';
 import { AnalyticsService } from './services/analytics.service';
 import { SyncService } from './services/sync.service';
+import { AppStateService } from './services/app-state.service';
 
 // Material components (MDC-based tab nav bar)
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
@@ -14,6 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-root',
   imports: [
+    CommonModule,
+
     // Material modules
     MatTabNav, MatTabLink, MatTabNavPanel, MatIconModule,
     RouterLink, RouterLinkActive, RouterOutlet,
@@ -44,7 +48,8 @@ export class App {
   constructor(
     private translate: TranslateService,
     private analytics: AnalyticsService,
-    private sync: SyncService
+    private sync: SyncService,
+    public appState: AppStateService
   ) {
     let lang = localStorage.getItem("selectedBible");
     if(lang) {

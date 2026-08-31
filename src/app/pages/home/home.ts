@@ -19,6 +19,7 @@ import { BiblePicker, Bible, BibleBook, BibleSelection, OverridableCSS as BibleC
 import { MatDialog } from '@angular/material/dialog';
 import { LanguageSelectorDialog } from '../../language-selector-dialog/language-selector-dialog';
 import { BibleTextViewer } from '../../components/bible-text-viewer/bible-text-viewer';
+import { AppStateService } from '../../services/app-state.service';
 
 
 @Component({
@@ -64,7 +65,8 @@ export class Home implements OnInit {
     private bibleServ: BibleService,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private appState: AppStateService
   ) {
     this.progress$ = this.bibleServ.downloadProgress$;
     this.textDownloadProgress$ = this.bibleServ.textDownloadProgress$;
@@ -156,6 +158,7 @@ export class Home implements OnInit {
           this.openLanguageSelector();
           return;
         }
+        this.appState.markLanguageSelected();
         this.init();
       }
     });

@@ -45,14 +45,12 @@ export class ConfirmationDialog implements OnInit, OnDestroy {
 
   private setLanguageFromLocalStorage(): void {
     const selectedBible = localStorage.getItem('selectedBible') || '';
-    let lang = 'pt-br'; // padrão português brasileiro
+    let lang = 'pt'; // padrão português — matches public/assets/i18n/pt.json
 
     if (selectedBible.includes('-')) {
       const code = selectedBible.split('-')[0].toLowerCase();
-      if (['en', 'es', 'zh'].includes(code)) {
+      if (['en', 'es', 'zh', 'ja'].includes(code)) {
         lang = code;
-      } else if (code.startsWith('zh')) {
-        lang = 'zh';
       }
     }
 

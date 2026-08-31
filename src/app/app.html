@@ -1,6 +1,11 @@
 <div class="app-container">
 
-  <app-install-prompt></app-install-prompt>
+  <!-- Bottom nav / install prompt use translate pipes, and no i18n file is
+       loaded until a language is picked — before that they'd show raw
+       "menu.home"-style keys instead of real text, which reads as a bug. -->
+  <ng-container *ngIf="appState.hasSelectedLanguage$ | async">
+    <app-install-prompt></app-install-prompt>
+  </ng-container>
 
   <!-- Conteúdo principal + player -->
   <div class="main-content">
@@ -15,6 +20,7 @@
 
   <!-- Bottom navigation – sempre visível e por cima do conteúdo -->
   <nav mat-tab-nav-bar
+       *ngIf="appState.hasSelectedLanguage$ | async"
        [tabPanel]="tabPanel"
        class="bottom-nav"
        backgroundColor="primary"

@@ -24,14 +24,14 @@ interface SubscriptionDoc {
 //   VAPID_PRIVATE_KEY         — pairs with environment.vapidPublicKey in the app.
 //   FIREBASE_SERVICE_ACCOUNT  — the Firebase service account JSON, as a string.
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (req.headers.authorization !== `Bearer ${process.env['CRON_SECRET']}`) {
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }
 
-  const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
-  const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
-  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+  const vapidPublicKey = process.env['VAPID_PUBLIC_KEY'];
+  const vapidPrivateKey = process.env['VAPID_PRIVATE_KEY'];
+  const serviceAccountJson = process.env['FIREBASE_SERVICE_ACCOUNT'];
   if (!vapidPublicKey || !vapidPrivateKey || !serviceAccountJson) {
     res.status(500).json({ error: 'Missing required environment variables' });
     return;
