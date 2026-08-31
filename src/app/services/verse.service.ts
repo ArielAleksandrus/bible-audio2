@@ -28,6 +28,9 @@ export interface VerseEntry {
 export class VerseService {
   private englishVerses: Promise<VerseEntry[]> | null = null;
   private fsModule: Promise<typeof import('firebase/firestore')> | null = null;
+  // Languages confirmed seeded this session — avoids a Firestore existence
+  // check on every page navigation once we already know it's there.
+  private confirmedSeeded = new Set<string>();
 
   constructor(private http: HttpClient) {}
 
@@ -54,13 +57,17 @@ export class VerseService {
   // cheap idempotency check so re-downloading the same language repeatedly
   // doesn't keep re-writing it.
   async saveVersesForLanguage(lang: string, verses: VerseEntry[]): Promise<void> {
-    if (!firebaseEnabled || lang === 'en') return;
+    if (!firebaseEnabled || lang === 'en' || this.confirmedSeeded.has(lang)) return;
     try {
       const [db, { doc, getDoc, setDoc }] = await Promise.all([this.getDb(), this.getFsModule()]);
       const ref = doc(db, 'verses', lang);
       const existing = await getDoc(ref);
-      if (existing.exists()) return;
+      if (existing.exists()) {
+        this.confirmedSeeded.add(lang);
+        return;
+      }
       await setDoc(ref, { verses: JSON.parse(JSON.stringify(verses)) });
+      this.confirmedSeeded.add(lang);
     } catch (err) {
       console.warn('VerseService: failed to save verses for', lang, err);
     }
