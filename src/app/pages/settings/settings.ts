@@ -10,6 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { BibleService } from '../../services/bible.service';
 import { AuthService } from '../../services/auth.service';
+import { NotificationsService } from '../../services/notifications.service';
 import { Bible } from 'bible-picker';
 import type { User } from 'firebase/auth';
 
@@ -59,13 +60,20 @@ export class Settings {
 
   user: User | null = null;
 
+  notifSubscribed = false;
+  notifBusy = false;
+  notifError: string | null = null;
+
   constructor(
     private translate: TranslateService,
     private bibleServ: BibleService,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    public authServ: AuthService
+    public authServ: AuthService,
+    public notifServ: NotificationsService
   ) {
+    this.notifSubscribed = this.notifServ.isSubscribed;
+
     this.authServ.user$.subscribe(user => {
       this.user = user;
       this.cdr.detectChanges();
@@ -100,8 +108,8 @@ export class Settings {
     });
   }
 
-  resetLanguage() {
-    this.bibleServ.removeBibleVersion();
+  async resetLanguage() {
+    await this.bibleServ.removeBibleVersion();
     location.href = "/home";
   }
 
@@ -111,6 +119,26 @@ export class Settings {
 
   signOut() {
     this.authServ.signOut();
+  }
+
+  async toggleNotifications() {
+    this.notifError = null;
+    this.notifBusy = true;
+    try {
+      if (this.notifSubscribed) {
+        await this.notifServ.unsubscribe();
+        this.notifSubscribed = false;
+      } else {
+        await this.notifServ.subscribe(this.bibleData?.language || 'en');
+        this.notifSubscribed = true;
+      }
+    } catch (err) {
+      console.warn('Settings::toggleNotifications', err);
+      this.notifError = 'permission';
+    } finally {
+      this.notifBusy = false;
+      this.cdr.detectChanges();
+    }
   }
 
   async calculateStorage() {

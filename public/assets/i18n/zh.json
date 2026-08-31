@@ -94,6 +94,15 @@
       "sign_in": "使用 Google 登录",
       "signed_in_as": "已登录：",
       "sign_out": "退出登录"
+    },
+    "notifications": {
+      "title": "每日提醒",
+      "description": "每天接收一条圣经经文通知，鼓励您阅读。完全可选。",
+      "enable": "开启每日提醒",
+      "disable": "关闭每日提醒",
+      "permission_error": "无法启用通知——请检查此网站在浏览器中的通知权限。",
+      "ios_install_required": "在 iPhone 上，只有将此应用添加到主屏幕后（点击分享按钮 → 添加到主屏幕），并从主屏幕打开，通知才能正常使用。",
+      "unsupported": "此浏览器不支持通知功能。"
     }
   },
   "dialog": {
@@ -101,6 +110,12 @@
       "title": "你确定吗？",
       "message": "要确认，请按住此按钮 5 秒"
     }
+  },
+  "install_prompt": {
+    "title": "安装 BibleAudio",
+    "description": "添加到您的设备，快速访问并离线收听。",
+    "ios_instructions": "点击分享按钮，然后选择“添加到主屏幕”。",
+    "install_button": "安装"
   },
   "plan_content": {
     "iniciante-7-dias": {

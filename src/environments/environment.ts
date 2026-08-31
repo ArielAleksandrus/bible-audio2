@@ -13,5 +13,8 @@ export const environment = {
 		storageBucket: 'bible-audio-ab851.firebasestorage.app',
 		messagingSenderId: '708812956918',
 		appId: '1:708812956918:web:db1f52d32fff77971b78d7'
-	}
+	},
+	// VAPID public key for Web Push subscriptions (safe to expose client-side —
+	// the matching private key lives server-side only, as a Vercel env var).
+	vapidPublicKey: 'BIqmtyyf9OrlogdzourrlmHSQXQKSocKMAK86CWnlUx9J32priS9REg_SqxFcWzWE3yfXJPsVbf9Qu-V7qBDIYI'
 };

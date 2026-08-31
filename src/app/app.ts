@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { AudioPlayer } from './components/audio-player/audio-player';
+import { InstallPrompt } from './components/install-prompt/install-prompt';
 import { AnalyticsService } from './services/analytics.service';
 import { SyncService } from './services/sync.service';
 
@@ -19,7 +20,8 @@ import { MatIconModule } from '@angular/material/icon';
     TranslateModule,
 
     // My components:
-    AudioPlayer
+    AudioPlayer,
+    InstallPrompt
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'

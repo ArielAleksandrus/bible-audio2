@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/send-daily-reminder",
+      "schedule": "0 13 * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/manifest.json",

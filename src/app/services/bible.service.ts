@@ -5,7 +5,8 @@ import { Plan, DailyGoal, ReadingPortion } from "../models/plan";
 import { AudioDownloaderService } from './audio-downloader.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { saveBibleVersion, getBibleVersion, AvailableSpace } from '../storage/my-db';
+import { saveBibleVersion, getBibleVersion, getAllSavedBibles, deleteBibleVersion, AvailableSpace } from '../storage/my-db';
+import { VerseService } from './verse.service';
 
 
 export const BIBLE_CDN_URL = "https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev";
@@ -40,7 +41,12 @@ export class BibleService {
 
   downloadProgress$: Observable<any> = this.progressSubject.asObservable();
 
-  constructor(private ads: AudioDownloaderService) {
+  // Progress for the Bible *text* JSON download specifically (a few MB,
+  // separate from the audio-download progress above). null when idle.
+  private textProgressSubject = new BehaviorSubject<{ loaded: number; total: number } | null>(null);
+  textDownloadProgress$: Observable<{ loaded: number; total: number } | null> = this.textProgressSubject.asObservable();
+
+  constructor(private ads: AudioDownloaderService, private verseServ: VerseService) {
     // Forward progress from AudioDownloaderService
     this.ads.downloadProgress$.subscribe(progress => {
       this.progressSubject.next(progress);
@@ -67,15 +73,49 @@ export class BibleService {
     }
 
     try {
-      const response = await fetch(url);
-      const bibleData = await response.json();
+      this.textProgressSubject.next({ loaded: 0, total: 0 });
+      const bibleData = await this.fetchJsonWithProgress(url);
 
       await saveBibleVersion(language + "-" + versionName, versionName, language, language + "-" + versionName, bibleData);
+
+      // Derive this language's daily-reminder verses now that we have the
+      // full text, so the notification Cron job has them ready to use.
+      this.verseServ.deriveVerses(<Bible>bibleData)
+        .then(verses => this.verseServ.saveVersesForLanguage(language, verses))
+        .catch(err => console.warn('BibleService: failed to derive/save verses', err));
+
       return <Bible>bibleData;
     } catch (err) {
       console.error('Erro ao baixar Bíblia:', err);
+    } finally {
+      this.textProgressSubject.next(null);
     }
     return undefined;
+  }
+
+  // fetch() alone gives no progress feedback for a multi-MB response — read
+  // the stream manually so the UI can show real download progress instead
+  // of an indefinite "loading" spinner.
+  private async fetchJsonWithProgress(url: string): Promise<unknown> {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.status}`);
+    if (!response.body) return response.json();
+
+    const total = Number(response.headers.get('content-length')) || 0;
+    const reader = response.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let loaded = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      loaded += value.length;
+      this.textProgressSubject.next({ loaded, total });
+    }
+
+    const text = await new Blob(chunks as BlobPart[]).text();
+    return JSON.parse(text);
   }
 
   async loadBibleVersion(language: string, versionName: string): Promise<Bible|undefined> {
@@ -89,8 +129,14 @@ export class BibleService {
       return undefined;
   }
 
-  removeBibleVersion() {
+  // Clears the selected-language flag AND every cached Bible text JSON —
+  // without the latter, re-picking the same language would just return the
+  // stale cached copy from IndexedDB instead of re-fetching (e.g. after a
+  // CDN correction to that language's file).
+  async removeBibleVersion() {
     localStorage.removeItem("selectedBible");
+    const saved = await getAllSavedBibles();
+    await Promise.all(saved.map(b => deleteBibleVersion(b.id)));
   }
 
   async booksDownloadStatus(bible: Bible): Promise<BookDownloadStatus[]> {

@@ -1,0 +1,452 @@
+[
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 6,
+    "verse": 6,
+    "ref": "Deuteronomy 6:6",
+    "theme": "scripture",
+    "text": "These commandments that I give you today are to be on your hearts."
+  },
+  {
+    "book": 5,
+    "abbrev": "JOS",
+    "chapter": 1,
+    "verse": 8,
+    "ref": "Joshua 1:8",
+    "theme": "scripture",
+    "text": "Keep this Book of the Law always on your lips; meditate on it day and night, so that you may be careful to do everything written in it. Then you will be prosperous and successful."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 1,
+    "verse": 2,
+    "ref": "Psalms 1:2",
+    "theme": "scripture",
+    "text": "but whose delight is in the law of the Lord, and who meditates on his law day and night."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 19,
+    "verse": 7,
+    "ref": "Psalms 19:7",
+    "theme": "scripture",
+    "text": "The heavens declare the glory of God; the skies proclaim the work of his hands."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 11,
+    "ref": "Psalms 119:11",
+    "theme": "scripture",
+    "text": "I have hidden your word in my heart that I might not sin against you."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 105,
+    "ref": "Psalms 119:105",
+    "theme": "scripture",
+    "text": "Your word is a lamp for my feet, a light on my path."
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 30,
+    "verse": 5,
+    "ref": "Proverbs 30:5",
+    "theme": "scripture",
+    "text": "“Every word of God is flawless; he is a shield to those who take refuge in him."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 55,
+    "verse": 11,
+    "ref": "Isaiah 55:11",
+    "theme": "scripture",
+    "text": "so is my word that goes out from my mouth: It will not return to me empty, but will accomplish what I desire and achieve the purpose for which I sent it."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 4,
+    "verse": 4,
+    "ref": "Matthew 4:4",
+    "theme": "scripture",
+    "text": "Jesus answered, “It is written: ‘Man shall not live on bread alone, but on every word that comes from the mouth of God.’”"
+  },
+  {
+    "book": 41,
+    "abbrev": "LUK",
+    "chapter": 11,
+    "verse": 28,
+    "ref": "Luke 11:28",
+    "theme": "scripture",
+    "text": "He replied, “Blessed rather are those who hear the word of God and obey it.”"
+  },
+  {
+    "book": 43,
+    "abbrev": "ACT",
+    "chapter": 17,
+    "verse": 11,
+    "ref": "Acts 17:11",
+    "theme": "scripture",
+    "text": "Now the Berean Jews were of more noble character than those in Thessalonica, for they received the message with great eagerness and examined the Scriptures every day to see if what Paul said was true."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 10,
+    "verse": 17,
+    "ref": "Romans 10:17",
+    "theme": "scripture",
+    "text": "Consequently, faith comes from hearing the message, and the message is heard through the word about Christ."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 15,
+    "verse": 4,
+    "ref": "Romans 15:4",
+    "theme": "scripture",
+    "text": "For everything that was written in the past was written to teach us, so that through the endurance taught in the Scriptures and the encouragement they provide we might have hope."
+  },
+  {
+    "book": 54,
+    "abbrev": "2TI",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "2 Timothy 3:16",
+    "theme": "scripture",
+    "text": "All Scripture is God-breathed and is useful for teaching, rebuking, correcting and training in righteousness,"
+  },
+  {
+    "book": 57,
+    "abbrev": "HEB",
+    "chapter": 4,
+    "verse": 12,
+    "ref": "Hebrews 4:12",
+    "theme": "scripture",
+    "text": "For the word of God is alive and active. Sharper than any double-edged sword, it penetrates even to dividing soul and spirit, joints and marrow; it judges the thoughts and attitudes of the heart."
+  },
+  {
+    "book": 58,
+    "abbrev": "JAS",
+    "chapter": 1,
+    "verse": 22,
+    "ref": "James 1:22",
+    "theme": "scripture",
+    "text": "Do not merely listen to the word, and so deceive yourselves. Do what it says."
+  },
+  {
+    "book": 59,
+    "abbrev": "1PE",
+    "chapter": 1,
+    "verse": 25,
+    "ref": "1 Peter 1:25",
+    "theme": "scripture",
+    "text": "For you have been born again, not of perishable seed, but of imperishable, through the living and enduring word of God."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 27,
+    "verse": 4,
+    "ref": "Psalms 27:4",
+    "theme": "connection",
+    "text": "One thing I ask from the Lord, this only do I seek: that I may dwell in the house of the Lord all the days of my life, to gaze on the beauty of the Lord and to seek him in his temple."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 46,
+    "verse": 1,
+    "ref": "Psalms 46:1",
+    "theme": "connection",
+    "text": "God is our refuge and strength, an ever-present help in trouble."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 62,
+    "verse": 8,
+    "ref": "Psalms 62:8",
+    "theme": "connection",
+    "text": "Trust in him at all times, you people; pour out your hearts to him, for God is our refuge."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 63,
+    "verse": 1,
+    "ref": "Psalms 63:1",
+    "theme": "connection",
+    "text": "You, God, are my God, earnestly I seek you; I thirst for you, my whole being longs for you, in a dry and parched land where there is no water."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 105,
+    "verse": 4,
+    "ref": "Psalms 105:4",
+    "theme": "connection",
+    "text": "Look to the Lord and his strength; seek his face always."
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 3,
+    "verse": 5,
+    "ref": "Proverbs 3:5",
+    "theme": "connection",
+    "text": "Trust in the Lord with all your heart and lean not on your own understanding;"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 41,
+    "verse": 10,
+    "ref": "Isaiah 41:10",
+    "theme": "connection",
+    "text": "So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my righteous right hand."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 29,
+    "verse": 11,
+    "ref": "Jeremiah 29:11",
+    "theme": "connection",
+    "text": "For I know the plans I have for you,” declares the Lord, “plans to prosper you and not to harm you, plans to give you hope and a future."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 29,
+    "verse": 13,
+    "ref": "Jeremiah 29:13",
+    "theme": "connection",
+    "text": "You will seek me and find me when you seek me with all your heart."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 6,
+    "verse": 33,
+    "ref": "Matthew 6:33",
+    "theme": "connection",
+    "text": "But seek first his kingdom and his righteousness, and all these things will be given to you as well."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 7,
+    "verse": 7,
+    "ref": "Matthew 7:7",
+    "theme": "connection",
+    "text": "“Ask and it will be given to you; seek and you will find; knock and the door will be opened to you."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 11,
+    "verse": 28,
+    "ref": "Matthew 11:28",
+    "theme": "connection",
+    "text": "“Come to me, all you who are weary and burdened, and I will give you rest."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 14,
+    "verse": 6,
+    "ref": "John 14:6",
+    "theme": "connection",
+    "text": "Jesus answered, “I am the way and the truth and the life. No one comes to the Father except through me."
+  },
+  {
+    "book": 49,
+    "abbrev": "PHP",
+    "chapter": 4,
+    "verse": 6,
+    "ref": "Philippians 4:6",
+    "theme": "connection",
+    "text": "Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God."
+  },
+  {
+    "book": 58,
+    "abbrev": "JAS",
+    "chapter": 4,
+    "verse": 8,
+    "ref": "James 4:8",
+    "theme": "connection",
+    "text": "Come near to God and he will come near to you."
+  },
+  {
+    "book": 65,
+    "abbrev": "REV",
+    "chapter": 3,
+    "verse": 20,
+    "ref": "Revelation 3:20",
+    "theme": "connection",
+    "text": "Here I am! I stand at the door and knock. If anyone hears my voice and opens the door, I will come in and eat with that person, and they with me."
+  },
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 7,
+    "verse": 9,
+    "ref": "Deuteronomy 7:9",
+    "theme": "love",
+    "text": "Know therefore that the Lord your God is God; he is the faithful God, keeping his covenant of love to a thousand generations of those who love him and keep his commandments."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 36,
+    "verse": 7,
+    "ref": "Psalms 36:7",
+    "theme": "love",
+    "text": "How priceless is your unfailing love, O God! People take refuge in the shadow of your wings."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 100,
+    "verse": 5,
+    "ref": "Psalms 100:5",
+    "theme": "love",
+    "text": "For the Lord is good and his love endures forever; his faithfulness continues through all generations."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 103,
+    "verse": 11,
+    "ref": "Psalms 103:11",
+    "theme": "love",
+    "text": "For as high as the heavens are above the earth, so great is his love for those who fear him;"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 136,
+    "verse": 1,
+    "ref": "Psalms 136:1",
+    "theme": "love",
+    "text": "Give thanks to the Lord, for he is good. His love endures forever."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 145,
+    "verse": 9,
+    "ref": "Psalms 145:9",
+    "theme": "love",
+    "text": "The Lord is good to all; he has compassion on all he has made."
+  },
+  {
+    "book": 35,
+    "abbrev": "ZEP",
+    "chapter": 3,
+    "verse": 17,
+    "ref": "Zephaniah 3:17",
+    "theme": "love",
+    "text": "The Lord your God is with you, the Mighty Warrior who saves. He will take great delight in you; in his love he will no longer rebuke you, but will rejoice over you with singing."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "John 3:16",
+    "theme": "love",
+    "text": "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 15,
+    "verse": 9,
+    "ref": "John 15:9",
+    "theme": "love",
+    "text": "“As the Father has loved me, so have I loved you. Now remain in my love."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 15,
+    "verse": 13,
+    "ref": "John 15:13",
+    "theme": "love",
+    "text": "Greater love has no one than this: to lay down one’s life for one’s friends."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 5,
+    "verse": 8,
+    "ref": "Romans 5:8",
+    "theme": "love",
+    "text": "But God demonstrates his own love for us in this: While we were still sinners, Christ died for us."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 8,
+    "verse": 38,
+    "ref": "Romans 8:38",
+    "theme": "love",
+    "text": "For I am convinced that neither death nor life, neither angels nor demons, neither the present nor the future, nor any powers, neither height nor depth, nor anything else in all creation, will be able to separate us from the love of God that is in Christ Jesus our Lord."
+  },
+  {
+    "book": 47,
+    "abbrev": "GAL",
+    "chapter": 2,
+    "verse": 20,
+    "ref": "Galatians 2:20",
+    "theme": "love",
+    "text": "I have been crucified with Christ and I no longer live, but Christ lives in me. The life I now live in the body, I live by faith in the Son of God, who loved me and gave himself for me."
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 2,
+    "verse": 4,
+    "ref": "Ephesians 2:4",
+    "theme": "love",
+    "text": "But because of his great love for us, God, who is rich in mercy,"
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 3,
+    "verse": 19,
+    "ref": "Ephesians 3:19",
+    "theme": "love",
+    "text": "and to know this love that surpasses knowledge—that you may be filled to the measure of all the fullness of God."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 8,
+    "ref": "1 John 4:8",
+    "theme": "love",
+    "text": "Whoever does not love does not know God, because God is love."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 19,
+    "ref": "1 John 4:19",
+    "theme": "love",
+    "text": "We love because he first loved us."
+  }
+]

@@ -94,6 +94,15 @@
       "sign_in": "Googleでサインイン",
       "signed_in_as": "サインイン中：",
       "sign_out": "サインアウト"
+    },
+    "notifications": {
+      "title": "毎日のリマインダー",
+      "description": "聖書を読むきっかけになる聖句を毎日通知でお届けします。完全に任意です。",
+      "enable": "毎日のリマインダーを有効にする",
+      "disable": "毎日のリマインダーを無効にする",
+      "permission_error": "通知を有効にできませんでした——ブラウザのこのサイトに対する通知の許可設定をご確認ください。",
+      "ios_install_required": "iPhoneでは、このアプリをホーム画面に追加し（共有ボタン→ホーム画面に追加）、ホーム画面から開いた場合のみ通知が機能します。",
+      "unsupported": "このブラウザでは通知がサポートされていません。"
     }
   },
   "dialog": {
@@ -101,6 +110,12 @@
       "title": "本当によろしいですか？",
       "message": "確認するには、このボタンを5秒間長押ししてください"
     }
+  },
+  "install_prompt": {
+    "title": "BibleAudioをインストール",
+    "description": "デバイスに追加して、すばやくアクセスしオフラインで聴けるようにしましょう。",
+    "ios_instructions": "共有ボタンをタップし、「ホーム画面に追加」を選択してください。",
+    "install_button": "インストール"
   },
   "plan_content": {
     "iniciante-7-dias": {

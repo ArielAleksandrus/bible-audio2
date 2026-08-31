@@ -6,5 +6,21 @@ service cloud.firestore {
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+
+    // Shared, non-sensitive: the 50 daily-reminder verses per language,
+    // derived client-side from each Bible translation. Public so any device
+    // can seed a language's set without needing to sign in.
+    match /verses/{lang} {
+      allow read, write: if true;
+    }
+
+    // Daily-reminder push subscriptions. Not tied to a signed-in user —
+    // each device keys its own doc with a random locally-generated id, so
+    // there's no account to authenticate against. The subscription payload
+    // itself isn't sensitive (a device push endpoint + language), so this
+    // stays open like verses/{lang} above.
+    match /push_subscriptions/{deviceId} {
+      allow read, write: if true;
+    }
   }
 }

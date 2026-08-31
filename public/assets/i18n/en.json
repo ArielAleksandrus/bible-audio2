@@ -94,6 +94,15 @@
       "sign_in": "Sign in with Google",
       "signed_in_as": "Signed in as",
       "sign_out": "Sign out"
+    },
+    "notifications": {
+      "title": "Daily Reminders",
+      "description": "Get a daily notification with a Bible verse to encourage you to read. Fully optional.",
+      "enable": "Enable Daily Reminders",
+      "disable": "Disable Daily Reminders",
+      "permission_error": "Couldn't enable notifications — check your browser's notification permission for this site.",
+      "ios_install_required": "On iPhone, notifications only work after you add this app to your Home Screen (Share button → Add to Home Screen), then open it from there.",
+      "unsupported": "Notifications aren't supported in this browser."
     }
   },
   "dialog": {
@@ -101,6 +110,12 @@
       "title": "Are you sure?",
       "message": "To confirm, hold this button for 5 seconds"
     }
+  },
+  "install_prompt": {
+    "title": "Install BibleAudio",
+    "description": "Add it to your device for quick access and offline listening.",
+    "ios_instructions": "Tap the Share button, then \"Add to Home Screen\".",
+    "install_button": "Install"
   },
   "plan_content": {
     "iniciante-7-dias": {

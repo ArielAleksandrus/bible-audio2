@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import type { Firestore } from 'firebase/firestore';
 import { Subject } from 'rxjs';
 
-import { firebaseEnabled, getFirebaseApp } from '../storage/firebase';
+import { firebaseEnabled, getFirestoreDb } from '../storage/firebase';
 import { AuthService } from './auth.service';
 import { PlanService } from './plan.service';
 import { Plan } from '../models/plan';
@@ -25,7 +25,6 @@ export class SyncService {
   // pages showing plans know to reload.
   syncCompleted$ = new Subject<void>();
 
-  private dbPromise: Promise<Firestore> | null = null;
   private fsModule: Promise<typeof import('firebase/firestore')> | null = null;
 
   constructor(private authServ: AuthService, private planServ: PlanService) {
@@ -46,17 +45,8 @@ export class SyncService {
     return this.fsModule;
   }
 
-  private async getDb(): Promise<Firestore> {
-    if (!this.dbPromise) {
-      this.dbPromise = (async () => {
-        const app = await getFirebaseApp();
-        const { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } = await this.getFsModule();
-        return initializeFirestore(app, {
-          localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-        });
-      })();
-    }
-    return this.dbPromise;
+  private getDb(): Promise<Firestore> {
+    return getFirestoreDb();
   }
 
   private async pushPlan(plan: Plan): Promise<void> {

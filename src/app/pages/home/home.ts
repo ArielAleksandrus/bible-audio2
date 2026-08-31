@@ -52,6 +52,7 @@ export class Home implements OnInit {
   availableMB = 0;
 
   progress$;
+  textDownloadProgress$;
 
   showTextViewer = false;
   textBook?: BibleBook;
@@ -66,6 +67,7 @@ export class Home implements OnInit {
     private translate: TranslateService
   ) {
     this.progress$ = this.bibleServ.downloadProgress$;
+    this.textDownloadProgress$ = this.bibleServ.textDownloadProgress$;
   }
 
   ngOnInit() {

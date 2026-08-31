@@ -1,0 +1,56 @@
+.install-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001; // above the audio player (1000)
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.banner-icon {
+  flex-shrink: 0;
+}
+
+.banner-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+
+  strong {
+    font-size: 0.95rem;
+  }
+
+  span {
+    font-size: 0.8rem;
+    opacity: 0.9;
+  }
+}
+
+.banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.close-button {
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .install-banner {
+    flex-wrap: wrap;
+  }
+
+  .banner-text {
+    flex-basis: 100%;
+    order: 1;
+  }
+}

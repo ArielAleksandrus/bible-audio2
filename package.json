@@ -1,6 +1,6 @@
 {
   "name": "bible-audio2",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -36,15 +36,19 @@
     "@ngx-translate/http-loader": "^17.0.0",
     "bible-picker": "^1.2.0",
     "firebase": "^12.18.0",
+    "firebase-admin": "^14.3.0",
     "idb": "^8.0.3",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@angular/build": "^21.0.0",
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
     "@types/node": "^25.0.8",
+    "@types/web-push": "^3.6.4",
+    "@vercel/node": "^10.0.0",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

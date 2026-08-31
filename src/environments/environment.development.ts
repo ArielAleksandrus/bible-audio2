@@ -11,5 +11,6 @@ export const environment = {
 		storageBucket: 'bible-audio-ab851.firebasestorage.app',
 		messagingSenderId: '708812956918',
 		appId: '1:708812956918:web:db1f52d32fff77971b78d7'
-	}
+	},
+	vapidPublicKey: 'BIqmtyyf9OrlogdzourrlmHSQXQKSocKMAK86CWnlUx9J32priS9REg_SqxFcWzWE3yfXJPsVbf9Qu-V7qBDIYI'
 };

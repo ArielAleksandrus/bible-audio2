@@ -1,0 +1,23 @@
+<div class="install-banner" *ngIf="visible">
+  <mat-icon class="banner-icon">install_mobile</mat-icon>
+
+  <div class="banner-text">
+    <ng-container *ngIf="mode === 'android'">
+      <strong>{{ 'install_prompt.title' | translate }}</strong>
+      <span>{{ 'install_prompt.description' | translate }}</span>
+    </ng-container>
+    <ng-container *ngIf="mode === 'ios'">
+      <strong>{{ 'install_prompt.title' | translate }}</strong>
+      <span>{{ 'install_prompt.ios_instructions' | translate }}</span>
+    </ng-container>
+  </div>
+
+  <div class="banner-actions">
+    <button mat-raised-button color="accent" *ngIf="mode === 'android'" (click)="install()">
+      {{ 'install_prompt.install_button' | translate }}
+    </button>
+    <button mat-icon-button class="close-button" (click)="dismiss()" aria-label="Dismiss">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>

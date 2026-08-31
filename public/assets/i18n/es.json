@@ -94,6 +94,15 @@
       "sign_in": "Iniciar sesión con Google",
       "signed_in_as": "Sesión iniciada como",
       "sign_out": "Cerrar sesión"
+    },
+    "notifications": {
+      "title": "Recordatorios diarios",
+      "description": "Recibe una notificación diaria con un versículo bíblico que te anime a leer. Totalmente opcional.",
+      "enable": "Activar recordatorios diarios",
+      "disable": "Desactivar recordatorios diarios",
+      "permission_error": "No se pudieron activar las notificaciones — revisa el permiso de notificaciones del navegador para este sitio.",
+      "ios_install_required": "En iPhone, las notificaciones solo funcionan si agregas esta app a tu pantalla de inicio (botón Compartir → Agregar a pantalla de inicio) y la abres desde ahí.",
+      "unsupported": "Las notificaciones no son compatibles con este navegador."
     }
   },
   "dialog": {
@@ -101,6 +110,12 @@
       "title": "¿Estás seguro?",
       "message": "Para confirmar, mantén presionado este botón durante 5 segundos"
     }
+  },
+  "install_prompt": {
+    "title": "Instalar BibleAudio",
+    "description": "Agrégala a tu dispositivo para acceso rápido y escucha sin conexión.",
+    "ios_instructions": "Toca el botón Compartir y luego \"Agregar a pantalla de inicio\".",
+    "install_button": "Instalar"
   },
   "plan_content": {
     "iniciante-7-dias": {
