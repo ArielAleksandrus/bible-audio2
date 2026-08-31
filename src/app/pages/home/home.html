@@ -30,7 +30,7 @@
     <div class="download-area">
       <!-- BOTÃO: aparece se houver espaço E NÃO estiver baixando -->
       <div class="full-download-button-wrapper"
-           *ngIf="availableMB > 1500 && (progress$ | async)?.status !== 'running'">
+           *ngIf="availableMB > 1500 && !bibleFullyDownloaded && (progress$ | async)?.status !== 'running'">
         <button mat-raised-button
                 color="primary"
                 class="full-download-button"
@@ -80,7 +80,7 @@
     <div class="picker-wrapper">
       <bible-picker
         [bible]="bibleData"
-        [select]="'chapters'"
+        [select]="'chapter'"
         [customCSS]="customCSS"
         (onSelecting)="bpSelecting($event)"
         (onSelected)="bpSelected($event)">

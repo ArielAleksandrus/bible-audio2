@@ -95,7 +95,7 @@ export class Home implements OnInit {
     this.bibleServ.loadBibleVersion(selected.split("-")[0], selected.split("-")[1]).then(res => {
       if(res) {
         this.bibleData = res;
-        const savedLang = this.bibleData.language;
+        const savedLang = this.bibleData.language?.split("-")[0]; // e.g. 'pt-br' -> 'pt'
         if(savedLang) {
           this.translate.use(savedLang);
         }
@@ -238,6 +238,11 @@ export class Home implements OnInit {
 
   get remainingCount(): number {
     return this.tracks.length - this.completedCount;
+  }
+
+  get bibleFullyDownloaded(): boolean {
+    return this.booksDownloadStatus.length > 0 &&
+      this.booksDownloadStatus.every(b => b.pendingCount === 0);
   }
 
   private isOnWifi(): boolean {

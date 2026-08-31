@@ -7,9 +7,27 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 
-import { provideTranslateService } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
-import { provideHttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { provideTranslateService, provideTranslateLoader, TranslateLoader } from '@ngx-translate/core';
+import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+const I18N_PREFIX = './assets/i18n/';
+const I18N_SUFFIX = '.json';
+
+// Some Bible JSONs on the CDN report their language as a regional variant
+// (e.g. 'pt-br') that has no matching file under assets/i18n — only the
+// base 'pt.json' exists. Normalizing here means even a stale cached client
+// that hasn't picked up the code fix yet can't request a deleted file.
+@Injectable()
+class AppTranslateLoader implements TranslateLoader {
+  private http = inject(HttpClient);
+
+  getTranslation(lang: string): Observable<any> {
+    const base = lang.split('-')[0];
+    return this.http.get(`${I18N_PREFIX}${base}${I18N_SUFFIX}`);
+  }
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,10 +44,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideTranslateService({
       defaultLanguage: 'pt',  // português como padrão
-    }),
-    provideTranslateHttpLoader({
-      prefix: './assets/i18n/',   // translations folder
-      suffix: '.json'
+      loader: provideTranslateLoader(AppTranslateLoader)
     })
   ]
 };

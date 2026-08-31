@@ -80,7 +80,7 @@ export class Plans {
     this.bibleServ.loadBibleVersion(selected.split("-")[0], selected.split("-")[1]).then(res => {
       if(res) {
         this.bibleData = res;
-        const savedLang = this.bibleData.language;
+        const savedLang = this.bibleData.language?.split("-")[0]; // e.g. 'pt-br' -> 'pt'
         if(savedLang) {
           this.translate.use(savedLang);
         }

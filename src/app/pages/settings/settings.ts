@@ -88,12 +88,12 @@ export class Settings {
     this.bibleServ.loadBibleVersion(selected.split("-")[0], selected.split("-")[1]).then(res => {
       if(res) {
         this.bibleData = res;
-        const savedLang = this.bibleData.language;
+        const savedLang = this.bibleData.language?.split("-")[0]; // e.g. 'pt-br' -> 'pt'
         if(savedLang) {
           this.translate.use(savedLang);
         }
         //@ts-ignore
-        this.currentLanguageName = this.languageMap[this.bibleData.language || "pt"] || "Português";
+        this.currentLanguageName = this.languageMap[savedLang || "pt"] || "Português";
       } else {
         location.href = "/home";
       }
