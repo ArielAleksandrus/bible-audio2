@@ -72,6 +72,24 @@ export class PlanService {
     await db.delete('plans', id);
   }
 
+  // Quantas vezes o usuário já terminou este plano (persistido separadamente
+  // do progresso, já que o progresso é resetado a cada reinício).
+  async incrementCompletionCount(planId: string): Promise<number> {
+    const db = await dbPromise;
+    const existing = await db.get('plan_completions', planId);
+    const count = (existing?.count || 0) + 1;
+    await db.put('plan_completions', { id: planId, count });
+    return count;
+  }
+
+  async getAllCompletionCounts(): Promise<Record<string, number>> {
+    const db = await dbPromise;
+    const all = await db.getAll('plan_completions');
+    const map: Record<string, number> = {};
+    for(const rec of all) map[rec.id] = rec.count;
+    return map;
+  }
+
   // Baixar plano novo da internet e salvar automaticamente
   async importFromUrl(url: string): Promise<Plan> {
     const response = await fetch(url);

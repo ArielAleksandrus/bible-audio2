@@ -59,7 +59,8 @@
       "delete": "删除",
       "start": "开始计划"
     },
-    "days": "天"
+    "days": "天",
+    "times_completed": "已完成 {{count}} 次"
   },
   "settings": {
     "title": "设置",

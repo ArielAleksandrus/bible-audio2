@@ -230,6 +230,18 @@
   margin-top: 8px;
 }
 
+.completion-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.8rem;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
 .plan-buttons {
   display: flex;
   gap: 12px;

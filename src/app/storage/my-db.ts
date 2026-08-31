@@ -38,13 +38,29 @@ interface AudioAppDB extends DBSchema {
       'by-downloadedAt': number;
     };
   };
+  analytics_queue: {
+    key: number;
+    value: {
+      id?: number;
+      name: string;
+      params: Record<string, unknown>;
+      ts: number;
+    };
+  };
+  plan_completions: {
+    key: string;
+    value: {
+      id: string; // plan id
+      count: number;
+    };
+  };
 }
 
 const DB_NAME = 'audio-db';
-const DB_VERSION = 3;
+const DB_VERSION = 5;
 
 // Lista de stores com tipo literal (as const) para satisfazer o TypeScript
-const STORE_NAMES = ['files', 'plans', 'bibles'] as const;
+const STORE_NAMES = ['files', 'plans', 'bibles', 'analytics_queue', 'plan_completions'] as const;
 type StoreName = (typeof STORE_NAMES)[number]; // "files" | "plans" | "bibles"
 
 export const dbPromise: Promise<IDBPDatabase<AudioAppDB>> = (async () => {
@@ -68,6 +84,12 @@ export const dbPromise: Promise<IDBPDatabase<AudioAppDB>> = (async () => {
           store.createIndex('by-language', 'language');
           store.createIndex('by-version', 'version');
           store.createIndex('by-downloadedAt', 'downloadedAt');
+        }
+        if (oldVersion < 4) {
+          db.createObjectStore('analytics_queue', { keyPath: 'id', autoIncrement: true });
+        }
+        if (oldVersion < 5) {
+          db.createObjectStore('plan_completions', { keyPath: 'id' });
         }
       },
       blocked() {
@@ -135,7 +157,10 @@ async function createFreshDatabase(): Promise<IDBPDatabase<AudioAppDB>> {
       biblesStore.createIndex('by-version', 'version');
       biblesStore.createIndex('by-downloadedAt', 'downloadedAt');
 
-      console.log('Fresh database created (v3)');
+      db.createObjectStore('analytics_queue', { keyPath: 'id', autoIncrement: true });
+      db.createObjectStore('plan_completions', { keyPath: 'id' });
+
+      console.log('Fresh database created (v5)');
     },
   });
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { dbPromise } from '../storage/my-db';
 import { AudioDownloaderService } from './audio-downloader.service';
+import { AnalyticsService } from './analytics.service';
 import { Track } from '../models/track';
 import { BehaviorSubject } from 'rxjs';
 
@@ -32,7 +33,7 @@ export class AudioService {
   private trackEndedSource = new BehaviorSubject<Track | null>(null);
   trackEnded$ = this.trackEndedSource.asObservable();
 
-  constructor(private downloader: AudioDownloaderService) {
+  constructor(private downloader: AudioDownloaderService, private analytics: AnalyticsService) {
     this.prepareAudioElement(this.audio);
     this.prepareAudioElement(this.audio2);
 
@@ -320,7 +321,10 @@ export class AudioService {
     if (!endedEl.currentSrc) return;
 
     const endedTrack = this.currentTrack$.value;
-    if (endedTrack) this.trackEndedSource.next(endedTrack);
+    if (endedTrack) {
+      this.trackEndedSource.next(endedTrack);
+      this.analytics.chapterCompleted(endedTrack.book, endedTrack.chapter);
+    }
 
     if (this.playlist.length === 0 || this.index >= this.playlist.length - 1) {
       this.isPlaying$.next(false);

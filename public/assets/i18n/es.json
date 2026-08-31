@@ -59,7 +59,8 @@
       "delete": "Eliminar",
       "start": "Comenzar Plan"
     },
-    "days": "días"
+    "days": "días",
+    "times_completed": "Completado {{count}}x"
   },
   "settings": {
     "title": "Configuraciones",

@@ -6,6 +6,7 @@ import { AudioDownloaderService } from '../../services/audio-downloader.service'
 import { AudioService } from '../../services/audio.service';
 import { BibleService } from '../../services/bible.service';
 import { PlanService } from '../../services/plan.service';
+import { AnalyticsService } from '../../services/analytics.service';
 
 import { Plan, DailyGoal } from '../../models/plan';
 import { Track } from '../../models/track';
@@ -41,6 +42,7 @@ export class Plans {
   availablePlans: Plan[] = [];
   startedPlans: Plan[] = [];
   completedPlans: Plan[] = [];
+  completionCounts: Record<string, number> = {};
 
   currentPlan?: Plan;
   currentDay: number = 1;
@@ -63,7 +65,8 @@ export class Plans {
     private audioService: AudioService,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private analytics: AnalyticsService
   ) {
 
     if(!localStorage.getItem("selectedBible")) {
@@ -84,6 +87,10 @@ export class Plans {
       }
     });
 
+  }
+
+  completionCount(plan: Plan): number {
+    return this.completionCounts[plan.id] || 0;
   }
 
   ngOnInit() {
@@ -141,8 +148,15 @@ export class Plans {
 
     const completed: boolean = this.currentPlan.goals.every(goal => goal.completed);
 
-    if(completed)
+    if(completed && this.currentPlan.status !== "completed") {
+      const planId = this.currentPlan.id;
+      this.currentPlan.status = "completed";
+      this.analytics.planCompleted(planId);
+      this.planServ.incrementCompletionCount(planId).then(count => {
+        this.completionCounts[planId] = count;
+      });
       alert("Parabéns, você finalizou o plano de leitura!");
+    }
   }
 
   /////////// START, RESUME, OPEN AND CLOSE PLANS ////////////
@@ -190,13 +204,14 @@ export class Plans {
     plan.startedAt = new Date().toISOString();
     plan.status = "started";
     this.planServ.get(plan.id).then(res => {
-      if(res) {
+      if(res && res.status !== "completed") {
         alert("Plano já iniciado. Caso queira recomeçá-lo, remova-o antes de adicionar novamente");
         return;
       } else {
         this.planServ.save(plan).then(_ => {
           this.openPlan(plan, 1);
         });
+        this.analytics.planStarted(plan.id);
       }
     });
     this.openPlan(plan);
@@ -292,6 +307,11 @@ export class Plans {
 
 
   private _loadPlans() {
+    this.planServ.getAllCompletionCounts().then(counts => {
+      this.completionCounts = counts;
+      this.cdr.detectChanges();
+    });
+
     this.planServ.getAll().then(plans => {
       this.availablePlans = [];
       this.startedPlans = [];

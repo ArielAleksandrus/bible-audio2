@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { AudioPlayer } from './components/audio-player/audio-player';
+import { AnalyticsService } from './services/analytics.service';
 
 // Material components (MDC-based tab nav bar)
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
@@ -38,7 +39,8 @@ export class App {
   activeLink = this.links[0];
 
   constructor(
-    private translate: TranslateService
+    private translate: TranslateService,
+    private analytics: AnalyticsService
   ) {
     let lang = localStorage.getItem("selectedBible");
     if(lang) {

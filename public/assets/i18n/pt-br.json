@@ -59,7 +59,8 @@
       "delete": "Excluir",
       "start": "Começar Plano"
     },
-    "days": "dias"
+    "days": "dias",
+    "times_completed": "Concluído {{count}}x"
   },
   "settings": {
     "title": "Configurações",

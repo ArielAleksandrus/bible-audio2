@@ -59,7 +59,8 @@
       "delete": "Delete",
       "start": "Start Plan"
     },
-    "days": "days"
+    "days": "days",
+    "times_completed": "Completed {{count}}x"
   },
   "settings": {
     "title": "Settings",
