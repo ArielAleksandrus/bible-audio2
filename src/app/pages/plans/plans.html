@@ -6,16 +6,16 @@
     <div class="plan-header">
       <h2>
         <mat-icon color="primary" class="header-icon">menu_book</mat-icon>
-        {{ 'plans.current.title' | translate }}: {{ currentPlan.title }}
+        {{ 'plans.current.title' | translate }}: {{ planText(currentPlan, 'title') }}
         <span *ngIf="completionCount(currentPlan) > 0" class="completion-badge">
           {{ 'plans.times_completed' | translate: { count: completionCount(currentPlan) } }}
         </span>
       </h2>
       <div class="plan-subtitle" *ngIf="currentPlan.author">
-        {{ 'plans.current.by' | translate }} {{ currentPlan.author }}
+        {{ 'plans.current.by' | translate }} {{ planText(currentPlan, 'author') }}
       </div>
       <div class="plan-description" *ngIf="currentPlan.description">
-        {{ currentPlan.description }}
+        {{ planText(currentPlan, 'description') }}
       </div>
       <div class="progress-text">
         <strong>
@@ -100,12 +100,12 @@
     <div class="plans-list">
       <div *ngFor="let plan of startedPlans" class="plan-item">
         <div class="plan-info">
-          <strong>{{ plan.title }}</strong>
+          <strong>{{ planText(plan, 'title') }}</strong>
           <span *ngIf="completionCount(plan) > 0" class="completion-badge">
             {{ 'plans.times_completed' | translate: { count: completionCount(plan) } }}
           </span>
-          <small *ngIf="plan.author">({{ 'plans.current.by' | translate }}: {{ plan.author }})</small>
-          <div *ngIf="plan.description" class="plan-desc">{{ plan.description }}</div>
+          <small *ngIf="plan.author">({{ 'plans.current.by' | translate }}: {{ planText(plan, 'author') }})</small>
+          <div *ngIf="plan.description" class="plan-desc">{{ planText(plan, 'description') }}</div>
           <div class="plan-days">
             {{ plan.daysRemaining ?? 0 }} {{ 'plans.current.of' | translate }} {{ plan.days }} {{ 'plans.current.days_remaining' | translate }}
           </div>
@@ -135,12 +135,12 @@
     <div class="plans-list">
       <div *ngFor="let plan of availablePlans" class="plan-item">
         <div class="plan-info">
-          <strong>{{ plan.title }}</strong>
+          <strong>{{ planText(plan, 'title') }}</strong>
           <span *ngIf="completionCount(plan) > 0" class="completion-badge">
             {{ 'plans.times_completed' | translate: { count: completionCount(plan) } }}
           </span>
-          <small *ngIf="plan.author">({{ 'plans.current.by' | translate }}: {{ plan.author }})</small>
-          <div *ngIf="plan.description" class="plan-desc">{{ plan.description }}</div>
+          <small *ngIf="plan.author">({{ 'plans.current.by' | translate }}: {{ planText(plan, 'author') }})</small>
+          <div *ngIf="plan.description" class="plan-desc">{{ planText(plan, 'description') }}</div>
           <div class="plan-days">{{ plan.days }} {{ 'plans.days' | translate }}</div>
         </div>
         <div class="plan-buttons">

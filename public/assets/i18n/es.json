@@ -94,5 +94,32 @@
       "title": "¿Estás seguro?",
       "message": "Para confirmar, mantén presionado este botón durante 5 segundos"
     }
+  },
+  "plan_content": {
+    "iniciante-7-dias": {
+      "title": "Primeros Pasos en la Biblia",
+      "author": "Hecho para ti",
+      "description": "Un plan de 7 días para quienes están comenzando: pasajes sencillos y esenciales para conocer a Jesús y el amor de Dios"
+    },
+    "novo-testamento-90": {
+      "title": "Nuevo Testamento en 90 días",
+      "author": "Hecho para ti",
+      "description": "Lee todo el Nuevo Testamento en solo 3 meses: perfecto para quienes quieren enfocarse en las enseñanzas de Jesús y los apóstoles"
+    },
+    "natal-7-dias": {
+      "title": "Navidad en 7 Días",
+      "author": "Hecho para ti",
+      "description": "Una lectura devocional de 7 días para celebrar el nacimiento de Jesús: profecías, nacimiento, anuncio y adoración"
+    },
+    "pascoa-7-dias": {
+      "title": "Pascua en 7 Días",
+      "author": "Hecho para ti",
+      "description": "Lectura devocional de 7 días sobre la Pasión, Muerte y Resurrección de Jesús: la verdadera Pascua"
+    },
+    "youversion-365": {
+      "title": "Leamos la Biblia juntos",
+      "author": "Youversion",
+      "description": "Plan de lectura de la Biblia en 1 año"
+    }
   }
 }

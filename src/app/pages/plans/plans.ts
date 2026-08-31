@@ -89,6 +89,18 @@ export class Plans {
 
   }
 
+  // Plan title/author/description come from the plan JSON in a single base language.
+  // Translations for them (when available) live in the i18n files under
+  // plan_content.<planId>.<field>; if no translation exists for the current
+  // language, the original text from the plan is used.
+  planText(plan: Plan | undefined, field: 'title' | 'author' | 'description'): string {
+    if(!plan) return '';
+    const original = plan[field] as string | undefined;
+    const key = `plan_content.${plan.id}.${field}`;
+    const translated = this.translate.instant(key);
+    return (translated && translated !== key) ? translated : (original || '');
+  }
+
   completionCount(plan: Plan): number {
     return this.completionCounts[plan.id] || 0;
   }
