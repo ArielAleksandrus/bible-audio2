@@ -14,10 +14,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 
-import { BiblePicker, Bible, BibleSelection, OverridableCSS as BibleCSS } from 'bible-picker';
+import { BiblePicker, Bible, BibleBook, BibleSelection, OverridableCSS as BibleCSS } from 'bible-picker';
 
 import { MatDialog } from '@angular/material/dialog';
 import { LanguageSelectorDialog } from '../../language-selector-dialog/language-selector-dialog';
+import { BibleTextViewer } from '../../components/bible-text-viewer/bible-text-viewer';
 
 
 @Component({
@@ -30,7 +31,8 @@ import { LanguageSelectorDialog } from '../../language-selector-dialog/language-
       MatProgressSpinnerModule,
       MatProgressBarModule,
       MatButtonModule,
-      TranslateModule
+      TranslateModule,
+      BibleTextViewer
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None // faz o css definido em home.scss penetrar o bible-picker
@@ -50,6 +52,10 @@ export class Home implements OnInit {
   availableMB = 0;
 
   progress$;
+
+  showTextViewer = false;
+  textBook?: BibleBook;
+  textChapters: number[] = [];
 
   constructor(
     private audioService: AudioService,
@@ -208,6 +214,10 @@ export class Home implements OnInit {
     // Playlist must be set before the first chapter ends, not after every chapter is downloaded.
     void this.audioService.playPlaylist(this.tracks, 0);
     void this.dlServ.downloadTracks(this.tracks);
+
+    this.textBook = sel.books[0];
+    this.textChapters = sel.chapters;
+    this.showTextViewer = true;
   }
 
   async playTrackFromHere(track: Track, index: number) {

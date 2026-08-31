@@ -1,0 +1,27 @@
+<div class="text-viewer-overlay">
+  <div class="text-viewer-header">
+    <h2>
+      {{ bookDisplayName }}
+      {{ chapters.length > 1 ? (chapters[0] + '-' + chapters[chapters.length - 1]) : chapters[0] }}
+    </h2>
+    <button mat-icon-button class="close-button" (click)="close.emit()" aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="text-viewer-body">
+    <article class="chapter-block" *ngFor="let chapter of renderedChapters">
+      <h3 class="chapter-number" *ngIf="chapters.length > 1">{{ bookDisplayName }} {{ chapter.number }}</h3>
+
+      <ng-container *ngFor="let entry of chapter.entries">
+        <h4 class="section-heading" *ngIf="entry.heading">{{ entry.text }}</h4>
+        <span class="verse" *ngIf="!entry.heading">
+          <sup class="verse-number">{{ entry.verseNumber }}</sup>{{ entry.text }}
+        </span>
+      </ng-container>
+    </article>
+
+    <!-- Keeps the last lines from being hidden behind the fixed audio player + bottom nav. -->
+    <div class="player-clearance"></div>
+  </div>
+</div>

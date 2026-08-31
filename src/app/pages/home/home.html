@@ -91,3 +91,10 @@
     </div>
   </section>
 </div>
+
+<app-bible-text-viewer
+  *ngIf="showTextViewer && textBook"
+  [book]="textBook"
+  [chapters]="textChapters"
+  (close)="showTextViewer = false">
+</app-bible-text-viewer>
