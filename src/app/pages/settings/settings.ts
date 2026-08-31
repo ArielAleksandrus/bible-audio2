@@ -134,7 +134,9 @@ export class Settings {
       }
     } catch (err) {
       console.warn('Settings::toggleNotifications', err);
-      this.notifError = 'permission';
+      // TEMP: surface the raw error so we can see what's actually failing
+      // on devices we can't attach devtools to (e.g. Android over 4G).
+      this.notifError = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
     } finally {
       this.notifBusy = false;
       this.cdr.detectChanges();

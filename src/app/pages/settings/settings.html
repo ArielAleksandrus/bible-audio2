@@ -64,6 +64,8 @@
           <p class="warning-note" *ngIf="notifError">
             <mat-icon class="note-icon">warning</mat-icon>
             {{ 'settings.notifications.permission_error' | translate }}
+            <br/>
+            <small>{{ notifError }}</small>
           </p>
         </ng-container>
         <ng-template #notSupported>
