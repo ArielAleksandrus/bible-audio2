@@ -111,6 +111,10 @@
       "message": "確認するには、このボタンを5秒間長押ししてください"
     }
   },
+  "update_available": {
+    "message": "新しいバージョンが利用可能です。",
+    "reload": "再読み込み"
+  },
   "install_prompt": {
     "title": "BibleAudioをインストール",
     "description": "デバイスに追加して、すばやくアクセスしオフラインで聴けるようにしましょう。",

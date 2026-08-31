@@ -111,10 +111,6 @@
       "message": "Para confirmar, segure este botão por 5 segundos"
     }
   },
-  "update_available": {
-    "message": "Uma nova versão está disponível.",
-    "reload": "Recarregar"
-  },
   "install_prompt": {
     "title": "Instalar o BibleAudio",
     "description": "Adicione ao seu aparelho para acesso rápido e escuta offline.",

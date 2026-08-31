@@ -111,6 +111,10 @@
       "message": "要确认，请按住此按钮 5 秒"
     }
   },
+  "update_available": {
+    "message": "有新版本可用。",
+    "reload": "重新加载"
+  },
   "install_prompt": {
     "title": "安装 BibleAudio",
     "description": "添加到您的设备，快速访问并离线收听。",

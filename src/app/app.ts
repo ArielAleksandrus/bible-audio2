@@ -8,10 +8,12 @@ import { InstallPrompt } from './components/install-prompt/install-prompt';
 import { AnalyticsService } from './services/analytics.service';
 import { SyncService } from './services/sync.service';
 import { AppStateService } from './services/app-state.service';
+import { UpdateService } from './services/update.service';
 
 // Material components (MDC-based tab nav bar)
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -49,12 +51,22 @@ export class App {
     private translate: TranslateService,
     private analytics: AnalyticsService,
     private sync: SyncService,
-    public appState: AppStateService
+    public appState: AppStateService,
+    private updateServ: UpdateService,
+    private snackBar: MatSnackBar
   ) {
     let lang = localStorage.getItem("selectedBible");
     if(lang) {
       //@ts-ignore
       this.currentLanguageName = this.languageMap[lang.split("-")[0]];
     }
+
+    this.updateServ.updateReady$.subscribe(ready => {
+      if (!ready) return;
+      const message = this.translate.instant('update_available.message');
+      const action = this.translate.instant('update_available.reload');
+      this.snackBar.open(message, action, { duration: undefined })
+        .onAction().subscribe(() => this.updateServ.reload());
+    });
   }
 }
