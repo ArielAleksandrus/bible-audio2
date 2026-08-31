@@ -30,7 +30,7 @@
       "title": "当前计划",
       "by": "作者",
       "of": "共",
-      "days_remaining": "天剩余",
+      "days_completed": "天已完成",
       "day": "第"
     },
     "table": {

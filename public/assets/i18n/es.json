@@ -30,7 +30,7 @@
       "title": "Plan Actual",
       "by": "por",
       "of": "de",
-      "days_remaining": "días restantes",
+      "days_completed": "días completados",
       "day": "Día"
     },
     "table": {

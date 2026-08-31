@@ -30,7 +30,7 @@
       "title": "Current Plan",
       "by": "by",
       "of": "of",
-      "days_remaining": "days remaining",
+      "days_completed": "days completed",
       "day": "Day"
     },
     "table": {

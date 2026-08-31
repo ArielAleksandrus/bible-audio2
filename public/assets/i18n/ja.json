@@ -30,7 +30,7 @@
       "title": "現在のプラン",
       "by": "作成者",
       "of": "中",
-      "days_remaining": "残り日数",
+      "days_completed": "日完了",
       "day": "日"
     },
     "table": {

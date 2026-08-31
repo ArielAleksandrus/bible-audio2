@@ -107,6 +107,10 @@ export class Plans {
     return this.completionCounts[plan.id] || 0;
   }
 
+  daysCompleted(plan: Plan): number {
+    return plan.days - (plan.daysRemaining ?? 0);
+  }
+
   ngOnInit() {
     this._loadPlans();
 
