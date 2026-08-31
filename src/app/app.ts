@@ -28,7 +28,8 @@ export class App {
     "pt": "Português",
     "en": "English",
     "es": "Español",
-    "zh": "中文 (Chinese)"
+    "zh": "中文 (Chinese)",
+    "ja": "日本語"
   };
 
   protected readonly title = signal('bible-audio2');

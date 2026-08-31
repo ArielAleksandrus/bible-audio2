@@ -17,6 +17,10 @@
     <span class="flag">🇨🇳</span>
     Chinese - CNVS (简体)
   </button>
+  <button mat-button class="language-btn" (click)="select('ja', 'jcb')">
+    <span class="flag">🇯🇵</span>
+    日本語 - JCB
+  </button>
 
   <div class="loading" *ngIf="loading">
     <mat-spinner diameter="30"></mat-spinner>

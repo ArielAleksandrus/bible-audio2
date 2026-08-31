@@ -1,0 +1,125 @@
+{
+  "hero": {
+    "title": "神の言葉を聞く",
+    "subtitle": "聴きたい書と章を選択してください。音声はオフラインで聴けるように自動的にダウンロードされます。",
+    "full_download": "聖書全体をダウンロード",
+    "full_download_description": "この操作には約1.3 GBが必要です",
+    "downloading_bible": "聖書をダウンロード中：{{total}}章中{{downloaded}}章",
+    "current_chapter": "現在の章",
+    "download_complete": "聖書のダウンロードが完了しました！",
+    "confirm_mobile_data": "Wi-Fiに接続されていません。聖書全体をダウンロードすると約1.3 GBのデータを使用します。それでも続行しますか？"
+  },
+  "loading": {
+    "bible": "あなたの言語で聖書を読み込んでいます",
+    "checking": "ダウンロード済みの項目を確認中..."
+  },
+  "legend": {
+    "partial": "一部ダウンロード",
+    "full": "完全ダウンロード"
+  },
+  "menu": {
+    "home": "ホーム",
+    "plans": "プラン",
+    "settings": "設定"
+  },
+  "plans": {
+    "plans": "プラン",
+    "title": "読書プラン",
+    "subtitle": "計画的に聖書を読むためのプランを選択してください",
+    "current": {
+      "title": "現在のプラン",
+      "by": "作成者",
+      "of": "中",
+      "days_remaining": "残り日数",
+      "day": "日"
+    },
+    "table": {
+      "day": "日",
+      "readings": "読書箇所",
+      "actions": "操作"
+    },
+    "actions": {
+      "play": "目標を再生",
+      "mark_complete": "完了にする",
+      "reset": "リセット"
+    },
+    "no_active": {
+      "title": "進行中のプランはありません",
+      "subtitle": "下記の利用可能なプランから選んで、音声付きで聖書の読書を始めましょう！"
+    },
+    "started": {
+      "title": "開始したプラン"
+    },
+    "available": {
+      "title": "利用可能なプラン"
+    },
+    "buttons": {
+      "resume": "再開",
+      "open": "開く",
+      "delete": "削除",
+      "start": "プランを開始"
+    },
+    "days": "日",
+    "times_completed": "{{count}}回完了"
+  },
+  "settings": {
+    "title": "設定",
+    "subtitle": "アプリのストレージと設定を管理",
+    "voice": "読み上げ音声",
+    "speed": "再生速度",
+    "download": "ダウンロードを管理",
+    "coming_soon": "その他のオプションは近日公開予定...",
+    "storage": {
+      "title": "ストレージ",
+      "used_by_app": "アプリの使用量（音声＋プラン）：",
+      "audios": "ダウンロード済み音声：",
+      "bibles": "聖書テキスト：",
+      "plans": "読書プラン：",
+      "available": "デバイスの空き容量：",
+      "used": "使用済み",
+      "of": "中",
+      "clear_audios": "ダウンロード済み音声をすべて削除",
+      "clear_warning": "ダウンロード済みの音声（{{size}} MB）がすべて完全に削除されますが、読書プランには影響しません。",
+      "calculating": "ストレージ使用量を計算中..."
+    },
+    "language": {
+      "title": "言語",
+      "current": "現在の言語",
+      "reset_button": "言語をリセット",
+      "reset_note": "次回アプリ起動時に、言語選択画面が再び表示されます。"
+    }
+  },
+  "dialog": {
+    "hold_confirm": {
+      "title": "本当によろしいですか？",
+      "message": "確認するには、このボタンを5秒間長押ししてください"
+    }
+  },
+  "plan_content": {
+    "iniciante-7-dias": {
+      "title": "聖書のはじめの一歩",
+      "author": "あなたのために",
+      "description": "初心者のための7日間プラン——イエスと神の愛を知るためのシンプルで大切な聖句"
+    },
+    "novo-testamento-90": {
+      "title": "90日で読む新約聖書",
+      "author": "あなたのために",
+      "description": "わずか3ヶ月で新約聖書全体を読む——イエスと使徒たちの教えに集中したい方に最適"
+    },
+    "natal-7-dias": {
+      "title": "7日間のクリスマス",
+      "author": "あなたのために",
+      "description": "イエスの誕生を祝う7日間のデボーション——預言、誕生、告知、礼拝"
+    },
+    "pascoa-7-dias": {
+      "title": "7日間のイースター",
+      "author": "あなたのために",
+      "description": "イエスの受難、死、復活についての7日間のデボーション——本当のイースター"
+    },
+    "youversion-365": {
+      "title": "一緒に聖書を読みましょう",
+      "author": "Youversion",
+      "description": "1年間の聖書通読プラン"
+    }
+  }
+}
