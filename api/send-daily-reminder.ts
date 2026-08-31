@@ -39,7 +39,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   webpush.setVapidDetails('mailto:support@bibleaudio.app', vapidPublicKey, vapidPrivateKey);
 
-  const app = getApps()[0] ?? initializeApp({ credential: cert(JSON.parse(serviceAccountJson)) });
+  // Dashboard env var inputs sometimes mangle the private_key field's escaped
+  // newlines in transit — normalize regardless of how it actually arrived
+  // (a no-op if it was already fine).
+  const serviceAccount = JSON.parse(serviceAccountJson);
+  if (typeof serviceAccount.private_key === 'string') {
+    serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+  }
+
+  const app = getApps()[0] ?? initializeApp({ credential: cert(serviceAccount) });
   const db = getFirestore(app);
 
   const verseCache = new Map<string, VerseEntry[]>();

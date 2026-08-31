@@ -1,16 +1,10 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 
-const DISMISSED_KEY = 'installPromptDismissed';
-
-// beforeinstallprompt isn't a standard DOM type.
-interface BeforeInstallPromptEvent extends Event {
-  prompt(): Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
+import { InstallPromptService } from '../../services/install-prompt.service';
 
 // A custom "Install app" banner instead of waiting for the user to find the
 // browser's own install option. Android/Chrome/desktop: captures the native
@@ -25,46 +19,13 @@ interface BeforeInstallPromptEvent extends Event {
   styleUrl: './install-prompt.scss'
 })
 export class InstallPrompt {
-  visible = false;
-  mode: 'android' | 'ios' = 'android';
+  constructor(public installServ: InstallPromptService) {}
 
-  private deferredPrompt: BeforeInstallPromptEvent | null = null;
-
-  constructor() {
-    if (this.alreadyInstalled() || localStorage.getItem(DISMISSED_KEY) === 'true') return;
-
-    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if (isIos) {
-      this.mode = 'ios';
-      this.visible = true;
-    }
-    // Android/desktop: wait for beforeinstallprompt (handled below) before showing anything.
+  install(): void {
+    void this.installServ.install();
   }
 
-  @HostListener('window:beforeinstallprompt', ['$event'])
-  onBeforeInstallPrompt(event: Event) {
-    event.preventDefault();
-    if (localStorage.getItem(DISMISSED_KEY) === 'true') return;
-    this.deferredPrompt = event as BeforeInstallPromptEvent;
-    this.mode = 'android';
-    this.visible = true;
-  }
-
-  async install() {
-    if (!this.deferredPrompt) return;
-    await this.deferredPrompt.prompt();
-    await this.deferredPrompt.userChoice;
-    this.deferredPrompt = null;
-    this.visible = false;
-  }
-
-  dismiss() {
-    this.visible = false;
-    localStorage.setItem(DISMISSED_KEY, 'true');
-  }
-
-  private alreadyInstalled(): boolean {
-    return window.matchMedia('(display-mode: standalone)').matches
-      || (navigator as unknown as { standalone?: boolean }).standalone === true;
+  dismiss(): void {
+    this.installServ.dismiss();
   }
 }

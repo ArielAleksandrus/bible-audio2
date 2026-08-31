@@ -5,6 +5,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { AudioPlayer } from './components/audio-player/audio-player';
 import { InstallPrompt } from './components/install-prompt/install-prompt';
+import { NotificationPrompt } from './components/notification-prompt/notification-prompt';
 import { AnalyticsService } from './services/analytics.service';
 import { SyncService } from './services/sync.service';
 import { AppStateService } from './services/app-state.service';
@@ -27,7 +28,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
     // My components:
     AudioPlayer,
-    InstallPrompt
+    InstallPrompt,
+    NotificationPrompt
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
