@@ -7,6 +7,7 @@ import { AudioService } from '../../services/audio.service';
 import { BibleService } from '../../services/bible.service';
 import { PlanService } from '../../services/plan.service';
 import { AnalyticsService } from '../../services/analytics.service';
+import { SyncService } from '../../services/sync.service';
 
 import { Plan, DailyGoal } from '../../models/plan';
 import { Track } from '../../models/track';
@@ -66,7 +67,8 @@ export class Plans {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private translate: TranslateService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private syncServ: SyncService
   ) {
 
     if(!localStorage.getItem("selectedBible")) {
@@ -114,6 +116,9 @@ export class Plans {
         this.setTrackCompleted(finishedTrack, true);
       }
     })
+
+    // Refresh the lists if a cross-device merge lands while this page is open.
+    this.syncServ.syncCompleted$.subscribe(() => this._loadPlans());
   }
 
   setGoalCompleted(goal: DailyGoal, completed: boolean) {

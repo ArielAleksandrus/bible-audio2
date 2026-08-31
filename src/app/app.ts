@@ -4,6 +4,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { AudioPlayer } from './components/audio-player/audio-player';
 import { AnalyticsService } from './services/analytics.service';
+import { SyncService } from './services/sync.service';
 
 // Material components (MDC-based tab nav bar)
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
@@ -40,7 +41,8 @@ export class App {
 
   constructor(
     private translate: TranslateService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private sync: SyncService
   ) {
     let lang = localStorage.getItem("selectedBible");
     if(lang) {

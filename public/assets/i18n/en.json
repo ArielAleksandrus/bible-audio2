@@ -87,6 +87,13 @@
       "current": "Current language",
       "reset_button": "Reset Language",
       "reset_note": "This will show the language selection screen again on the next app start."
+    },
+    "account": {
+      "title": "Account & Sync",
+      "description": "Sign in to keep your reading plan progress in sync across your devices. Fully optional.",
+      "sign_in": "Sign in with Google",
+      "signed_in_as": "Signed in as",
+      "sign_out": "Sign out"
     }
   },
   "dialog": {

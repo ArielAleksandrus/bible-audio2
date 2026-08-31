@@ -87,6 +87,13 @@
       "current": "Idioma actual",
       "reset_button": "Restablecer Idioma",
       "reset_note": "Esto volverá a mostrar la pantalla de selección de idioma al iniciar la app."
+    },
+    "account": {
+      "title": "Cuenta y sincronización",
+      "description": "Inicia sesión para mantener el progreso de tus planes de lectura sincronizado entre tus dispositivos. Totalmente opcional.",
+      "sign_in": "Iniciar sesión con Google",
+      "signed_in_as": "Sesión iniciada como",
+      "sign_out": "Cerrar sesión"
     }
   },
   "dialog": {

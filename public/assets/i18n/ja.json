@@ -87,6 +87,13 @@
       "current": "現在の言語",
       "reset_button": "言語をリセット",
       "reset_note": "次回アプリ起動時に、言語選択画面が再び表示されます。"
+    },
+    "account": {
+      "title": "アカウントと同期",
+      "description": "サインインすると、読書プランの進捗がデバイス間で同期されます。完全に任意です。",
+      "sign_in": "Googleでサインイン",
+      "signed_in_as": "サインイン中：",
+      "sign_out": "サインアウト"
     }
   },
   "dialog": {

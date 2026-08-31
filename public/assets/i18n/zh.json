@@ -87,6 +87,13 @@
       "current": "当前语言",
       "reset_button": "重置语言",
       "reset_note": "这将在下次启动应用时再次显示语言选择界面。"
+    },
+    "account": {
+      "title": "账户与同步",
+      "description": "登录后，您的阅读计划进度将在您的设备之间保持同步。完全可选。",
+      "sign_in": "使用 Google 登录",
+      "signed_in_as": "已登录：",
+      "sign_out": "退出登录"
     }
   },
   "dialog": {

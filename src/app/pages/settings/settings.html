@@ -6,6 +6,39 @@
     <p><small><i>(v.{{version}})</i></small></p>
   </header>
 
+  <!-- ACCOUNT / SYNC CARD -->
+  <section class="account-section" *ngIf="authServ.enabled">
+    <mat-card class="session-card mat-elevation-z4">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon color="primary">cloud_sync</mat-icon>
+          {{ 'settings.account.title' | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ng-container *ngIf="user; else signedOut">
+          <p class="language-info">
+            {{ 'settings.account.signed_in_as' | translate }}: <strong>{{ user.displayName || user.email }}</strong>
+          </p>
+          <button mat-raised-button color="accent" (click)="signOut()">
+            <mat-icon>logout</mat-icon>
+            {{ 'settings.account.sign_out' | translate }}
+          </button>
+        </ng-container>
+        <ng-template #signedOut>
+          <p class="language-note">
+            <mat-icon class="note-icon">info</mat-icon>
+            {{ 'settings.account.description' | translate }}
+          </p>
+          <button mat-raised-button color="primary" (click)="signIn()">
+            <mat-icon>login</mat-icon>
+            {{ 'settings.account.sign_in' | translate }}
+          </button>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
   <!-- LANGUAGE CARD -->
   <section class="language-section">
     <mat-card class="session-card mat-elevation-z4">

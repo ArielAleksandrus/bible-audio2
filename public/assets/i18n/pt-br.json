@@ -87,6 +87,13 @@
       "current": "Idioma atual",
       "reset_button": "Redefinir Idioma",
       "reset_note": "Isso abrirá novamente a tela de seleção de idioma na próxima inicialização do app."
+    },
+    "account": {
+      "title": "Conta e Sincronização",
+      "description": "Entre com sua conta para manter o progresso dos seus planos de leitura sincronizado entre seus aparelhos. Totalmente opcional.",
+      "sign_in": "Entrar com o Google",
+      "signed_in_as": "Conectado como",
+      "sign_out": "Sair"
     }
   },
   "dialog": {

@@ -18,6 +18,9 @@ export interface Plan {
   goals: DailyGoal[];
   startedAt?: string;
   status?: "not started"|"started"|"late"|"completed";
+  // Bumped on every local save; used to resolve conflicts when merging
+  // this plan's progress against another device's copy during cloud sync.
+  updatedAt?: number;
 
   // helper variables
   daysRemaining?: number;

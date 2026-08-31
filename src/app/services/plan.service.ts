@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { dbPromise } from '../storage/my-db';
 import { Plan } from '../models/plan';
 import { HttpClient } from '@angular/common/http';
@@ -7,6 +8,12 @@ const AVAILABLE_PLANS = ['first-steps', 'new-testament', 'christmas', 'easter'];
 
 @Injectable({ providedIn: 'root' })
 export class PlanService {
+  // SyncService listens on these to mirror local writes to Firestore,
+  // without PlanService needing to know sync exists (avoids a DI cycle,
+  // since SyncService itself depends on PlanService for local reads/writes).
+  planSaved$ = new Subject<Plan>();
+  planDeleted$ = new Subject<string>();
+  completionCountChanged$ = new Subject<{ planId: string; count: number }>();
 
   constructor(private http: HttpClient) {}
 
@@ -48,10 +55,23 @@ export class PlanService {
     return res;
   }
 
+  // How many portions have been marked completed — used as the source of
+  // truth when merging two devices' copies of the same plan, since it's
+  // immune to clock skew (unlike comparing save timestamps).
+  progressScore(plan: Plan): number {
+    let score = 0;
+    for(const goal of plan.goals)
+      for(const portion of goal.portions)
+        if(portion.completed) score++;
+    return score;
+  }
+
   // Salvar ou atualizar plano (usuário marcando capítulos)
   async save(plan: Plan): Promise<void> {
+    plan.updatedAt = Date.now();
     const db = await dbPromise;
     await db.put('plans', plan);
+    this.planSaved$.next(plan);
   }
 
   // Carregar um plano específico
@@ -70,16 +90,29 @@ export class PlanService {
   async delete(id: string): Promise<void> {
     const db = await dbPromise;
     await db.delete('plans', id);
+    this.planDeleted$.next(id);
   }
 
   // Quantas vezes o usuário já terminou este plano (persistido separadamente
   // do progresso, já que o progresso é resetado a cada reinício).
   async incrementCompletionCount(planId: string): Promise<number> {
+    const count = (await this.getCompletionCount(planId)) + 1;
+    await this.setCompletionCount(planId, count);
+    return count;
+  }
+
+  async getCompletionCount(planId: string): Promise<number> {
     const db = await dbPromise;
     const existing = await db.get('plan_completions', planId);
-    const count = (existing?.count || 0) + 1;
+    return existing?.count || 0;
+  }
+
+  // Sets the count directly (used by the increment above, and by
+  // SyncService when reconciling with a remote count during merge).
+  async setCompletionCount(planId: string, count: number): Promise<void> {
+    const db = await dbPromise;
     await db.put('plan_completions', { id: planId, count });
-    return count;
+    this.completionCountChanged$.next({ planId, count });
   }
 
   async getAllCompletionCounts(): Promise<Record<string, number>> {

@@ -9,7 +9,9 @@ import { dbPromise, AvailableSpace } from '../../storage/my-db';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { BibleService } from '../../services/bible.service';
+import { AuthService } from '../../services/auth.service';
 import { Bible } from 'bible-picker';
+import type { User } from 'firebase/auth';
 
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialog';
@@ -55,12 +57,19 @@ export class Settings {
     "ja": "日本語 (Japanese)"
   };
 
+  user: User | null = null;
+
   constructor(
     private translate: TranslateService,
     private bibleServ: BibleService,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public authServ: AuthService
   ) {
+    this.authServ.user$.subscribe(user => {
+      this.user = user;
+      this.cdr.detectChanges();
+    });
 
     let bibleJson = localStorage.getItem("selectedBible");
     if(!bibleJson) {
@@ -94,6 +103,14 @@ export class Settings {
   resetLanguage() {
     this.bibleServ.removeBibleVersion();
     location.href = "/home";
+  }
+
+  signIn() {
+    this.authServ.signInWithGoogle();
+  }
+
+  signOut() {
+    this.authServ.signOut();
   }
 
   async calculateStorage() {
