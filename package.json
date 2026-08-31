@@ -34,7 +34,7 @@
     "@angular/service-worker": "^21.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "bible-picker": ">=1.1.3",
+    "bible-picker": "^1.2.0",
     "firebase": "^12.18.0",
     "idb": "^8.0.3",
     "rxjs": "~7.8.0",
