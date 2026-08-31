@@ -19,15 +19,15 @@
        color="accent">
     <a mat-tab-link routerLink="/home" routerLinkActive #home="routerLinkActive" [active]="home.isActive">
       <mat-icon>home</mat-icon>
-      <span>Home</span>
+      <span>{{ 'menu.home' | translate }}</span>
     </a>
     <a mat-tab-link routerLink="/plans" routerLinkActive #plans="routerLinkActive" [active]="plans.isActive">
       <mat-icon>format_list_bulleted</mat-icon>
-      <span>{{ 'plans.plans' | translate }}</span>
+      <span>{{ 'menu.plans' | translate }}</span>
     </a>
     <a mat-tab-link routerLink="/settings" routerLinkActive #settings="routerLinkActive" [active]="settings.isActive">
       <mat-icon>settings</mat-icon>
-      <span>Configs</span>
+      <span>{{ 'menu.settings' | translate }}</span>
     </a>
   </nav>
 </div>
