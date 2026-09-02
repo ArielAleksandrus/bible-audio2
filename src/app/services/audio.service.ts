@@ -67,6 +67,11 @@ export class AudioService {
       });
 
       el.addEventListener('pause', () => {
+        // The spec fires `pause` right before `ended` when a track finishes
+        // naturally. Don't broadcast a "paused" state for that — it's a
+        // false signal to the OS/car media session that can cause it to
+        // treat playback as stopped between chapters.
+        if (this.autoAdvance && el.ended) return;
         if (el === this.activeAudio) {
           this.isPlaying$.next(false);
           if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
@@ -405,6 +410,17 @@ export class AudioService {
     this.clearElement(oldActive);
   }
 
+  /**
+   * Fully materializes the next chapter into an IndexedDB blob before wiring
+   * it into the inactive element, instead of just streaming the raw network
+   * URL into it. A paused, off-screen <audio> element gets its network
+   * buffering deprioritized by Chrome once the tab is backgrounded (screen
+   * locked for car Bluetooth), so it can sit there never actually filling up;
+   * a plain fetch() (what the downloader uses) isn't subject to that same
+   * throttling and reliably completes in the background. Once we hold the
+   * blob, the transition plays instantly and needs no further network
+   * activity — the same reason offline playback never has this problem.
+   */
   private async preloadNextIfPossible() {
     if (this.playlist.length <= this.index + 1) return;
 
@@ -412,6 +428,14 @@ export class AudioService {
     if (this.preloaded?.track === nextTrack && this.inactiveAudio.src) return;
 
     const gen = ++this.preloadGeneration;
+
+    await this.downloader.download(nextTrack).catch(err => {
+      console.warn('Failed to pre-download next track, will fall back to streaming:', err);
+    });
+
+    if (gen !== this.preloadGeneration) return;
+    if (this.playlist[this.index + 1] !== nextTrack) return;
+
     const url = await this.resolvePlayUrl(nextTrack);
 
     if (gen !== this.preloadGeneration) {

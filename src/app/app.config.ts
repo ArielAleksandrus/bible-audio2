@@ -8,9 +8,11 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 
 import { inject, Injectable } from '@angular/core';
-import { provideTranslateService, provideTranslateLoader, TranslateLoader } from '@ngx-translate/core';
+import { provideTranslateService, provideTranslateLoader, provideMissingTranslationHandler, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+import { HumanizedMissingTranslationHandler } from './i18n/humanized-missing-translation-handler';
 
 const I18N_PREFIX = './assets/i18n/';
 const I18N_SUFFIX = '.json';
@@ -43,8 +45,9 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(),
     provideTranslateService({
-      defaultLanguage: 'pt',  // português como padrão
-      loader: provideTranslateLoader(AppTranslateLoader)
+      fallbackLang: 'pt',  // português como padrão
+      loader: provideTranslateLoader(AppTranslateLoader),
+      missingTranslationHandler: provideMissingTranslationHandler(HumanizedMissingTranslationHandler)
     })
   ]
 };

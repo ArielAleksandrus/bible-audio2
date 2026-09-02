@@ -21,8 +21,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   ]
 })
 export class ConfirmationDialog implements OnInit, OnDestroy {
-  title = '';
-  message = '';
+  // Defaults (Portuguese, matching the app's default language) so the dialog
+  // is never blank if the translation request stalls or fails — e.g. a slow
+  // or offline connection while the language file hasn't been cached yet.
+  title = 'Tem certeza?';
+  message = 'Para confirmar, segure este botão por 5 segundos';
   progress = 0; // 0 a 100
   private interval: any = null;
   private readonly duration = 5000; // 5 segundos
@@ -35,8 +38,17 @@ export class ConfirmationDialog implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setLanguageFromLocalStorage();
-    this.translate.get('dialog.hold_confirm.title').subscribe(res => this.title = res);
-    this.translate.get('dialog.hold_confirm.message').subscribe(res => this.message = res);
+    // Keep the hardcoded defaults above if this never resolves (e.g. the
+    // translation file fails to load) — only override once we actually have
+    // a real value, and don't let an error clear the fallback text.
+    this.translate.get('dialog.hold_confirm.title').subscribe({
+      next: res => { if (res) this.title = res; },
+      error: err => console.warn('Failed to load dialog title translation:', err),
+    });
+    this.translate.get('dialog.hold_confirm.message').subscribe({
+      next: res => { if (res) this.message = res; },
+      error: err => console.warn('Failed to load dialog message translation:', err),
+    });
   }
 
   ngOnDestroy(): void {

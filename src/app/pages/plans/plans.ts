@@ -192,6 +192,12 @@ export class Plans {
     this.currentPlan = plan;
     this.dataSource.data = this.currentPlan.goals;
     this.stoppedAt = this.planServ.stoppedAt(plan);
+    // A plan fresh from fetchPlans() (start of a new plan) has no
+    // daysRemaining yet — daysCompleted() falls back to 0 via `?? 0`,
+    // which reads as "days - 0 = every day already completed". Set it
+    // here so it's correct from the moment a plan is opened/started, not
+    // just after the first goal/track completion runs updatePlan().
+    this.currentPlan.daysRemaining = this.currentPlan.days + 1 - this.stoppedAt.day;
     if(this.stoppedAt) {
       this.currentDay = this.stoppedAt.day;
       this.curTrackIdx = this.stoppedAt.portionIdx;
