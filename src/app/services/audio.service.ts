@@ -446,6 +446,12 @@ export class AudioService {
       if (url.startsWith('blob:')) URL.revokeObjectURL(url);
       return;
     }
+    // Not actually buffered (download failed/never finished, so resolvePlayUrl
+    // fell back to the raw network URL). Wiring that into the paused, off-screen
+    // inactive element and calling it "preloaded" is exactly the silent-track
+    // bug this method exists to avoid — leave preload empty and let
+    // startNextTrack's same-element fallback stream it directly instead.
+    if (!url.startsWith('blob:')) return;
 
     this.setAudioSource(this.inactiveAudio, url);
     this.inactiveAudio.load();
