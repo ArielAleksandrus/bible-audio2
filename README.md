@@ -1,8 +1,8 @@
-# BibleAudio
+# Bíblia Narrada
 
 A Progressive Web App for listening to the Bible offline, including with the screen locked and from car Bluetooth controls.
 
-Live app: [https://bible-audio2.vercel.app/](https://bible-audio2.vercel.app/)
+Live app: [https://bible-audio2.vercel.app/](https://bible-audio2.vercel.app/) or [https://biblia-narrada.vercel.app/](https://biblia-narrada.vercel.app/) — same build, deployed twice (see [Deploy](#deploy)).
 
 The goal is simple: pick chapters or a reading plan, download the audio to the device, and keep listening for over an hour without the phone having to stay awake or online.
 
@@ -101,15 +101,18 @@ App version is read from `package.json` (`environment.appVersion`) and shown on 
 
 ## Deploy
 
-Production is the Vercel project behind `bible-audio2.vercel.app`. The production build registers `ngsw-worker.js`.
+The same repo is deployed as **two separate Vercel projects** — `bible-audio2` (original URL, already had users before the rename) and `biblia-narrada` (new branded domain) — rather than two domains on one project, since a second `.vercel.app` alias on a single project requires a paid plan. Both build independently on every push to `master`. The production build registers `ngsw-worker.js`.
 
-The daily-reminder function (`api/send-daily-reminder.ts`) needs these Vercel environment variables (not committed):
+The daily-reminder function (`api/send-daily-reminder.ts`) needs these Vercel environment variables (not committed), set separately on **each** project:
 
 | Variable | Purpose |
 |---|---|
 | `CRON_SECRET` | Vercel Cron `Authorization` bearer token |
 | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web Push VAPID pair (public key also in `environment.ts`) |
 | `FIREBASE_SERVICE_ACCOUNT` | Firebase Admin JSON, as a string |
+| `ENABLE_DAILY_REMINDER_CRON` | Must be `true` on **exactly one** of the two projects — both register the same cron against the same Firestore data, so leaving it unset on the other prevents every subscriber getting the daily push twice |
+
+Both projects point at the same Firebase project, so `biblia-narrada.vercel.app` also needs to be added under Firebase Console → Authentication → Settings → Authorized domains for Google sign-in to work there.
 
 Firestore rules live in `firestore.rules`: each signed-in user can only read/write `users/{uid}/**`; `verses/{lang}` and `push_subscriptions/{deviceId}` are used for reminders.
 
