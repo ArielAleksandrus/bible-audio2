@@ -6,6 +6,8 @@ import { Subject } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class AudioDownloaderService {
   private tracks: Track[] = [];
+  /** Dedup concurrent downloads of the same chapter (plan preload + playlist preload). */
+  private inFlight = new Map<string, Promise<void>>();
 
   private downloadProgressSubject = new Subject<{
     downloaded: number;
@@ -23,6 +25,18 @@ export class AudioDownloaderService {
 
   /** Download a single track */
   async download(track: Track): Promise<void> {
+    const key = track.id || track.fileName;
+    const ongoing = this.inFlight.get(key);
+    if (ongoing) return ongoing;
+
+    const promise = this.downloadExclusive(track).finally(() => {
+      this.inFlight.delete(key);
+    });
+    this.inFlight.set(key, promise);
+    return promise;
+  }
+
+  private async downloadExclusive(track: Track): Promise<void> {
     let downloaded = await this.isDownloaded(track);
     if(downloaded) {
       track.status = "done";

@@ -303,7 +303,12 @@ export class Plans {
 
   async play() {
     await this.prepareToPlay();
-    await this.dlServ.download(this.tracks[0]);
+    const start = this.tracks[this.curTrackIdx] ?? this.tracks[0];
+    if (!start) {
+      console.error("Plans::play", "no tracks to play");
+      return;
+    }
+    await this.dlServ.download(start);
     // if we await here, next lines will only run once audio playback is completed.
     this.audioService.playPlaylist(this.tracks, this.curTrackIdx).then(_ => {});
 
