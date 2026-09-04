@@ -13,7 +13,9 @@
   color: #333;
 }
 
-.header-icon {
+// Element-qualified (see home.scss's .hero-icon for why) so this reliably
+// beats Angular Material's own `.mat-icon { height: 24px; width: 24px; }`.
+mat-icon.header-icon {
   font-size: 4rem;
   height: 4rem;
   width: 4rem;

@@ -18,7 +18,15 @@
   color: #333;
 }
 
-.hero-icon {
+// Qualified with the element type (not just `.hero-icon`) so this beats
+// Angular Material's own `.mat-icon { height: 24px; width: 24px; }` base
+// rule on specificity alone. Both rules have a single class-level selector,
+// so without the element qualifier it comes down to which stylesheet was
+// inserted into the document last — and Material inserts its own mat-icon
+// styles at runtime, the first time any <mat-icon> renders anywhere in the
+// app, so whether it lands before or after this rule (and thus whether this
+// override wins) depends on page-load order and isn't reliable.
+mat-icon.hero-icon {
   font-size: 4.5rem;
   height: 4.5rem;
   width: 4.5rem;
@@ -210,7 +218,7 @@ bible-picker {
     font-size: 0.8rem;
   }
 
-  .hero-icon {
+  mat-icon.hero-icon {
     font-size: 3.5rem;
     height: 3.5rem;
     width: 3.5rem;

@@ -7,6 +7,42 @@
 @use '@angular/material' as mat;
 @use 'theme-colors' as theme;
 
+// Self-hosted (instead of fonts.googleapis.com) so the service worker can
+// precache it like any other static asset — see ngsw-config.json. Icons were
+// previously fetched live from Google Fonts on every load with no caching,
+// so a slow/flaky connection would leave <mat-icon> showing its raw ligature
+// text (e.g. "menu_book") until the font eventually loaded, or a reload hit
+// a warm HTTP cache. font-display: block hides the ligature text for a short
+// beat instead of flashing it while the (now-local, near-instant) font loads.
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('/assets/fonts/material-icons.woff2') format('woff2');
+}
+
+// Angular's <mat-icon> adds this class for ligature icons but doesn't style
+// it itself — it expects the consumer to supply it, which fonts.googleapis.com
+// used to do alongside the font. Without it, mat-icon silently inherits the
+// surrounding Roboto font and renders the raw ligature text (e.g. "menu_book")
+// instead of the glyph.
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
 html {
   @include mat.theme((
     color: (
