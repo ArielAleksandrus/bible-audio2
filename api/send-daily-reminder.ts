@@ -23,9 +23,22 @@ interface SubscriptionDoc {
 //                                 header on Cron-triggered requests once set.
 //   VAPID_PRIVATE_KEY         — pairs with environment.vapidPublicKey in the app.
 //   FIREBASE_SERVICE_ACCOUNT  — the Firebase service account JSON, as a string.
+//   ENABLE_DAILY_REMINDER_CRON — must be exactly "true" for this to actually
+//                                 send. bible-audio2 and biblia-narrada are
+//                                 two separate Vercel projects built from the
+//                                 same repo (and the same Firestore data), so
+//                                 both register this same cron independently
+//                                 — without this flag they'd double-send every
+//                                 subscriber's daily notification. Set it to
+//                                 "true" on exactly one of the two projects.
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.headers.authorization !== `Bearer ${process.env['CRON_SECRET']}`) {
     res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
+
+  if (process.env['ENABLE_DAILY_REMINDER_CRON'] !== 'true') {
+    res.status(200).json({ skipped: true, reason: 'ENABLE_DAILY_REMINDER_CRON not set on this deployment' });
     return;
   }
 
