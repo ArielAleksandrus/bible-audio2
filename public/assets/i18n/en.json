@@ -121,6 +121,13 @@
     "ios_instructions": "Tap the Share button, then \"Add to Home Screen\".",
     "install_button": "Install"
   },
+  "safari_warning": {
+    "title": "Suggestion",
+    "message": "For better notification and background-playback support, add BibleAudio to your Home Screen (Share -> Add to Home Screen).",
+    "step_share": "Tap Share",
+    "step_add": "Tap \"Add to Home Screen\"",
+    "dismiss": "Got it"
+  },
   "plan_content": {
     "iniciante-7-dias": {
       "title": "First Steps in the Bible",

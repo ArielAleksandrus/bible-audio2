@@ -1,0 +1,33 @@
+<div class="safari-warning-dialog">
+  <button mat-icon-button class="close-button" (click)="close()" aria-label="Fechar">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <h2 mat-dialog-title class="title-with-close">{{ 'safari_warning.title' | translate }}</h2>
+
+  <mat-dialog-content>
+    <p>{{ 'safari_warning.message' | translate }}</p>
+
+    <div class="steps-illustration">
+      <div class="step">
+        <div class="step-icon">
+          <mat-icon>ios_share</mat-icon>
+        </div>
+        <span class="step-label">{{ 'safari_warning.step_share' | translate }}</span>
+      </div>
+
+      <mat-icon class="step-arrow">arrow_forward</mat-icon>
+
+      <div class="step">
+        <div class="step-icon highlight">
+          <mat-icon>add_to_home_screen</mat-icon>
+        </div>
+        <span class="step-label">{{ 'safari_warning.step_add' | translate }}</span>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">{{ 'safari_warning.dismiss' | translate }}</button>
+  </mat-dialog-actions>
+</div>

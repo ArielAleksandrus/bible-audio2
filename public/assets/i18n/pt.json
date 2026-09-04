@@ -121,6 +121,13 @@
     "ios_instructions": "Toque no botão Compartilhar e depois em \"Adicionar à Tela de Início\".",
     "install_button": "Instalar"
   },
+  "safari_warning": {
+    "title": "Sugestão",
+    "message": "Para melhor suporte a notificações e reprodução em segundo plano, adicione o BibleAudio à tela de início (Compartilhar -> Adicionar à tela de início).",
+    "step_share": "Toque em Compartilhar",
+    "step_add": "Toque em \"Adicionar à Tela de Início\"",
+    "dismiss": "Entendi"
+  },
   "plan_content": {
     "iniciante-7-dias": {
       "title": "Primeiros Passos na Bíblia",

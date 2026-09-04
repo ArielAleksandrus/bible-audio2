@@ -10,11 +10,16 @@ import { AnalyticsService } from './services/analytics.service';
 import { SyncService } from './services/sync.service';
 import { AppStateService } from './services/app-state.service';
 import { UpdateService } from './services/update.service';
+import { SafariWarningDialog } from './safari-warning-dialog/safari-warning-dialog';
+import { isIosDevice } from './utils/browser.util';
 
 // Material components (MDC-based tab nav bar)
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+
+const SAFARI_WARNING_DISMISSED_KEY = 'safariWarningDismissed';
 
 @Component({
   selector: 'app-root',
@@ -55,7 +60,8 @@ export class App {
     private sync: SyncService,
     public appState: AppStateService,
     private updateServ: UpdateService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     let lang = localStorage.getItem("selectedBible");
     if(lang) {
@@ -70,5 +76,32 @@ export class App {
       this.snackBar.open(message, action, { duration: undefined })
         .onAction().subscribe(() => this.updateServ.reload());
     });
+
+    this.maybeShowSafariWarning();
+  }
+
+  // On iOS, every browser (Safari, Chrome, Firefox) runs on the same WebKit
+  // engine under the hood, so none of them can do background audio playback
+  // or push notifications with the tab/app in the background — only an
+  // installed (Home Screen) PWA can. Desktop Safari's notification/playback
+  // gaps are a lower priority, so this only targets phones/tablets.
+  private maybeShowSafariWarning(): void {
+    if (localStorage.getItem(SAFARI_WARNING_DISMISSED_KEY) === 'true') return;
+    if (!isIosDevice()) return;
+    if (this.isRunningStandalone()) return;
+
+    const dialogRef = this.dialog.open(SafariWarningDialog, {
+      width: '420px',
+      maxWidth: '90vw',
+      autoFocus: false
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      localStorage.setItem(SAFARI_WARNING_DISMISSED_KEY, 'true');
+    });
+  }
+
+  private isRunningStandalone(): boolean {
+    return window.matchMedia('(display-mode: standalone)').matches
+      || (navigator as unknown as { standalone?: boolean }).standalone === true;
   }
 }

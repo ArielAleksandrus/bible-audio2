@@ -121,6 +121,13 @@
     "ios_instructions": "共有ボタンをタップし、「ホーム画面に追加」を選択してください。",
     "install_button": "インストール"
   },
+  "safari_warning": {
+    "title": "ご提案",
+    "message": "通知やバックグラウンド再生をより良くサポートするために、BibleAudioをホーム画面に追加してください（共有 -> ホーム画面に追加）。",
+    "step_share": "「共有」をタップ",
+    "step_add": "「ホーム画面に追加」をタップ",
+    "dismiss": "了解"
+  },
   "plan_content": {
     "iniciante-7-dias": {
       "title": "聖書のはじめの一歩",

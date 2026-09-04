@@ -121,6 +121,13 @@
     "ios_instructions": "点击分享按钮，然后选择“添加到主屏幕”。",
     "install_button": "安装"
   },
+  "safari_warning": {
+    "title": "建议",
+    "message": "为了获得更好的通知和后台播放支持，请将 BibleAudio 添加到主屏幕（分享 -> 添加到主屏幕）。",
+    "step_share": "点击分享",
+    "step_add": "点击\"添加到主屏幕\"",
+    "dismiss": "知道了"
+  },
   "plan_content": {
     "iniciante-7-dias": {
       "title": "圣经初学之旅",
