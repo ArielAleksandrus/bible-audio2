@@ -252,15 +252,52 @@ describe('AudioService auto-advance', () => {
     expect(notifiedBeforePlay).toBe(false);
   });
 
-  it('does not cut the current chapter on timeupdate in the last half-second', async () => {
+  it('does not advance well before the current chapter is near its end', async () => {
     await startTwoChapterPlaylist();
     const current = instances[0];
-    current.currentTime = current.duration - 0.2;
+    current.currentTime = current.duration - 1;
     current.dispatchEvent(new Event('timeupdate'));
     await Promise.resolve();
 
     expect(service.currentTrack$.value?.id).toBe('j1');
     expect(current.paused).toBe(false);
+  });
+
+  it('hands off a little before the real `ended` event once timeupdate reports the chapter is basically done', async () => {
+    // 1.0.3's proven behavior: advance on timeupdate once we're in the last
+    // ~0.35s, instead of waiting for the literal `ended` event. By then the
+    // primed next chapter has had the whole lead window to settle, which is
+    // what makes the handoff glitch-free — waiting for the exact boundary
+    // is what stutters.
+    vi.useFakeTimers();
+    const tracks = await startTwoChapterPlaylist();
+    // Let the post-start transition window (which also guards against
+    // advancing twice) close before simulating the chapter's real end.
+    await vi.advanceTimersByTimeAsync(3000);
+    const current = instances[0];
+    const nextEl = instances[1];
+    nextEl.src = 'blob:j2';
+    nextEl.readyState = 4;
+    (service as unknown as { preloaded: { track: Track; url: string; ready: boolean } }).preloaded = {
+      track: tracks[1],
+      url: 'blob:j2',
+      ready: true,
+    };
+
+    // Primed a couple of seconds out, same as a real device.
+    current.currentTime = current.duration - 2;
+    current.dispatchEvent(new Event('timeupdate'));
+    expect(nextEl.paused).toBe(false);
+
+    // The chapter is basically done — hand off before the real `ended` fires.
+    current.currentTime = current.duration - 0.2;
+    current.dispatchEvent(new Event('timeupdate'));
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(service.currentTrack$.value?.id).toBe('j2');
+    expect(nextEl.paused).toBe(false);
+    expect(current.paused).toBe(true);
   });
 
   it('starts the next chapter once at volume 0 shortly before the current one ends', async () => {

@@ -98,6 +98,7 @@ export class AudioService {
             duration: Math.floor(el.duration) || 0,
           });
           this.maybePrimeNext(el);
+          this.maybeAdvanceIfStuckAtEnd(el);
           this.schedulePrimeTimer(el);
           this.updatePositionState();
         }
@@ -567,11 +568,18 @@ export class AudioService {
     }, delayMs);
   }
 
+  /**
+   * Also called on every `timeupdate` (not just on a real stall) — this is
+   * what makes 1.0.3's handoff clean. Handing off ~0.3-0.5s before the real
+   * `ended` event, while the primed element is already comfortably mid-flow,
+   * avoids some OS-level hiccup that happens right at the literal
+   * end-of-media boundary. 1.0.5 removed the timeupdate call to stop cutting
+   * the last half-second, but that same "bug" was load-bearing: every
+   * version since (1.0.5-1.0.8) hands off exactly at `ended` and stutters.
+   */
   private maybeAdvanceIfStuckAtEnd(el: HTMLAudioElement) {
     if (el !== this.activeAudio) return;
     if (!this.autoAdvance || this.transitioning || this.advancing) return;
-    // Still playing — do not cut the last half-second. Only waiting/stalled.
-    if (!el.paused && !el.ended) return;
     const { currentTime, duration } = el;
     if (!duration || !isFinite(duration)) return;
     if (currentTime < duration - 0.35) return;
