@@ -263,17 +263,10 @@ describe('AudioService auto-advance', () => {
     expect(current.paused).toBe(false);
   });
 
-  it('starts the next chapter muted once, without seeking back to 0 on later timeupdates', async () => {
-    const tracks = await startTwoChapterPlaylist();
+  it('primes a silent blob once, not the next chapter, before the current one ends', async () => {
+    await startTwoChapterPlaylist();
     const current = instances[0];
     const nextEl = instances[1];
-    nextEl.src = 'blob:j2';
-    nextEl.readyState = 4;
-    (service as unknown as { preloaded: { track: Track; url: string; ready: boolean } }).preloaded = {
-      track: tracks[1],
-      url: 'blob:j2',
-      ready: true,
-    };
 
     let playCount = 0;
     const originalPlay = nextEl.play.bind(nextEl);
@@ -282,7 +275,7 @@ describe('AudioService auto-advance', () => {
       return originalPlay();
     };
 
-    current.currentTime = current.duration - 1;
+    current.currentTime = current.duration - 0.5;
     current.dispatchEvent(new Event('timeupdate'));
     nextEl.currentTime = 0.3;
     current.dispatchEvent(new Event('timeupdate'));
@@ -290,6 +283,8 @@ describe('AudioService auto-advance', () => {
     expect(nextEl.paused).toBe(false);
     expect(nextEl.muted).toBe(true);
     expect(playCount).toBe(1);
+    expect(nextEl.src).toMatch(/^blob:/);
+    expect(nextEl.src).not.toContain('j2.mp3');
     expect(nextEl.currentTime).toBe(0.3);
     expect(current.paused).toBe(false);
     expect(service.currentTrack$.value?.id).toBe('j1');
