@@ -592,30 +592,11 @@ export class AudioService {
         this.setAudioSource(this.inactiveAudio, blobUrl);
       }
     } else if (!this.inactiveAudio.src) {
-      // Blob download hasn't finished. Start streaming now, while the
-      // current chapter is still playing (allowed); waiting for `ended`
-      // and then calling play() on a network URL is what fails online
-      // with the screen off.
       this.setAudioSource(this.inactiveAudio, bypassServiceWorker(nextTrack.url));
     }
-
-    this.nextPrimed = true;
-    this.inactiveAudio.muted = false;
-    this.inactiveAudio.volume = 0;
-    try {
-      this.inactiveAudio.currentTime = 0;
-    } catch {
-      // Will restart from 0 on take-over if seeking isn't allowed yet.
-    }
-    this.inactiveAudio.play()
-      .then(() => {
-        console.log('Primed next chapter (still playing current):', nextTrack.title);
-      })
-      .catch(err => {
-        console.warn('Prime next failed:', err?.name, err?.message);
-        this.nextPrimed = false;
-        this.inactiveAudio.volume = 1;
-      });
+    // Never play() the next chapter while the current one is still going.
+    // Volume 0 still leaks on some phones, and retrying play()+seek(0) loops
+    // the first syllable ("A-A-A-Atos capítulo 1") over the end of the psalm.
   }
 
   private handleTrackEnded(endedEl: HTMLAudioElement) {
