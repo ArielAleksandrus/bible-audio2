@@ -8,10 +8,15 @@ import { BehaviorSubject } from 'rxjs';
 
 /**
  * Start the next chapter this many seconds before the current one ends.
- * 1.0.3 used 2.5s and leaked a long "A-A-A-Atos" overlap. Keep the same
- * early-play (that is what actually auto-advanced) but a much shorter window.
+ * Must be wide enough that a setTimeout scheduled from the last timeupdate
+ * still fires with the screen off, and that a non-preloaded chapter has time
+ * to actually buffer before we hand off to it. 1.0.3 used this same value and
+ * successfully kept auto-advance alive across a locked screen; the "A-A-A-Atos"
+ * bleed it had came from `volume = 0` not being fully silent on every audio
+ * path (observed over Bluetooth), not from the window length — see `muted`
+ * below, which is what actually fixes that leak.
  */
-const PRIME_REMAINING_S = 0.5;
+const PRIME_REMAINING_S = 2.5;
 
 @Injectable({ providedIn: 'root' })
 export class AudioService {
@@ -574,9 +579,12 @@ export class AudioService {
   }
 
   /**
-   * Same as 1.0.3: play the next chapter on the other element before this
-   * one ends (that is what kept auto-advance alive). Shorter window, play
-   * once — no seek(0) retry loop.
+   * Same as 1.0.3: play the real next chapter on the other element before
+   * this one ends (that is what kept auto-advance alive) — no src swap at
+   * hand-off, no seek(0) retry loop. Unlike 1.0.3, mute it (not just
+   * volume = 0): `muted` is enforced by the OS/output pipeline itself, while
+   * `volume` alone leaked audibly on some routes (Bluetooth) and caused the
+   * "A-A-A-Atos" bleed.
    */
   private maybePrimeNext(el: HTMLAudioElement) {
     if (!this.autoAdvance || this.userPaused || this.advancing || this.nextPrimed) return;
@@ -602,7 +610,7 @@ export class AudioService {
     if (!this.inactiveAudio.src) return;
 
     this.nextPrimed = true;
-    this.inactiveAudio.muted = false;
+    this.inactiveAudio.muted = true;
     this.inactiveAudio.volume = 0;
     this.inactiveAudio.play().catch(err => {
       console.warn('Prime next failed:', err?.name, err?.message);
@@ -670,6 +678,7 @@ export class AudioService {
     } catch {
       // Keep going from wherever the prime reached.
     }
+    // Undo the muting from maybePrimeNext now that this is the real handoff.
     this.inactiveAudio.muted = false;
     this.inactiveAudio.volume = 1;
     if (this.inactiveAudio.paused) {
