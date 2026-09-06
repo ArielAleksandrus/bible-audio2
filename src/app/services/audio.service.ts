@@ -4,16 +4,14 @@ import { AudioDownloaderService } from './audio-downloader.service';
 import { AnalyticsService } from './analytics.service';
 import { Track } from '../models/track';
 import { bypassServiceWorker } from '../utils/sw-bypass.util';
-import { silentWavBlob } from '../utils/silent-wav.util';
 import { BehaviorSubject } from 'rxjs';
 
 /**
- * Play silence on the other element this many seconds before the current
- * chapter ends, so the media session never goes idle. Must be shorter than
- * SILENCE_S so any leaked audio is still silence, not "Atos capítulo 1".
+ * Start the next chapter this many seconds before the current one ends.
+ * 1.0.3 used 2.5s and leaked a long "A-A-A-Atos" overlap. Keep the same
+ * early-play (that is what actually auto-advanced) but a much shorter window.
  */
-const PRIME_REMAINING_S = 0.9;
-const SILENCE_S = 1.25;
+const PRIME_REMAINING_S = 0.5;
 
 @Injectable({ providedIn: 'root' })
 export class AudioService {
@@ -54,7 +52,6 @@ export class AudioService {
   private primeTimer: ReturnType<typeof setTimeout> | null = null;
   /** Ignore OS/media-session pause until this time (ms since epoch). */
   private holdUntil = 0;
-  private silenceUrl: string | null = null;
 
   // === ESTADO PÚBLICO (para o player consumir) ===
   currentTrack$ = new BehaviorSubject<Track | null>(null);
@@ -480,18 +477,11 @@ export class AudioService {
     }
     el.src = url;
     el.preload = 'auto';
-    if (url.startsWith('blob:') && url !== this.silenceUrl) {
+    if (url.startsWith('blob:')) {
       this.blobUrlByEl.set(el, url);
     } else {
       this.blobUrlByEl.delete(el);
     }
-  }
-
-  private getSilenceUrl(): string {
-    if (!this.silenceUrl) {
-      this.silenceUrl = URL.createObjectURL(silentWavBlob(SILENCE_S));
-    }
-    return this.silenceUrl;
   }
 
   private clearElement(el: HTMLAudioElement, revokeBlob = true) {
@@ -499,7 +489,7 @@ export class AudioService {
     el.muted = false;
     el.volume = 1;
     const blob = this.blobUrlByEl.get(el);
-    if (blob && blob !== this.silenceUrl) {
+    if (blob) {
       this.blobUrlByEl.delete(el);
       if (revokeBlob) URL.revokeObjectURL(blob);
     }
@@ -584,9 +574,9 @@ export class AudioService {
   }
 
   /**
-   * Keep the media session alive with 1s of silence on the other element
-   * before the current chapter ends (1.0.3's early play, without "Atos").
-   * Prime window is shorter than the silence so leaked audio is still quiet.
+   * Same as 1.0.3: play the next chapter on the other element before this
+   * one ends (that is what kept auto-advance alive). Shorter window, play
+   * once — no seek(0) retry loop.
    */
   private maybePrimeNext(el: HTMLAudioElement) {
     if (!this.autoAdvance || this.userPaused || this.advancing || this.nextPrimed) return;
@@ -596,14 +586,26 @@ export class AudioService {
 
     const remaining = el.duration - el.currentTime;
     if (!isFinite(remaining) || remaining > PRIME_REMAINING_S || remaining < 0) return;
-    if (typeof URL === 'undefined' || typeof URL.createObjectURL !== 'function') return;
+
+    const nextTrack = this.playlist[this.index + 1];
+    const blobUrl = this.preloaded?.track === nextTrack && this.preloaded.url.startsWith('blob:')
+      ? this.preloaded.url
+      : null;
+
+    if (blobUrl) {
+      if (this.inactiveAudio.src !== blobUrl) {
+        this.setAudioSource(this.inactiveAudio, blobUrl);
+      }
+    } else if (!this.inactiveAudio.src) {
+      this.setAudioSource(this.inactiveAudio, bypassServiceWorker(nextTrack.url));
+    }
+    if (!this.inactiveAudio.src) return;
 
     this.nextPrimed = true;
-    this.setAudioSource(this.inactiveAudio, this.getSilenceUrl());
-    this.inactiveAudio.muted = true;
+    this.inactiveAudio.muted = false;
     this.inactiveAudio.volume = 0;
     this.inactiveAudio.play().catch(err => {
-      console.warn('Prime silence failed:', err?.name, err?.message);
+      console.warn('Prime next failed:', err?.name, err?.message);
     });
   }
 
@@ -641,9 +643,8 @@ export class AudioService {
   }
 
   /**
-   * If silence is already playing on the other element, swap in the real
-   * chapter (session never went idle). Otherwise play on the element that
-   * just ended. Never pause()/load() the sibling in the same turn.
+   * If the next chapter is already playing (primed), raise volume and swap.
+   * Otherwise play on the element that just ended.
    */
   private startNextTrack(track: Track) {
     if (this.nextPrimed && this.inactiveAudio.src) {
@@ -662,31 +663,25 @@ export class AudioService {
   private takeOverPrimed(track: Track) {
     this.preloadGeneration++;
     this.nextPrimed = false;
-    const nextUrl =
-      (this.preloaded?.track === track && this.preloaded.url.startsWith('blob:')
-        ? this.preloaded.url
-        : null) || bypassServiceWorker(track.url);
+    const primedUrl = this.preloaded?.track === track ? this.preloaded.url : this.inactiveAudio.src;
     this.preloaded = null;
-    this.setAudioSource(this.inactiveAudio, nextUrl);
+    try {
+      this.inactiveAudio.currentTime = 0;
+    } catch {
+      // Keep going from wherever the prime reached.
+    }
     this.inactiveAudio.muted = false;
     this.inactiveAudio.volume = 1;
-    const playPromise = this.inactiveAudio.play();
-    const oldActive = this.activeAudio;
-    this.activeAudio = this.inactiveAudio;
-    this.inactiveAudio = oldActive;
-    this.activeAudio.muted = false;
-    this.activeAudio.volume = 1;
-    playPromise
-      .then(() => {
-        this.parkElement(oldActive);
-        this.onStarted(track);
-        this.schedulePreloadAfterSettle();
-        console.log('Took over primed next chapter:', track.title);
-      })
-      .catch(err => {
+    if (this.inactiveAudio.paused) {
+      this.inactiveAudio.play().catch(err => {
         console.warn('Primed take-over play() failed:', err?.name, err?.message);
-        this.playOnActiveNow(track, nextUrl);
+        this.playOnActiveNow(track, primedUrl || bypassServiceWorker(track.url));
       });
+    }
+    this.adoptInactiveAsActive();
+    this.onStarted(track);
+    this.schedulePreloadAfterSettle();
+    console.log('Took over primed next chapter:', track.title);
   }
 
   private isInactiveReadyFor(track: Track): boolean {
@@ -750,7 +745,7 @@ export class AudioService {
     el.muted = false;
     el.volume = 1;
     const blob = this.blobUrlByEl.get(el);
-    if (blob && blob !== this.silenceUrl && revokeBlob) {
+    if (blob && revokeBlob) {
       this.blobUrlByEl.delete(el);
       URL.revokeObjectURL(blob);
       el.removeAttribute('src');
