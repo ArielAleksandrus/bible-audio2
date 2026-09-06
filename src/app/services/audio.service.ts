@@ -3,10 +3,15 @@ import { dbPromise } from '../storage/my-db';
 import { AudioDownloaderService } from './audio-downloader.service';
 import { AnalyticsService } from './analytics.service';
 import { Track } from '../models/track';
+import { bypassServiceWorker } from '../utils/sw-bypass.util';
 import { BehaviorSubject } from 'rxjs';
 
-/** Start the next chapter this many seconds before the current one ends. */
-const PRIME_REMAINING_S = 0.4;
+/**
+ * Start the next chapter this many seconds before the current one ends.
+ * Must be wide enough that a setTimeout scheduled from the last timeupdate
+ * still fires with the screen off (timeupdate itself is often throttled then).
+ */
+const PRIME_REMAINING_S = 2.5;
 
 @Injectable({ providedIn: 'root' })
 export class AudioService {
@@ -37,12 +42,16 @@ export class AudioService {
   /** Set only by the in-app / explicit pause() so we never auto-resume a real pause. */
   private userPaused = false;
   /**
-   * Next chapter is already playing (muted) on the inactive element while
+   * Next chapter is already playing (volume 0) on the inactive element while
    * the current one finishes. Playback never actually stops, which is what
    * mobile browsers require to allow the continuation.
    */
   private nextPrimed = false;
   private transitionTimer: ReturnType<typeof setTimeout> | null = null;
+  /** Fires even when `timeupdate` is throttled (locked screen). */
+  private primeTimer: ReturnType<typeof setTimeout> | null = null;
+  /** Ignore OS/media-session pause until this time (ms since epoch). */
+  private holdUntil = 0;
 
   // === ESTADO PÚBLICO (para o player consumir) ===
   currentTrack$ = new BehaviorSubject<Track | null>(null);
@@ -63,6 +72,12 @@ export class AudioService {
   constructor(private downloader: AudioDownloaderService, private analytics: AnalyticsService) {
     this.prepareAudioElement(this.audio);
     this.prepareAudioElement(this.audio2);
+    try {
+      const session = (navigator as Navigator & { audioSession?: { type: string } }).audioSession;
+      if (session) session.type = 'playback';
+    } catch {
+      // Audio Session API is optional.
+    }
 
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible' && !this.activeAudio.paused) {
@@ -78,7 +93,17 @@ export class AudioService {
             duration: Math.floor(el.duration) || 0,
           });
           this.maybePrimeNext(el);
+          this.maybeAdvanceIfStuckAtEnd(el);
+          this.schedulePrimeTimer(el);
+          this.updatePositionState();
         }
+      });
+
+      el.addEventListener('loadedmetadata', () => {
+        if (el === this.activeAudio) this.schedulePrimeTimer(el);
+      });
+      el.addEventListener('durationchange', () => {
+        if (el === this.activeAudio) this.schedulePrimeTimer(el);
       });
 
       el.addEventListener('play', () => {
@@ -101,12 +126,10 @@ export class AudioService {
         // false signal to the OS/car media session that can cause it to
         // treat playback as stopped between chapters.
         if (this.autoAdvance && el.ended) return;
-        // OS / Bluetooth / Chrome may pause the new chapter in the gap
-        // between chapters. Undo that unless the user actually paused.
-        if (this.transitioning && !this.userPaused) {
-          if (el.paused && !el.ended && el.currentSrc) {
-            el.play().catch(() => {});
-          }
+        // Locked-screen Android: after we start chapter 2, the OS often
+        // pauses it. Resume in this event (play() from setTimeout is blocked).
+        if (this.inAdvanceHold()) {
+          this.resumeSpuriousPause(el);
           return;
         }
         this.isPlaying$.next(false);
@@ -117,14 +140,7 @@ export class AudioService {
 
       // Streamed MP3s (online, not yet in IndexedDB) sometimes never fire
       // `ended` and just stall at the last buffer. Treat that as finished.
-      const maybeStuckAtEnd = () => {
-        if (el !== this.activeAudio) return;
-        if (!this.autoAdvance || this.transitioning || this.advancing) return;
-        const { currentTime, duration } = el;
-        if (!duration || !isFinite(duration)) return;
-        if (currentTime < duration - 0.35) return;
-        this.handleTrackEnded(el);
-      };
+      const maybeStuckAtEnd = () => this.maybeAdvanceIfStuckAtEnd(el);
       el.addEventListener('waiting', maybeStuckAtEnd);
       el.addEventListener('stalled', maybeStuckAtEnd);
 
@@ -152,6 +168,7 @@ export class AudioService {
     this.autoAdvance = false;
     this.userPaused = false;
     this.advancing = false;
+    this.clearPrimeTimer();
     this.clearTransition(false);
     this.stopPrimedNext();
     this.invalidatePreload();
@@ -175,6 +192,7 @@ export class AudioService {
       }
       console.log('Started playing', track.title);
       this.onStarted(track);
+      this.schedulePrimeTimer(this.activeAudio);
       void this.preloadNextIfPossible();
     } catch (err) {
       this.isPlaying$.next(false);
@@ -199,6 +217,8 @@ export class AudioService {
   pause() {
     this.userPaused = true;
     this.advancing = false;
+    this.holdUntil = 0;
+    this.clearPrimeTimer();
     this.stopPrimedNext();
     this.clearTransition(false);
     this.activeAudio.pause();
@@ -219,6 +239,7 @@ export class AudioService {
     this.autoAdvance = false;
     this.userPaused = true;
     this.advancing = false;
+    this.clearPrimeTimer();
     this.stopPrimedNext();
     this.clearTransition(false);
     this.invalidatePreload();
@@ -275,6 +296,7 @@ export class AudioService {
     if (this.playlist.length === 0) return;
     if (this.advancing) return;
     this.advancing = true;
+    this.clearPrimeTimer();
     this.beginTransition();
     this.index = (this.index + 1) % this.playlist.length;
     this.startNextTrack(this.playlist[this.index]);
@@ -300,12 +322,12 @@ export class AudioService {
 
     navigator.mediaSession.setActionHandler('play', () => this.play());
     navigator.mediaSession.setActionHandler('pause', () => {
-      // Phone speaker / notification shade: Android often invokes `pause`
-      // when it sees a chapter end, even though we're already starting the
-      // next one. Car Bluetooth usually does not, which is why the same
-      // playlist can work in the car and then stall on the phone.
-      if (this.transitioning && !this.userPaused) {
-        this.keepPlaybackStatePlaying();
+      // Setting this handler replaces Chrome's default pause. 1.0.2 only
+      // flipped playbackState to "playing" and returned — the element stayed
+      // paused, which is exactly "track 2 title + play button" on unlock.
+      // play() must run in this turn; a later timer is autoplay-blocked.
+      if (this.inAdvanceHold()) {
+        this.resumeSpuriousPause();
         return;
       }
       this.pause();
@@ -317,8 +339,8 @@ export class AudioService {
     });
     try {
       navigator.mediaSession.setActionHandler('stop', () => {
-        if (this.transitioning && !this.userPaused) {
-          this.keepPlaybackStatePlaying();
+        if (this.inAdvanceHold()) {
+          this.resumeSpuriousPause();
           return;
         }
         this.pause();
@@ -335,9 +357,9 @@ export class AudioService {
         artist: 'Bíblia em Áudio',
         album: track.title || track.fileName,
         artwork: [
-          { src: '/assets/icons/icon-96x96.png', sizes: '96x96', type: 'image/png' },
-          { src: '/assets/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/assets/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+          { src: '/icons/android/android-launchericon-96-96.png', sizes: '96x96', type: 'image/png' },
+          { src: '/icons/android/android-launchericon-192-192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icons/android/android-launchericon-512-512.png', sizes: '512x512', type: 'image/png' },
         ]
       });
     }
@@ -349,6 +371,24 @@ export class AudioService {
     el.volume = 1;
     el.muted = false;
     el.setAttribute('playsinline', 'true');
+    el.setAttribute('webkit-playsinline', 'true');
+    el.setAttribute('x-webkit-airplay', 'deny');
+    el.disableRemotePlayback = true;
+  }
+
+  /** OS pause right after a chapter change is not a user pause. */
+  private inAdvanceHold(): boolean {
+    if (this.userPaused || !this.autoAdvance) return false;
+    if (this.transitioning || this.nextPrimed) return true;
+    return Date.now() < this.holdUntil;
+  }
+
+  /** Must run inside the pause/ended turn — setTimeout play() is blocked locked-screen. */
+  private resumeSpuriousPause(el: HTMLAudioElement = this.activeAudio) {
+    this.keepPlaybackStatePlaying();
+    if (el.paused && !el.ended && el.currentSrc) {
+      el.play().catch(err => console.warn('Resume after OS pause failed:', err?.name, err?.message));
+    }
   }
 
   private keepPlaybackStatePlaying() {
@@ -358,8 +398,25 @@ export class AudioService {
     }
   }
 
+  private updatePositionState() {
+    if (!('mediaSession' in navigator) || !('setPositionState' in navigator.mediaSession)) return;
+    const el = this.activeAudio;
+    const duration = el.duration;
+    if (!duration || !isFinite(duration)) return;
+    try {
+      navigator.mediaSession.setPositionState({
+        duration,
+        playbackRate: el.playbackRate || 1,
+        position: Math.min(Math.max(0, el.currentTime), duration),
+      });
+    } catch {
+      // Browser rejects out-of-range position during src changes.
+    }
+  }
+
   private beginTransition() {
     this.transitioning = true;
+    this.holdUntil = Date.now() + 4000;
     this.keepPlaybackStatePlaying();
     if (this.transitionTimer != null) clearTimeout(this.transitionTimer);
     // Failsafe: if play() never resolves (hung preload), don't ignore pause forever.
@@ -403,11 +460,14 @@ export class AudioService {
     }
     this.autoAdvance = true;
     this.keepPlaybackStatePlaying();
-    // Hold the transition window a bit past actual start so a late OS pause
-    // (common 50–400ms after `ended` on phone speaker) is still ignored.
+    this.updatePositionState();
+    // OS pause often arrives 50–2000ms after `ended` (Now Playing / Cast when
+    // online). Keep ignoring it; play() from a timer is autoplay-blocked.
     this.transitioning = true;
+    this.holdUntil = Date.now() + 4000;
     if (this.transitionTimer != null) clearTimeout(this.transitionTimer);
-    this.transitionTimer = setTimeout(() => this.endTransition(true), 700);
+    this.transitionTimer = setTimeout(() => this.endTransition(true), 2500);
+    this.schedulePrimeTimer(this.activeAudio);
   }
 
   private setAudioSource(el: HTMLAudioElement, url: string) {
@@ -472,28 +532,75 @@ export class AudioService {
       console.warn('Failed to read cached audio, falling back to network:', err);
     }
     void this.downloader.download(track).catch(() => {});
-    return track.url;
+    return bypassServiceWorker(track.url);
+  }
+
+  private clearPrimeTimer() {
+    if (this.primeTimer != null) {
+      clearTimeout(this.primeTimer);
+      this.primeTimer = null;
+    }
   }
 
   /**
-   * While the current chapter is still playing, start the next one muted on
-   * the other element. Mobile browsers treat a gap after `ended` as a new
-   * autoplay (and block it). Playing the next source *before* the current
-   * one stops is the only way to keep the session continuous.
+   * `timeupdate` is throttled or dropped with the screen off. A timer
+   * scheduled while audio is still playing is covered by Chrome's "playing
+   * media" exemption and still fires, which is how we start the next
+   * chapter before the current one actually stops.
    */
+  private schedulePrimeTimer(el: HTMLAudioElement) {
+    this.clearPrimeTimer();
+    if (el !== this.activeAudio) return;
+    if (!this.autoAdvance || this.userPaused || this.advancing || this.nextPrimed) return;
+    if (el.paused || el.ended) return;
+    const remaining = el.duration - el.currentTime;
+    if (!isFinite(remaining) || remaining <= 0) return;
+    const delayMs = Math.max(0, (remaining - PRIME_REMAINING_S) * 1000);
+    this.primeTimer = setTimeout(() => {
+      this.primeTimer = null;
+      if (el !== this.activeAudio) return;
+      this.maybePrimeNext(el);
+    }, delayMs);
+  }
+
+  private maybeAdvanceIfStuckAtEnd(el: HTMLAudioElement) {
+    if (el !== this.activeAudio) return;
+    if (!this.autoAdvance || this.transitioning || this.advancing) return;
+    const { currentTime, duration } = el;
+    if (!duration || !isFinite(duration)) return;
+    if (currentTime < duration - 0.35) return;
+    this.handleTrackEnded(el);
+  }
+
+  /** Keep the next blob on the inactive element; do not play() it. */
   private maybePrimeNext(el: HTMLAudioElement) {
     if (!this.autoAdvance || this.userPaused || this.advancing || this.nextPrimed) return;
     if (el.paused || el.ended) return;
+    if (el !== this.activeAudio) return;
     if (this.playlist.length <= this.index + 1) return;
-
-    const nextTrack = this.playlist[this.index + 1];
-    if (!this.isInactiveReadyFor(nextTrack)) return;
 
     const remaining = el.duration - el.currentTime;
     if (!isFinite(remaining) || remaining > PRIME_REMAINING_S || remaining < 0) return;
 
+    const nextTrack = this.playlist[this.index + 1];
+    const blobUrl = this.preloaded?.track === nextTrack && this.preloaded.url.startsWith('blob:')
+      ? this.preloaded.url
+      : null;
+
+    if (blobUrl) {
+      if (this.inactiveAudio.src !== blobUrl) {
+        this.setAudioSource(this.inactiveAudio, blobUrl);
+      }
+    } else if (!this.inactiveAudio.src) {
+      // Blob download hasn't finished. Start streaming now, while the
+      // current chapter is still playing (allowed); waiting for `ended`
+      // and then calling play() on a network URL is what fails online
+      // with the screen off.
+      this.setAudioSource(this.inactiveAudio, bypassServiceWorker(nextTrack.url));
+    }
+
     this.nextPrimed = true;
-    this.inactiveAudio.muted = true;
+    this.inactiveAudio.muted = false;
     this.inactiveAudio.volume = 0;
     try {
       this.inactiveAudio.currentTime = 0;
@@ -502,12 +609,11 @@ export class AudioService {
     }
     this.inactiveAudio.play()
       .then(() => {
-        console.log('Primed next chapter (muted, still playing current):', nextTrack.title);
+        console.log('Primed next chapter (still playing current):', nextTrack.title);
       })
       .catch(err => {
         console.warn('Prime next failed:', err?.name, err?.message);
         this.nextPrimed = false;
-        this.inactiveAudio.muted = false;
         this.inactiveAudio.volume = 1;
       });
   }
@@ -534,6 +640,7 @@ export class AudioService {
     // gap that mobile browsers treat as a new autoplay.
     const endedTrack = this.currentTrack$.value;
     this.advancing = true;
+    this.clearPrimeTimer();
     this.beginTransition();
     this.index += 1;
     this.startNextTrack(this.playlist[this.index]);
@@ -545,82 +652,55 @@ export class AudioService {
   }
 
   /**
-   * Keep audio output continuous across chapters.
-   *
-   * Mobile browsers block `play()` if output has already stopped. So:
-   *  1. If we already started the next chapter muted near the end of the
-   *     current one, unmute it and swap — output never stopped.
-   *  2. Else if the next source is fully buffered on the other element,
-   *     `play()` that element first (still inside `ended`), then swap.
-   *  3. Last resort: set src on the element that just ended and `play()`
-   *     immediately. That has a load gap, so it can still be blocked.
+   * If the next chapter is already playing (primed), unmute and swap.
+   * Otherwise set src on the element that just ended and play() in this turn.
+   * Never pause()/load() the sibling in the same turn — that steals Android
+   * audio focus and is the "0.5s of chapter 2 then silence" failure.
    */
   private startNextTrack(track: Track) {
-    const preloaded = this.preloaded?.track === track ? this.preloaded : null;
-
     if (this.nextPrimed && this.inactiveAudio.src) {
       this.takeOverPrimed(track);
       return;
     }
-
-    if (preloaded && this.isInactiveReadyFor(track)) {
-      this.preloadGeneration++;
-      this.nextPrimed = false;
-      try {
-        this.inactiveAudio.currentTime = 0;
-      } catch {
-        // Not seekable yet — play() will start from the beginning anyway.
-      }
-      this.inactiveAudio.muted = false;
-      this.inactiveAudio.volume = 1;
-      // play() first, while this is still a continuation of the ended turn.
-      const playPromise = this.inactiveAudio.play();
-      this.preloaded = null;
-      this.adoptInactiveAsActive();
-      playPromise
-        .then(() => {
-          console.log('Seamless next track started:', track.title);
-          this.onStarted(track);
-          void this.preloadNextIfPossible();
-        })
-        .catch(err => {
-          console.warn('Seamless next failed, using same element:', err?.name, err?.message);
-          this.playOnActiveNow(track, preloaded.url);
-        });
-      return;
-    }
-
-    this.playOnActiveNow(track, preloaded?.url ?? track.url);
+    const preloaded = this.preloaded?.track === track ? this.preloaded : null;
+    const blobOnInactive = this.blobUrlByEl.get(this.inactiveAudio);
+    const url =
+      (preloaded?.url.startsWith('blob:') ? preloaded.url : null) ||
+      (blobOnInactive && this.preloaded?.track === track ? blobOnInactive : null) ||
+      bypassServiceWorker(track.url);
+    this.playOnActiveNow(track, url);
   }
 
   private takeOverPrimed(track: Track) {
     this.preloadGeneration++;
     this.nextPrimed = false;
+    const primedUrl = this.preloaded?.track === track ? this.preloaded.url : this.inactiveAudio.src;
     this.preloaded = null;
     try {
       this.inactiveAudio.currentTime = 0;
     } catch {
-      // Keep going from wherever the muted prime reached (~0.4s in).
+      // Keep going from wherever the prime reached.
     }
     this.inactiveAudio.muted = false;
     this.inactiveAudio.volume = 1;
     if (this.inactiveAudio.paused) {
       this.inactiveAudio.play().catch(err => {
         console.warn('Primed take-over play() failed:', err?.name, err?.message);
-        this.playOnActiveNow(track, track.url);
+        this.playOnActiveNow(track, primedUrl || bypassServiceWorker(track.url));
       });
     }
     this.adoptInactiveAsActive();
     this.onStarted(track);
-    void this.preloadNextIfPossible();
+    this.schedulePreloadAfterSettle();
     console.log('Took over primed next chapter:', track.title);
   }
 
   private isInactiveReadyFor(track: Track): boolean {
     if (this.preloaded?.track !== track) return false;
     if (!this.inactiveAudio.src) return false;
-    // HAVE_FUTURE_DATA (3): enough decoded audio that play() starts immediately.
-    if (this.inactiveAudio.readyState < 3) return false;
+    // HAVE_CURRENT_DATA (2) is enough for play() to start; a paused,
+    // off-screen element often never reaches HAVE_FUTURE_DATA (3).
+    if (this.inactiveAudio.readyState < 2) return false;
     return true;
   }
 
@@ -632,20 +712,24 @@ export class AudioService {
     this.nextPrimed = false;
     this.setAudioSource(this.activeAudio, url);
     const playPromise = this.activeAudio.play();
-    this.clearElement(this.inactiveAudio, !transferringBlob);
+    // Do not pause/load the other element here. That steals Android audio
+    // focus from the play() we just issued (~0.5s of chapter 2 then stop).
 
     playPromise
       .then(() => {
         console.log('Next track started (same element):', track.title);
+        this.parkElement(this.inactiveAudio, !transferringBlob);
         this.onStarted(track);
-        void this.preloadNextIfPossible();
+        this.schedulePreloadAfterSettle();
       })
       .catch(async err => {
         console.warn('Same-element next failed, trying cached blob:', err?.name, err?.message);
+        if (this.userPaused) return;
         try {
           await this.activeAudio.play();
+          this.parkElement(this.inactiveAudio, !transferringBlob);
           this.onStarted(track);
-          void this.preloadNextIfPossible();
+          this.schedulePreloadAfterSettle();
           return;
         } catch {
           // First retry of the same src failed; try a blob if we were streaming.
@@ -655,8 +739,9 @@ export class AudioService {
           if (blobUrl === url) throw err;
           this.setAudioSource(this.activeAudio, blobUrl);
           await this.activeAudio.play();
+          this.parkElement(this.inactiveAudio, !transferringBlob);
           this.onStarted(track);
-          void this.preloadNextIfPossible();
+          this.schedulePreloadAfterSettle();
         } catch (err2) {
           console.error('Failed to start next track', err2);
           this.clearTransition(false);
@@ -665,13 +750,33 @@ export class AudioService {
       });
   }
 
+  /** Pause the sibling without load(). load() fires pause/ended and can stop the active player. */
+  private parkElement(el: HTMLAudioElement, revokeBlob = true) {
+    el.pause();
+    el.muted = false;
+    el.volume = 1;
+    const blob = this.blobUrlByEl.get(el);
+    if (blob && revokeBlob) {
+      this.blobUrlByEl.delete(el);
+      URL.revokeObjectURL(blob);
+      el.removeAttribute('src');
+    }
+  }
+
+  private schedulePreloadAfterSettle() {
+    setTimeout(() => {
+      if (this.userPaused || !this.autoAdvance) return;
+      void this.preloadNextIfPossible();
+    }, 2000);
+  }
+
   private adoptInactiveAsActive() {
     const oldActive = this.activeAudio;
     this.activeAudio = this.inactiveAudio;
     this.inactiveAudio = oldActive;
     this.activeAudio.muted = false;
     this.activeAudio.volume = 1;
-    this.clearElement(oldActive);
+    this.parkElement(oldActive);
   }
 
   /**
@@ -714,8 +819,21 @@ export class AudioService {
     // fell back to the raw network URL). Wiring that into the paused, off-screen
     // inactive element and calling it "preloaded" is exactly the silent-track
     // bug this method exists to avoid — leave preload empty and let
-    // startNextTrack's same-element fallback stream it directly instead.
-    if (!url.startsWith('blob:')) return;
+    // maybePrimeNext / startNextTrack stream it on an already-playing session.
+    if (!url.startsWith('blob:')) {
+      const upcoming = this.playlist[this.index + 2];
+      if (upcoming) void this.downloader.download(upcoming).catch(() => {});
+      return;
+    }
+
+    if (this.nextPrimed) {
+      // Already playing the next chapter at volume 0 — don't clobber it
+      // with a load() of the blob. Remember the blob for take-over fallback.
+      this.preloaded = { track: nextTrack, url, ready: true };
+      const upcomingWhilePrimed = this.playlist[this.index + 2];
+      if (upcomingWhilePrimed) void this.downloader.download(upcomingWhilePrimed).catch(() => {});
+      return;
+    }
 
     this.setAudioSource(this.inactiveAudio, url);
     this.inactiveAudio.load();
@@ -725,7 +843,11 @@ export class AudioService {
     };
     this.inactiveAudio.addEventListener('canplaythrough', markReady, { once: true });
     this.inactiveAudio.addEventListener('canplay', markReady, { once: true });
-    if (this.inactiveAudio.readyState >= 3) markReady();
+    if (this.inactiveAudio.readyState >= 2) markReady();
     console.log('Preloading next:', nextTrack.title, '(blob)');
+
+    // Warm the chapter after next so the following boundary is also a blob.
+    const upcoming = this.playlist[this.index + 2];
+    if (upcoming) void this.downloader.download(upcoming).catch(() => {});
   }
 }

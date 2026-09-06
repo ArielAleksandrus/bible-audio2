@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { dbPromise, AvailableSpace } from '../storage/my-db';
 import { Track } from '../models/track';
+import { bypassServiceWorker } from '../utils/sw-bypass.util';
 import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -46,7 +47,13 @@ export class AudioDownloaderService {
     await this.ensureFreeDiskSpace();
 
     track.status = 'downloading';
-    const response = await fetch(track.url, { mode: 'cors' });
+    // Query-param bypass only. A custom `ngsw-bypass` header would trigger a
+    // CORS preflight against the R2 CDN and can fail the download entirely.
+    const response = await fetch(bypassServiceWorker(track.url), {
+      mode: 'cors',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(120_000),
+    });
     if (!response.ok) {
       track.status = 'error';
       console.error(`Falha: ${track.title}`, response);
@@ -95,8 +102,9 @@ export class AudioDownloaderService {
         this.reportProgress(downloadedCount, total, track);
       }
 
-      // small yield to keep UI responsive
-      await new Promise(resolve => requestAnimationFrame(resolve));
+      // Yield without rAF: requestAnimationFrame never fires while the
+      // screen is off, which would stall the rest of the playlist download.
+      await new Promise(resolve => setTimeout(resolve, 0));
     }
 
     // Final update

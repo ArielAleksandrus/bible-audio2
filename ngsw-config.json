@@ -34,10 +34,7 @@
       "updateMode": "prefetch",
       "resources": {
         "files": [
-          "/**/*.(txt|mp3|svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
-        ],
-        "urls": [
-          "https://nlabs.live:3003/assets/bible/audio/**"
+          "/**/*.(txt|svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
       }
     }

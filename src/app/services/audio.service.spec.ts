@@ -180,7 +180,7 @@ describe('AudioService auto-advance', () => {
     await Promise.resolve();
     expect(service.currentTrack$.value?.id).toBe('j2');
 
-    await vi.advanceTimersByTimeAsync(800);
+    await vi.advanceTimersByTimeAsync(5000);
     mediaHandlers['pause']?.();
 
     expect(instances[0].paused).toBe(true);
@@ -252,12 +252,11 @@ describe('AudioService auto-advance', () => {
     expect(notifiedBeforePlay).toBe(false);
   });
 
-  it('starts the next chapter muted before the current one ends when preload is ready', async () => {
+  it('uses the same element and a preloaded blob for the next chapter', async () => {
     const tracks = await startTwoChapterPlaylist();
     const current = instances[0];
     const nextEl = instances[1];
 
-    // Simulate a fully buffered next chapter on the inactive element.
     nextEl.src = 'blob:j2';
     nextEl.readyState = 4;
     (service as unknown as { preloaded: { track: Track; url: string; ready: boolean } }).preloaded = {
@@ -266,20 +265,59 @@ describe('AudioService auto-advance', () => {
       ready: true,
     };
 
-    current.currentTime = current.duration - 0.2;
-    current.dispatchEvent(new Event('timeupdate'));
-
-    expect(nextEl.paused).toBe(false);
-    expect(nextEl.muted).toBe(true);
-    expect(current.paused).toBe(false);
-
     finish(current);
     await Promise.resolve();
     await Promise.resolve();
 
     expect(service.currentTrack$.value?.id).toBe('j2');
+    expect(current.src).toBe('blob:j2');
+    expect(current.paused).toBe(false);
+    expect(nextEl.paused).toBe(true);
+  });
+
+  it('resumes the next chapter when the OS pauses it right after auto-advance', async () => {
+    await startTwoChapterPlaylist();
+    const playingEl = instances[0];
+
+    finish(playingEl);
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(service.currentTrack$.value?.id).toBe('j2');
+    expect(playingEl.paused).toBe(false);
+
+    // Android Now Playing / Media Session pauses the new element after ended.
+    playingEl.pause();
+    await Promise.resolve();
+
+    expect(playingEl.paused).toBe(false);
     expect(service.isPlaying$.value).toBe(true);
-    expect(nextEl.muted).toBe(false);
-    expect(nextEl.paused).toBe(false);
+    expect(navigator.mediaSession.playbackState).toBe('playing');
+  });
+
+  it('resumes from a media-session pause during the chapter-change hold', async () => {
+    await startTwoChapterPlaylist();
+    const playingEl = instances[0];
+
+    finish(playingEl);
+    await Promise.resolve();
+    await Promise.resolve();
+    playingEl.pause();
+    mediaHandlers['pause']?.();
+    await Promise.resolve();
+
+    expect(playingEl.paused).toBe(false);
+    expect(service.isPlaying$.value).toBe(true);
+  });
+
+  it('bypasses the service worker when falling back to a network URL', async () => {
+    await startTwoChapterPlaylist();
+    const playingEl = instances[0];
+
+    finish(playingEl);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(playingEl.src).toContain('j2.mp3');
+    expect(playingEl.src).toContain('ngsw-bypass');
   });
 });
