@@ -93,7 +93,6 @@ export class AudioService {
             duration: Math.floor(el.duration) || 0,
           });
           this.maybePrimeNext(el);
-          this.maybeAdvanceIfStuckAtEnd(el);
           this.schedulePrimeTimer(el);
           this.updatePositionState();
         }
@@ -566,13 +565,19 @@ export class AudioService {
   private maybeAdvanceIfStuckAtEnd(el: HTMLAudioElement) {
     if (el !== this.activeAudio) return;
     if (!this.autoAdvance || this.transitioning || this.advancing) return;
+    // Still playing — do not cut the last half-second. Only waiting/stalled.
+    if (!el.paused && !el.ended) return;
     const { currentTime, duration } = el;
     if (!duration || !isFinite(duration)) return;
     if (currentTime < duration - 0.35) return;
     this.handleTrackEnded(el);
   }
 
-  /** Keep the next blob on the inactive element; do not play() it. */
+  /**
+   * Start the next chapter muted on the other element before this one ends
+   * (what made 1.0.3 keep playing). Play once — do not seek(0) on retries
+   * (that was the "A-A-A-Atos" loop). muted=true, not only volume=0.
+   */
   private maybePrimeNext(el: HTMLAudioElement) {
     if (!this.autoAdvance || this.userPaused || this.advancing || this.nextPrimed) return;
     if (el.paused || el.ended) return;
@@ -594,9 +599,15 @@ export class AudioService {
     } else if (!this.inactiveAudio.src) {
       this.setAudioSource(this.inactiveAudio, bypassServiceWorker(nextTrack.url));
     }
-    // Never play() the next chapter while the current one is still going.
-    // Volume 0 still leaks on some phones, and retrying play()+seek(0) loops
-    // the first syllable ("A-A-A-Atos capítulo 1") over the end of the psalm.
+    if (!this.inactiveAudio.src) return;
+
+    this.nextPrimed = true;
+    this.inactiveAudio.muted = true;
+    this.inactiveAudio.volume = 0;
+    this.inactiveAudio.play().catch(err => {
+      console.warn('Prime next failed:', err?.name, err?.message);
+      // Keep nextPrimed so timeupdate does not retry seek(0)+play().
+    });
   }
 
   private handleTrackEnded(endedEl: HTMLAudioElement) {

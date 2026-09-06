@@ -252,6 +252,49 @@ describe('AudioService auto-advance', () => {
     expect(notifiedBeforePlay).toBe(false);
   });
 
+  it('does not cut the current chapter on timeupdate in the last half-second', async () => {
+    await startTwoChapterPlaylist();
+    const current = instances[0];
+    current.currentTime = current.duration - 0.2;
+    current.dispatchEvent(new Event('timeupdate'));
+    await Promise.resolve();
+
+    expect(service.currentTrack$.value?.id).toBe('j1');
+    expect(current.paused).toBe(false);
+  });
+
+  it('starts the next chapter muted once, without seeking back to 0 on later timeupdates', async () => {
+    const tracks = await startTwoChapterPlaylist();
+    const current = instances[0];
+    const nextEl = instances[1];
+    nextEl.src = 'blob:j2';
+    nextEl.readyState = 4;
+    (service as unknown as { preloaded: { track: Track; url: string; ready: boolean } }).preloaded = {
+      track: tracks[1],
+      url: 'blob:j2',
+      ready: true,
+    };
+
+    let playCount = 0;
+    const originalPlay = nextEl.play.bind(nextEl);
+    nextEl.play = () => {
+      playCount += 1;
+      return originalPlay();
+    };
+
+    current.currentTime = current.duration - 1;
+    current.dispatchEvent(new Event('timeupdate'));
+    nextEl.currentTime = 0.3;
+    current.dispatchEvent(new Event('timeupdate'));
+
+    expect(nextEl.paused).toBe(false);
+    expect(nextEl.muted).toBe(true);
+    expect(playCount).toBe(1);
+    expect(nextEl.currentTime).toBe(0.3);
+    expect(current.paused).toBe(false);
+    expect(service.currentTrack$.value?.id).toBe('j1');
+  });
+
   it('uses the same element and a preloaded blob for the next chapter', async () => {
     const tracks = await startTwoChapterPlaylist();
     const current = instances[0];
