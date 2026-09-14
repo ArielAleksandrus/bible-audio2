@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -74,9 +75,24 @@ export class Settings {
   ) {
     this.notifSubscribed = this.notifServ.isSubscribed;
 
-    this.authServ.user$.subscribe(user => {
+    // user$ is a BehaviorSubject, so subscribing here replays its current
+    // value synchronously, before Angular has finished creating this
+    // component's own view. Calling detectChanges() — an immediate,
+    // synchronous re-check — from inside that replay re-enters Angular's
+    // change detection while this view's own initial pass is still running,
+    // which threw "ASSERTION ERROR: Should be run in update mode" on every
+    // navigation to Settings (confirmed via repeated Home<->Settings
+    // navigation in a real browser) and left that render half-applied —
+    // this is what was behind the settings gear icon intermittently
+    // rendering as raw clipped text after switching tabs. markForCheck()
+    // just flags the view for the next cycle instead of forcing one now, so
+    // it's safe to call from here (see AudioPlayer's ctor for the same
+    // pattern). takeUntilDestroyed() additionally stops this from leaking a
+    // subscriber (holding a dead view's ChangeDetectorRef) on every visit,
+    // since Settings is recreated each time the route is entered.
+    this.authServ.user$.pipe(takeUntilDestroyed()).subscribe(user => {
       this.user = user;
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
 
     let bibleJson = localStorage.getItem("selectedBible");
