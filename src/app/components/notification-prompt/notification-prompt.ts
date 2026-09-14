@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, take } from 'rxjs/operators';
+import { delay, filter, take } from 'rxjs/operators';
 
 import { InstallPromptService } from '../../services/install-prompt.service';
 import { NotificationsService } from '../../services/notifications.service';
 
 const DISMISSED_KEY = 'notificationPromptDismissed';
+// Gives the install banner's dismiss/install animation room to finish before
+// this one takes its place, instead of the two swapping in the same frame.
+const SHOW_AFTER_INSTALL_RESOLVED_MS = 1500;
 
 // "Enable daily reminders" banner, shown once per first-time visit — but
 // only after the install-prompt banner has been resolved (dismissed,
@@ -37,7 +40,11 @@ export class NotificationPrompt {
     // just fail silently, and the browser won't show its permission UI again.
     if (typeof Notification !== 'undefined' && Notification.permission === 'denied') return;
 
-    this.installServ.resolved$.pipe(filter(r => r), take(1)).subscribe(() => {
+    this.installServ.resolved$.pipe(
+      filter(r => r),
+      take(1),
+      delay(SHOW_AFTER_INSTALL_RESOLVED_MS)
+    ).subscribe(() => {
       this.visible = true;
       this.cdr.detectChanges();
     });

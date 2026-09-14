@@ -11,6 +11,7 @@
   },
   "loading": {
     "bible": "正在加载您语言的圣经",
+    "bible_selected_language": "正在加载您选择语言的圣经...",
     "checking": "正在检查已下载项目..."
   },
   "legend": {

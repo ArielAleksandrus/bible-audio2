@@ -1,9 +1,10 @@
 <div class="app-container">
 
-  <!-- Bottom nav / install prompt use translate pipes, and no i18n file is
-       loaded until a language is picked — before that they'd show raw
-       "menu.home"-style keys instead of real text, which reads as a bug. -->
-  <ng-container *ngIf="appState.hasSelectedLanguage$ | async">
+  <!-- Install/notification prompts use translate pipes, and no i18n file is
+       loaded until a language is picked. They also shouldn't appear while
+       the home page is still fetching the Bible JSON, so they wait for the
+       picker to actually be on screen, not just for translations. -->
+  <ng-container *ngIf="appState.canShowInstallPrompt$ | async">
     <app-install-prompt></app-install-prompt>
     <app-notification-prompt></app-notification-prompt>
   </ng-container>

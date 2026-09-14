@@ -19,9 +19,19 @@ export class AppStateService {
 
   private languageSelected$ = new BehaviorSubject<boolean>(!!localStorage.getItem('selectedBible'));
   private translationsLoaded$ = new BehaviorSubject<boolean>(!!this.translate.currentLang);
+  // Set by home.ts once its Bible JSON fetch resolves and the picker is
+  // actually on screen — see markBibleLoaded().
+  private bibleLoaded$ = new BehaviorSubject<boolean>(false);
 
   hasSelectedLanguage$ = combineLatest([this.languageSelected$, this.translationsLoaded$]).pipe(
     map(([selected, loaded]) => selected && loaded)
+  );
+
+  // The install banner shouldn't appear while the home page is still showing
+  // its "Loading the Bible..." spinner, so it waits for the Bible JSON too,
+  // not just translations.
+  canShowInstallPrompt$ = combineLatest([this.languageSelected$, this.translationsLoaded$, this.bibleLoaded$]).pipe(
+    map(([selected, translated, bibleLoaded]) => selected && translated && bibleLoaded)
   );
 
   constructor() {
@@ -30,5 +40,9 @@ export class AppStateService {
 
   markLanguageSelected(): void {
     this.languageSelected$.next(true);
+  }
+
+  markBibleLoaded(): void {
+    this.bibleLoaded$.next(true);
   }
 }

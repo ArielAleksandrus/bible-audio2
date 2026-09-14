@@ -11,6 +11,7 @@
   },
   "loading": {
     "bible": "あなたの言語で聖書を読み込んでいます",
+    "bible_selected_language": "あなたが選択した言語で聖書を読み込んでいます...",
     "checking": "ダウンロード済みの項目を確認中..."
   },
   "legend": {

@@ -11,6 +11,7 @@
   },
   "loading": {
     "bible": "Carregando a bíblia no seu idioma",
+    "bible_selected_language": "Carregando a Bíblia no idioma que você escolheu...",
     "checking": "Verificando itens baixados..."
   },
   "legend": {

@@ -1,6 +1,7 @@
-<div *ngIf="!bibleData">
+<div class="loading-container" *ngIf="!bibleData">
   <div class="loading-hint">
     <ng-container *ngIf="(textDownloadProgress$ | async) as textProgress; else genericLoadingHint">
+      <span class="loading-message">{{ 'loading.bible_selected_language' | translate }}</span>
       <mat-progress-bar
         [mode]="textProgress.total > 0 ? 'determinate' : 'indeterminate'"
         [value]="textProgress.total > 0 ? (textProgress.loaded / textProgress.total) * 100 : 0">

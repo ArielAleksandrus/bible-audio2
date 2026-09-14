@@ -49,18 +49,37 @@ mat-icon.hero-icon {
   margin-bottom: 20px;
 }
 
-.loading-hint {
+.loading-container {
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+}
+
+.loading-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
-  margin-top: 20px;
   color: #666;
   font-size: 1rem;
+  text-align: center;
+  max-width: 320px;
+
+  mat-progress-bar {
+    width: 100%;
+  }
 
   mat-spinner {
     margin: 0;
   }
+}
+
+.loading-message {
+  font-weight: 500;
+  color: #333;
 }
 
 .download-area {

@@ -92,9 +92,14 @@ export class Home implements OnInit {
       this.openLanguageSelector();
       return;
     }
+    // Load translations as soon as the language is known, in parallel with
+    // the Bible JSON fetch below, so the loading screen itself can show
+    // translated text instead of only the fallback language.
+    this.translate.use(selected.split("-")[0]);
     this.bibleServ.loadBibleVersion(selected.split("-")[0], selected.split("-")[1]).then(res => {
       if(res) {
         this.bibleData = res;
+        this.appState.markBibleLoaded();
         const savedLang = this.bibleData.language?.split("-")[0]; // e.g. 'pt-br' -> 'pt'
         if(savedLang) {
           this.translate.use(savedLang);
