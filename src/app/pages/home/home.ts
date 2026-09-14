@@ -114,8 +114,11 @@ export class Home implements OnInit {
   }
 
   fullDownload(): Promise<Track[]> {
-    // Verifica se está em Wi-Fi
-    if (!this.isOnWifi()) {
+    // Só avisa quando temos certeza de que a conexão é via dados móveis —
+    // a Network Information API (navigator.connection) não existe no
+    // Safari/Firefox, então "não sei dizer" não pode ser tratado como
+    // "está no celular", ou o aviso apareceria sempre nesses navegadores.
+    if (this.isOnCellular() === true) {
       const confirm = window.confirm(
         this.translate.instant('hero.confirm_mobile_data') ||
         'Você não está conectado ao Wi-Fi. O download da Bíblia inteira usa cerca de 1.3 GB de dados. Deseja continuar mesmo assim?'
@@ -256,18 +259,18 @@ export class Home implements OnInit {
       this.booksDownloadStatus.every(b => b.pendingCount === 0);
   }
 
-  private isOnWifi(): boolean {
-    // Verifica a API Network Information (suportada na maioria dos navegadores modernos e PWAs)
-    // @ts-ignore – pois nem todos os tipos TypeScript incluem isso ainda
+  /**
+   * true = definitely on cellular, false = definitely not, null = can't tell
+   * (API unsupported, e.g. Safari/Firefox, or `type` not exposed by this
+   * browser — Chrome itself only reports it on Android, not desktop).
+   */
+  private isOnCellular(): boolean | null {
     const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
-
-    if (connection) {
-      // Tipo de conexão: 'wifi', 'cellular', 'ethernet', 'none', 'unknown'
-      return connection.type !== 'cellular';
+    if (!connection || typeof connection.type === 'undefined') {
+      return null;
     }
-
-    // Fallback: se a API não estiver disponível, suponha que NÃO é wifi
-    return false;
+    // Tipo de conexão: 'wifi', 'cellular', 'ethernet', 'none', 'unknown', ...
+    return connection.type === 'cellular';
   }
 }
 export default Home;
