@@ -128,8 +128,14 @@ export class Home implements OnInit {
     let bd = this.bibleData;
     if(!bd)
       return new Promise(res => res([]));
-    else
-      return new Promise(res => res(this.bibleServ.downloadEntireBible(bd)));
+
+    // Refresh download status/legend once the bulk download settles —
+    // whether it finished, errored, or was cut short by a stall — so
+    // bibleFullyDownloaded (and the button it gates) reflects reality.
+    return this.bibleServ.downloadEntireBible(bd).then(tracks => {
+      this.checkDownloaded();
+      return tracks;
+    });
   }
 
   checkDownloaded() {

@@ -3,6 +3,7 @@ import { Track } from '../models/track';
 import { Bible, BibleBook } from 'bible-picker';
 import { Plan, DailyGoal, ReadingPortion } from "../models/plan";
 import { AudioDownloaderService } from './audio-downloader.service';
+import { WakeLockService } from './wake-lock.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { saveBibleVersion, getBibleVersion, getAllSavedBibles, deleteBibleVersion, AvailableSpace } from '../storage/my-db';
@@ -46,7 +47,11 @@ export class BibleService {
   private textProgressSubject = new BehaviorSubject<{ loaded: number; total: number } | null>(null);
   textDownloadProgress$: Observable<{ loaded: number; total: number } | null> = this.textProgressSubject.asObservable();
 
-  constructor(private ads: AudioDownloaderService, private verseServ: VerseService) {
+  constructor(
+    private ads: AudioDownloaderService,
+    private verseServ: VerseService,
+    private wakeLock: WakeLockService
+  ) {
     // Forward progress from AudioDownloaderService
     this.ads.downloadProgress$.subscribe(progress => {
       this.progressSubject.next(progress);
@@ -273,8 +278,16 @@ export class BibleService {
     // Filter only pending tracks (optional optimization)
     const pendingTracks = allTracks.filter(t => t.status !== 'done');
 
-    // Start the bulk download – progress will flow automatically
-    await this.ads.downloadTracks(pendingTracks);
+    // Keep the screen from auto-locking while this runs. Doesn't survive a
+    // manual power-button lock — see WakeLockService — but that's handled
+    // by downloadTracks()'s own stall detection instead.
+    await this.wakeLock.request();
+    try {
+      // Start the bulk download – progress will flow automatically
+      await this.ads.downloadTracks(pendingTracks);
+    } finally {
+      this.wakeLock.release();
+    }
 
     // Return all tracks (with updated status)
     return allTracks;

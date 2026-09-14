@@ -2,10 +2,30 @@ import { Injectable } from '@angular/core';
 import { dbPromise, AvailableSpace } from '../storage/my-db';
 import { Track } from '../models/track';
 import { bypassServiceWorker } from '../utils/sw-bypass.util';
+import { runWithConcurrency } from '../utils/concurrency.util';
 import { Subject } from 'rxjs';
+
+/** An AbortSignal that trips as soon as either input signal does. */
+function combineSignals(a: AbortSignal, b: AbortSignal): AbortSignal {
+  if (a.aborted) return a;
+  if (b.aborted) return b;
+  const controller = new AbortController();
+  a.addEventListener('abort', () => controller.abort(a.reason), { once: true });
+  b.addEventListener('abort', () => controller.abort(b.reason), { once: true });
+  return controller.signal;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AudioDownloaderService {
+  // How many chapters to fetch in parallel during a bulk download.
+  private static readonly DOWNLOAD_CONCURRENCY = 3;
+  // If a bulk download makes no progress at all for this long — e.g. the
+  // screen was locked and the tab got frozen/throttled — treat it as
+  // stopped rather than leaving the progress bar stuck on "running" with no
+  // way for the user to retry.
+  private static readonly STALL_TIMEOUT_MS = 60_000;
+  private static readonly STALL_CHECK_INTERVAL_MS = 5_000;
+
   private tracks: Track[] = [];
   /** Dedup concurrent downloads of the same chapter (plan preload + playlist preload). */
   private inFlight = new Map<string, Promise<void>>();
@@ -25,19 +45,19 @@ export class AudioDownloaderService {
   }
 
   /** Download a single track */
-  async download(track: Track): Promise<void> {
+  async download(track: Track, signal?: AbortSignal): Promise<void> {
     const key = track.id || track.fileName;
     const ongoing = this.inFlight.get(key);
     if (ongoing) return ongoing;
 
-    const promise = this.downloadExclusive(track).finally(() => {
+    const promise = this.downloadExclusive(track, signal).finally(() => {
       this.inFlight.delete(key);
     });
     this.inFlight.set(key, promise);
     return promise;
   }
 
-  private async downloadExclusive(track: Track): Promise<void> {
+  private async downloadExclusive(track: Track, signal?: AbortSignal): Promise<void> {
     let downloaded = await this.isDownloaded(track);
     if(downloaded) {
       track.status = "done";
@@ -47,12 +67,13 @@ export class AudioDownloaderService {
     await this.ensureFreeDiskSpace();
 
     track.status = 'downloading';
+    const timeoutSignal = AbortSignal.timeout(120_000);
     // Query-param bypass only. A custom `ngsw-bypass` header would trigger a
     // CORS preflight against the R2 CDN and can fail the download entirely.
     const response = await fetch(bypassServiceWorker(track.url), {
       mode: 'cors',
       cache: 'no-store',
-      signal: AbortSignal.timeout(120_000),
+      signal: signal ? combineSignals(timeoutSignal, signal) : timeoutSignal,
     });
     if (!response.ok) {
       track.status = 'error';
@@ -76,39 +97,74 @@ export class AudioDownloaderService {
     this.tracks = tracks;
 
     const total = tracks.length;
-    let downloadedCount = 0;
 
     // First, count how many are already downloaded
     const alreadyDone = await this.areDownloaded(tracks);
-    downloadedCount = total - alreadyDone.pendingCount;
+    let downloadedCount = total - alreadyDone.pendingCount;
+
+    if (alreadyDone.pendingCount === 0) {
+      this.reportProgress(downloadedCount, total, undefined, 'completed');
+      return;
+    }
 
     this.reportProgress(downloadedCount, total);
 
-    // Download only the pending ones
-    for (const track of tracks) {
-      if (await this.isDownloaded(track)) {
-        continue; // skip already downloaded
+    // Bail out of the whole batch if nothing has completed for a while —
+    // most likely the screen got locked and the tab was frozen/throttled.
+    // Without this, the progress bar would stay stuck on "running" forever
+    // with no way for the user to retry (the download button only reappears
+    // once status leaves 'running').
+    const stallController = new AbortController();
+    let lastProgressAt = Date.now();
+    const checkStalled = () => {
+      if (Date.now() - lastProgressAt > AudioDownloaderService.STALL_TIMEOUT_MS) {
+        stallController.abort(new Error('Bulk download stalled (screen locked/backgrounded too long)'));
       }
+    };
+    const watchdog = setInterval(checkStalled, AudioDownloaderService.STALL_CHECK_INTERVAL_MS);
+    // Re-check the instant the tab is foregrounded again instead of waiting
+    // for the next watchdog tick, so the button reappears right on unlock.
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') checkStalled();
+    };
+    document.addEventListener('visibilitychange', onVisible);
 
-      try {
-        this.reportProgress(downloadedCount, total, track); // show current track
-        await this.download(track);
-        downloadedCount++;
-        this.reportProgress(downloadedCount, total); // update downloaded count
-      } catch (err) {
-        console.error('Failed to download track', track, err);
-        // Decide: continue or stop? Here we continue
-        track.status = 'error';
-        this.reportProgress(downloadedCount, total, track);
-      }
+    try {
+      await runWithConcurrency(tracks, AudioDownloaderService.DOWNLOAD_CONCURRENCY, async (track) => {
+        if (stallController.signal.aborted) return;
+        if (await this.isDownloaded(track)) return;
 
-      // Yield without rAF: requestAnimationFrame never fires while the
-      // screen is off, which would stall the rest of the playlist download.
-      await new Promise(resolve => setTimeout(resolve, 0));
+        try {
+          this.reportProgress(downloadedCount, total, track); // show current track
+          await this.download(track, stallController.signal);
+          downloadedCount++;
+          lastProgressAt = Date.now();
+          this.reportProgress(downloadedCount, total); // update downloaded count
+        } catch (err) {
+          if (stallController.signal.aborted) return; // bailing out entirely, not a single-chapter failure
+          console.error('Failed to download track', track, err);
+          // Decide: continue or stop? Here we continue
+          track.status = 'error';
+          lastProgressAt = Date.now(); // still making progress overall, just this file failed
+          this.reportProgress(downloadedCount, total, track);
+        }
+
+        // Yield without rAF: requestAnimationFrame never fires while the
+        // screen is off, which would stall the rest of the playlist download.
+        await new Promise(resolve => setTimeout(resolve, 0));
+      });
+    } finally {
+      clearInterval(watchdog);
+      document.removeEventListener('visibilitychange', onVisible);
+    }
+
+    if (stallController.signal.aborted) {
+      this.reportProgress(downloadedCount, total, undefined, 'error');
+      return;
     }
 
     // Final update
-    this.reportProgress(downloadedCount, total);
+    this.reportProgress(downloadedCount, total, undefined, 'completed');
   }
 
   async ensureFreeDiskSpace(): Promise<void> {
@@ -178,19 +234,17 @@ export class AudioDownloaderService {
     return (await db.getAllKeys('files')).length;
   }
 
-  private reportProgress(downloaded: number, total: number, currentTrack?: Track) {
+  private reportProgress(
+    downloaded: number,
+    total: number,
+    currentTrack?: Track,
+    status: 'idle' | 'running' | 'completed' | 'error' = 'running'
+  ) {
     this.downloadProgressSubject.next({
       downloaded,
       total,
       currentTrack,
-      status: 'running'
-    });
-  }
-  private completeProgress(downloaded: number, total: number) {
-    this.downloadProgressSubject.next({
-      downloaded,
-      total,
-      status: 'completed'
+      status
     });
   }
 }
