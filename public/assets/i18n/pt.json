@@ -122,9 +122,10 @@
     "ios_instructions": "Toque no botão Compartilhar e depois em \"Adicionar à Tela de Início\".",
     "install_button": "Instalar"
   },
-  "install_required": {
-    "message": "Para baixar e tocar a Bíblia, é necessário instalar este app.",
-    "continue": "Continuar"
+  "install_suggested": {
+    "message": "Para uma melhor experiência com reprodução em segundo plano e armazenamento offline, recomendamos instalar este app.",
+    "install": "Instalar",
+    "dismiss": "Agora não"
   },
   "in_app_browser_warning": {
     "title": "Abra no navegador",

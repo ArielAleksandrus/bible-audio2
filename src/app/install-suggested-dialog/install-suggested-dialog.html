@@ -1,0 +1,16 @@
+<div class="install-suggested-dialog">
+  <mat-icon class="install-suggested-icon">install_mobile</mat-icon>
+
+  <mat-dialog-content>
+    <p>{{ 'install_suggested.message' | translate }}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="dismiss()">
+      {{ 'install_suggested.dismiss' | translate }}
+    </button>
+    <button mat-raised-button color="primary" (click)="install()">
+      {{ 'install_suggested.install' | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>

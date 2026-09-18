@@ -122,9 +122,10 @@
     "ios_instructions": "共有ボタンをタップし、「ホーム画面に追加」を選択してください。",
     "install_button": "インストール"
   },
-  "install_required": {
-    "message": "聖書をダウンロードして再生するには、このアプリをインストールする必要があります。",
-    "continue": "続ける"
+  "install_suggested": {
+    "message": "バックグラウンド再生やオフライン保存をより快適にご利用いただくため、このアプリのインストールをおすすめします。",
+    "install": "インストール",
+    "dismiss": "後で"
   },
   "in_app_browser_warning": {
     "title": "ブラウザで開いてください",

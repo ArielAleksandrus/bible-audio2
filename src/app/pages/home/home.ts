@@ -22,7 +22,7 @@ import { BibleTextViewer } from '../../components/bible-text-viewer/bible-text-v
 import { AppStateService } from '../../services/app-state.service';
 import { InAppBrowserWarningService } from '../../services/in-app-browser-warning.service';
 import { InstallPromptService } from '../../services/install-prompt.service';
-import { InstallRequiredDialog } from '../../install-required-dialog/install-required-dialog';
+import { InstallSuggestedDialog } from '../../install-suggested-dialog/install-suggested-dialog';
 import { isAppInstalled, isInstagramInAppBrowser, isMobileDevice } from '../../utils/browser.util';
 
 
@@ -131,17 +131,14 @@ export class Home implements OnInit {
       });
     }
 
-    // Same idea for any other mobile browser (a "real" one, not Instagram)
-    // where the app hasn't been installed yet: background audio/offline
-    // storage aren't reliable in a plain browser tab, so require installing
-    // first rather than spending 1.3 GB on a download the user will lose.
+    // Any other mobile browser (a "real" one, not Instagram) where the app
+    // hasn't been installed yet: background audio/offline storage are less
+    // reliable in a plain browser tab, so we suggest installing — but it's
+    // only a suggestion, not a gate, so the download below still runs.
     // Desktop has no equivalent installed/not-installed expectation, so it
-    // keeps working normally.
+    // never shows this.
     if (isMobileDevice() && !isAppInstalled()) {
-      return this.playFirstChapterFallback().then(tracks => {
-        this.dialog.open(InstallRequiredDialog, { width: '320px', autoFocus: false });
-        return tracks;
-      });
+      this.dialog.open(InstallSuggestedDialog, { width: '320px', autoFocus: false });
     }
 
     // Só avisa quando temos certeza de que a conexão é via dados móveis —

@@ -122,9 +122,10 @@
     "ios_instructions": "点击分享按钮，然后选择“添加到主屏幕”。",
     "install_button": "安装"
   },
-  "install_required": {
-    "message": "要下载和播放圣经，需要先安装此应用。",
-    "continue": "继续"
+  "install_suggested": {
+    "message": "为了获得更好的后台播放和离线存储体验，建议安装此应用。",
+    "install": "安装",
+    "dismiss": "暂不"
   },
   "in_app_browser_warning": {
     "title": "请在浏览器中打开",

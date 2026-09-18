@@ -122,9 +122,10 @@
     "ios_instructions": "Tap the Share button, then \"Add to Home Screen\".",
     "install_button": "Install"
   },
-  "install_required": {
-    "message": "To download and play the Bible, you need to install this app.",
-    "continue": "Continue"
+  "install_suggested": {
+    "message": "For a better experience with background playback and offline storage, we recommend installing this app.",
+    "install": "Install",
+    "dismiss": "Not now"
   },
   "in_app_browser_warning": {
     "title": "Open in your browser",
