@@ -21,6 +21,9 @@ import { LanguageSelectorDialog } from '../../language-selector-dialog/language-
 import { BibleTextViewer } from '../../components/bible-text-viewer/bible-text-viewer';
 import { AppStateService } from '../../services/app-state.service';
 import { InAppBrowserWarningService } from '../../services/in-app-browser-warning.service';
+import { InstallPromptService } from '../../services/install-prompt.service';
+import { InstallRequiredDialog } from '../../install-required-dialog/install-required-dialog';
+import { isAppInstalled, isInstagramInAppBrowser, isMobileDevice } from '../../utils/browser.util';
 
 
 @Component({
@@ -68,7 +71,8 @@ export class Home implements OnInit {
     private dialog: MatDialog,
     private translate: TranslateService,
     private appState: AppStateService,
-    private inAppBrowserWarning: InAppBrowserWarningService
+    private inAppBrowserWarning: InAppBrowserWarningService,
+    private installServ: InstallPromptService
   ) {
     this.progress$ = this.bibleServ.downloadProgress$;
     this.textDownloadProgress$ = this.bibleServ.textDownloadProgress$;
@@ -116,6 +120,30 @@ export class Home implements OnInit {
   }
 
   fullDownload(): Promise<Track[]> {
+    // Instagram's in-app browser can't run the PWA in the background at
+    // all (see browser.util.ts), so a 1.3 GB download there is wasted —
+    // play Genesis 1 instead, just to show the app works, and point the
+    // user at "open in browser" immediately (no waiting for anything).
+    if (isInstagramInAppBrowser()) {
+      return this.playFirstChapterFallback().then(tracks => {
+        this.inAppBrowserWarning.showNow();
+        return tracks;
+      });
+    }
+
+    // Same idea for any other mobile browser (a "real" one, not Instagram)
+    // where the app hasn't been installed yet: background audio/offline
+    // storage aren't reliable in a plain browser tab, so require installing
+    // first rather than spending 1.3 GB on a download the user will lose.
+    // Desktop has no equivalent installed/not-installed expectation, so it
+    // keeps working normally.
+    if (isMobileDevice() && !isAppInstalled()) {
+      return this.playFirstChapterFallback().then(tracks => {
+        this.dialog.open(InstallRequiredDialog, { width: '320px', autoFocus: false });
+        return tracks;
+      });
+    }
+
     // Só avisa quando temos certeza de que a conexão é via dados móveis —
     // a Network Information API (navigator.connection) não existe no
     // Safari/Firefox, então "não sei dizer" não pode ser tratado como
@@ -141,6 +169,20 @@ export class Home implements OnInit {
       this.checkDownloaded();
       return tracks;
     });
+  }
+
+  // Downloads and plays just Genesis 1, in place of the full-Bible download,
+  // so the user can see the app actually works even though the bulk
+  // download was blocked. Genesis is always the first book/chapter in
+  // canonical order, so this doesn't depend on the current translation.
+  private async playFirstChapterFallback(): Promise<Track[]> {
+    const bd = this.bibleData;
+    if (!bd) return [];
+    const firstBook = bd.books[0];
+    const tracks = await this.bibleServ.genTracks(bd, firstBook.abbrev, [1]);
+    await this.dlServ.download(tracks[0]);
+    void this.audioService.playPlaylist(tracks, 0);
+    return tracks;
   }
 
   checkDownloaded() {

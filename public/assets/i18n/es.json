@@ -122,6 +122,10 @@
     "ios_instructions": "Toca el botón Compartir y luego \"Agregar a pantalla de inicio\".",
     "install_button": "Instalar"
   },
+  "install_required": {
+    "message": "Para descargar y reproducir la Biblia, es necesario instalar esta app.",
+    "continue": "Continuar"
+  },
   "in_app_browser_warning": {
     "title": "Abre en tu navegador",
     "message": "Reproducir dentro de Instagram puede detener el audio al bloquear la pantalla o cambiar de app. Abre este enlace en tu navegador para escuchar sin interrupciones.",
@@ -134,7 +138,13 @@
     "message": "Para un mejor soporte de notificaciones y reproducción en segundo plano, agrega BibleAudio a la pantalla de inicio (Compartir -> Agregar a pantalla de inicio).",
     "step_share": "Toca Compartir",
     "step_add": "Toca \"Agregar a pantalla de inicio\"",
+    "how_to": "¿Cómo lo hago?",
     "dismiss": "Entendido"
+  },
+  "video_example": {
+    "confirm_message": "Te voy a mostrar un ejemplo, ¿de acuerdo?",
+    "yes": "Sí",
+    "no": "No"
   },
   "plan_content": {
     "iniciante-7-dias": {

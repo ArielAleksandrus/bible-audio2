@@ -52,7 +52,14 @@ export class InAppBrowserWarningService {
   }
 
   private show(): void {
-    const lang = detectOverlayLanguage();
+    // Every current trigger (fullDownload/bpSelected on Home, Plans) fires
+    // after the user has already picked a Bible language, so prefer that
+    // over the browser's language — otherwise a Portuguese-speaking user
+    // whose phone/browser is set to English would see this banner in
+    // English despite having chosen Portuguese in the app. detectOverlayLanguage()
+    // (browser-based) is only the fallback for the case this fires before
+    // any language is known.
+    const lang = this.translate.currentLang || detectOverlayLanguage();
     // reloadLang() fetches the translation file without touching
     // TranslateService's currentLang, so this doesn't interfere with the
     // language the rest of the app ends up using once a Bible is picked.

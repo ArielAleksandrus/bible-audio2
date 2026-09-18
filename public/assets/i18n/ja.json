@@ -122,6 +122,10 @@
     "ios_instructions": "共有ボタンをタップし、「ホーム画面に追加」を選択してください。",
     "install_button": "インストール"
   },
+  "install_required": {
+    "message": "聖書をダウンロードして再生するには、このアプリをインストールする必要があります。",
+    "continue": "続ける"
+  },
   "in_app_browser_warning": {
     "title": "ブラウザで開いてください",
     "message": "Instagram内で再生していると、画面ロックやアプリ切り替え時に音声が止まることがあります。中断のない再生には、このリンクをブラウザで開いてください。",
@@ -134,7 +138,13 @@
     "message": "通知やバックグラウンド再生をより良くサポートするために、BibleAudioをホーム画面に追加してください（共有 -> ホーム画面に追加）。",
     "step_share": "「共有」をタップ",
     "step_add": "「ホーム画面に追加」をタップ",
+    "how_to": "やり方は？",
     "dismiss": "了解"
+  },
+  "video_example": {
+    "confirm_message": "例をお見せしますね。よろしいですか？",
+    "yes": "はい",
+    "no": "いいえ"
   },
   "plan_content": {
     "iniciante-7-dias": {

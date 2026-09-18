@@ -122,6 +122,10 @@
     "ios_instructions": "Tap the Share button, then \"Add to Home Screen\".",
     "install_button": "Install"
   },
+  "install_required": {
+    "message": "To download and play the Bible, you need to install this app.",
+    "continue": "Continue"
+  },
   "in_app_browser_warning": {
     "title": "Open in your browser",
     "message": "Playing inside Instagram means audio can stop when you lock your screen or switch apps. Open this link in your browser for uninterrupted playback.",
@@ -134,7 +138,13 @@
     "message": "For better notification and background-playback support, add BibleAudio to your Home Screen (Share -> Add to Home Screen).",
     "step_share": "Tap Share",
     "step_add": "Tap \"Add to Home Screen\"",
+    "how_to": "How do I do it?",
     "dismiss": "Got it"
+  },
+  "video_example": {
+    "confirm_message": "I'll show you an example, is that okay?",
+    "yes": "Yes",
+    "no": "No"
   },
   "plan_content": {
     "iniciante-7-dias": {

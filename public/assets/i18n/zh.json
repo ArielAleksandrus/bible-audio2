@@ -122,6 +122,10 @@
     "ios_instructions": "点击分享按钮，然后选择“添加到主屏幕”。",
     "install_button": "安装"
   },
+  "install_required": {
+    "message": "要下载和播放圣经，需要先安装此应用。",
+    "continue": "继续"
+  },
   "in_app_browser_warning": {
     "title": "请在浏览器中打开",
     "message": "在 Instagram 内播放时，锁屏或切换应用可能会导致音频停止。请在浏览器中打开此链接以获得不间断播放。",
@@ -134,7 +138,13 @@
     "message": "为了获得更好的通知和后台播放支持，请将 BibleAudio 添加到主屏幕（分享 -> 添加到主屏幕）。",
     "step_share": "点击分享",
     "step_add": "点击\"添加到主屏幕\"",
+    "how_to": "怎么做？",
     "dismiss": "知道了"
+  },
+  "video_example": {
+    "confirm_message": "我给你看一个示例，可以吗？",
+    "yes": "好的",
+    "no": "不用"
   },
   "plan_content": {
     "iniciante-7-dias": {

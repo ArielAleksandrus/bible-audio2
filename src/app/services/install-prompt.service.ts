@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-import { isInstagramInAppBrowser } from '../utils/browser.util';
+import { isAppInstalled, isInstagramInAppBrowser } from '../utils/browser.util';
 
 const DISMISSED_KEY = 'installPromptDismissed';
 const NO_PROMPT_TIMEOUT_MS = 4000;
@@ -31,7 +31,7 @@ export class InstallPromptService {
   private deferredPrompt: BeforeInstallPromptEvent | null = null;
 
   constructor() {
-    if (this.alreadyInstalled() || localStorage.getItem(DISMISSED_KEY) === 'true') {
+    if (isAppInstalled() || localStorage.getItem(DISMISSED_KEY) === 'true') {
       this.resolved$.next(true);
       return;
     }
@@ -79,8 +79,16 @@ export class InstallPromptService {
     localStorage.setItem(DISMISSED_KEY, 'true');
   }
 
-  private alreadyInstalled(): boolean {
-    return window.matchMedia('(display-mode: standalone)').matches
-      || (navigator as unknown as { standalone?: boolean }).standalone === true;
+  /**
+   * Force the banner back on screen for a given platform, bypassing the
+   * dismissed/resolved state above. Used when another flow (the "you must
+   * install this app" gate on the full-Bible download) needs to point the
+   * user at install instructions on demand, even if they dismissed this
+   * banner earlier or it never fired (e.g. beforeinstallprompt hasn't
+   * arrived yet).
+   */
+  forceShow(mode: 'android' | 'ios'): void {
+    this.mode = mode;
+    this.visible$.next(true);
   }
 }

@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
+
+import { VideoExampleDialog } from '../video-example-dialog/video-example-dialog';
 
 @Component({
   selector: 'app-safari-warning-dialog',
@@ -13,9 +15,16 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './safari-warning-dialog.scss'
 })
 export class SafariWarningDialog {
-  constructor(public dialogRef: MatDialogRef<SafariWarningDialog>) {}
+  constructor(
+    public dialogRef: MatDialogRef<SafariWarningDialog>,
+    private dialog: MatDialog
+  ) {}
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  showExample(): void {
+    this.dialog.open(VideoExampleDialog, { width: '320px', maxWidth: '90vw', autoFocus: false });
   }
 }

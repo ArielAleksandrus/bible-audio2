@@ -122,6 +122,10 @@
     "ios_instructions": "Toque no botão Compartilhar e depois em \"Adicionar à Tela de Início\".",
     "install_button": "Instalar"
   },
+  "install_required": {
+    "message": "Para baixar e tocar a Bíblia, é necessário instalar este app.",
+    "continue": "Continuar"
+  },
   "in_app_browser_warning": {
     "title": "Abra no navegador",
     "message": "Tocar dentro do Instagram pode travar o áudio quando você bloquear a tela ou trocar de app. Abra este link no seu navegador para ouvir sem interrupções.",
@@ -134,7 +138,13 @@
     "message": "Para melhor suporte a notificações e reprodução em segundo plano, adicione o BibleAudio à tela de início (Compartilhar -> Adicionar à tela de início).",
     "step_share": "Toque em Compartilhar",
     "step_add": "Toque em \"Adicionar à Tela de Início\"",
+    "how_to": "Como fazer?",
     "dismiss": "Entendi"
+  },
+  "video_example": {
+    "confirm_message": "Vou te mostrar um exemplo, tudo bem?",
+    "yes": "Sim",
+    "no": "Não"
   },
   "plan_content": {
     "iniciante-7-dias": {

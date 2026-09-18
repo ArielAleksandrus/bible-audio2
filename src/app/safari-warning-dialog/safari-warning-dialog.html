@@ -28,6 +28,7 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
+    <button mat-stroked-button class="how-to-button" (click)="showExample()">{{ 'safari_warning.how_to' | translate }}</button>
     <button mat-button (click)="close()">{{ 'safari_warning.dismiss' | translate }}</button>
   </mat-dialog-actions>
 </div>

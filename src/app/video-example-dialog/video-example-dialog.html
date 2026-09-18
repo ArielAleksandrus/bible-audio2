@@ -1,0 +1,28 @@
+<div class="video-example-dialog">
+  <button mat-icon-button class="close-button" (click)="close()" aria-label="Fechar">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <ng-container *ngIf="!showVideo; else video">
+    <mat-dialog-content>
+      <p>{{ 'video_example.confirm_message' | translate }}</p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="close()">{{ 'video_example.no' | translate }}</button>
+      <button mat-raised-button color="primary" (click)="confirm()">{{ 'video_example.yes' | translate }}</button>
+    </mat-dialog-actions>
+  </ng-container>
+
+  <ng-template #video>
+    <div class="video-wrap">
+      <iframe
+        [src]="videoUrl"
+        title="Example"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </ng-template>
+</div>

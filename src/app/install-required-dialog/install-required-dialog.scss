@@ -1,0 +1,24 @@
+.install-required-dialog {
+  position: relative;
+  padding: 20px;
+  text-align: center;
+
+  .install-required-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #ff9100;
+    margin-bottom: 8px;
+  }
+
+  mat-dialog-content p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  mat-dialog-actions {
+    margin-top: 12px;
+    justify-content: center;
+  }
+}

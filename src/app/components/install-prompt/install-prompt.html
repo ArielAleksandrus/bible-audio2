@@ -16,8 +16,11 @@
     <button mat-raised-button color="accent" *ngIf="installServ.mode === 'android'" (click)="install()">
       {{ 'install_prompt.install_button' | translate }}
     </button>
-    <button mat-icon-button class="close-button" (click)="dismiss()" aria-label="Dismiss">
+    <button mat-icon-button class="close-button" *ngIf="installServ.mode === 'android'" (click)="dismiss()" aria-label="Dismiss">
       <mat-icon>close</mat-icon>
+    </button>
+    <button mat-icon-button class="close-button" *ngIf="installServ.mode === 'ios'" (click)="showTutorial()" aria-label="Como fazer?">
+      <mat-icon>help_outline</mat-icon>
     </button>
   </div>
 </div>

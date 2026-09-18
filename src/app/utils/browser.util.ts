@@ -12,8 +12,33 @@ export function isIosDevice(): boolean {
 // so a PWA install (and anything that depends on it — background audio,
 // push notifications) is unreachable until the user backs out to a real
 // browser.
+// Instagram's webview appends "Instagram <version>" to the UA string on both
+// iOS and Android. It's a plain embedded WKWebView/Custom Tab with no
+// beforeinstallprompt support and no "Add to Home Screen" entry in its menu,
+// so a PWA install (and anything that depends on it — background audio,
+// push notifications) is unreachable until the user backs out to a real
+// browser.
 export function isInstagramInAppBrowser(): boolean {
   return /\bInstagram\b/.test(navigator.userAgent);
+}
+
+export function isAndroidDevice(): boolean {
+  return /Android/i.test(navigator.userAgent);
+}
+
+// Phones/tablets only — used to gate features (like requiring the PWA to be
+// installed before a bulk download) that shouldn't apply to desktop, where
+// there's no equivalent "install" step users are expected to take.
+export function isMobileDevice(): boolean {
+  return isIosDevice() || isAndroidDevice();
+}
+
+// True once the app is running as an installed PWA (Home Screen icon on
+// iOS, or any standalone-display-mode install elsewhere), as opposed to a
+// regular browser tab.
+export function isAppInstalled(): boolean {
+  return window.matchMedia('(display-mode: standalone)').matches
+    || (navigator as unknown as { standalone?: boolean }).standalone === true;
 }
 
 const SUPPORTED_UI_LANGS = ['pt', 'en', 'es', 'zh', 'ja'];
