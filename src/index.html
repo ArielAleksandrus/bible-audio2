@@ -1,17 +1,22 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="no">
 <head>
   <meta charset="utf-8">
   <title>Bíblia Narrada</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The app already ships its own translations (pt/en/es/zh/ja). Browser
+       auto-translate does in-place DOM node swapping that fights Angular's
+       own re-rendering (tabs, snackbar notifications appearing/disappearing),
+       corrupting text or throwing DOM errors — so opt this page out of it. -->
+  <meta name="google" content="notranslate">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="manifest" href="/manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="apple-touch-icon" href="/icons/ios/192.png">
   <link rel="apple-touch-icon" sizes="512x512" href="/icons/ios/512.png">
 </head>
-<body>
+<body class="notranslate">
   <app-root></app-root>
   <noscript>Please enable JavaScript to continue using this application.</noscript>
 </body>

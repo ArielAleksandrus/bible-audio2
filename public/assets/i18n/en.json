@@ -122,6 +122,13 @@
     "ios_instructions": "Tap the Share button, then \"Add to Home Screen\".",
     "install_button": "Install"
   },
+  "in_app_browser_warning": {
+    "title": "Open in your browser",
+    "message": "Playing inside Instagram means audio can stop when you lock your screen or switch apps. Open this link in your browser for uninterrupted playback.",
+    "menu_hint": "Tap ••• then \"Open in Browser\"",
+    "dismiss": "Continue anyway"
+  },
+
   "safari_warning": {
     "title": "Suggestion",
     "message": "For better notification and background-playback support, add BibleAudio to your Home Screen (Share -> Add to Home Screen).",

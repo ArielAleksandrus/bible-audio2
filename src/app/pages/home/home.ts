@@ -20,6 +20,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LanguageSelectorDialog } from '../../language-selector-dialog/language-selector-dialog';
 import { BibleTextViewer } from '../../components/bible-text-viewer/bible-text-viewer';
 import { AppStateService } from '../../services/app-state.service';
+import { InAppBrowserWarningService } from '../../services/in-app-browser-warning.service';
 
 
 @Component({
@@ -66,7 +67,8 @@ export class Home implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private translate: TranslateService,
-    private appState: AppStateService
+    private appState: AppStateService,
+    private inAppBrowserWarning: InAppBrowserWarningService
   ) {
     this.progress$ = this.bibleServ.downloadProgress$;
     this.textDownloadProgress$ = this.bibleServ.textDownloadProgress$;
@@ -229,6 +231,7 @@ export class Home implements OnInit {
       return;
     }
     this.tracks = await this.bibleServ.genTracks(this.bibleData, sel.books[0].abbrev, sel.chapters);
+    this.inAppBrowserWarning.armForNextPlay();
     await this.dlServ.download(this.tracks[0]);
     // Playlist must be set before the first chapter ends, not after every chapter is downloaded.
     void this.audioService.playPlaylist(this.tracks, 0);

@@ -122,6 +122,13 @@
     "ios_instructions": "Toca el botón Compartir y luego \"Agregar a pantalla de inicio\".",
     "install_button": "Instalar"
   },
+  "in_app_browser_warning": {
+    "title": "Abre en tu navegador",
+    "message": "Reproducir dentro de Instagram puede detener el audio al bloquear la pantalla o cambiar de app. Abre este enlace en tu navegador para escuchar sin interrupciones.",
+    "menu_hint": "Toca ••• y luego \"Abrir en el navegador\"",
+    "dismiss": "Continuar de todos modos"
+  },
+
   "safari_warning": {
     "title": "Sugerencia",
     "message": "Para un mejor soporte de notificaciones y reproducción en segundo plano, agrega BibleAudio a la pantalla de inicio (Compartir -> Agregar a pantalla de inicio).",

@@ -122,6 +122,13 @@
     "ios_instructions": "Toque no botão Compartilhar e depois em \"Adicionar à Tela de Início\".",
     "install_button": "Instalar"
   },
+  "in_app_browser_warning": {
+    "title": "Abra no navegador",
+    "message": "Tocar dentro do Instagram pode travar o áudio quando você bloquear a tela ou trocar de app. Abra este link no seu navegador para ouvir sem interrupções.",
+    "menu_hint": "Toque em ••• e depois em \"Abrir no navegador\"",
+    "dismiss": "Continuar mesmo assim"
+  },
+
   "safari_warning": {
     "title": "Sugestão",
     "message": "Para melhor suporte a notificações e reprodução em segundo plano, adicione o BibleAudio à tela de início (Compartilhar -> Adicionar à tela de início).",

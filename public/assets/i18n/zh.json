@@ -122,6 +122,13 @@
     "ios_instructions": "点击分享按钮，然后选择“添加到主屏幕”。",
     "install_button": "安装"
   },
+  "in_app_browser_warning": {
+    "title": "请在浏览器中打开",
+    "message": "在 Instagram 内播放时，锁屏或切换应用可能会导致音频停止。请在浏览器中打开此链接以获得不间断播放。",
+    "menu_hint": "点击 ••• 然后选择\"在浏览器中打开\"",
+    "dismiss": "仍然继续"
+  },
+
   "safari_warning": {
     "title": "建议",
     "message": "为了获得更好的通知和后台播放支持，请将 BibleAudio 添加到主屏幕（分享 -> 添加到主屏幕）。",

@@ -38,6 +38,7 @@ export class BibleService {
     total: number;
     currentTrack?: Track;
     status: 'idle' | 'running' | 'completed' | 'error';
+    context?: 'full-bible' | 'selection';
   }>({ downloaded: 0, total: 0, status: 'idle' });
 
   downloadProgress$: Observable<any> = this.progressSubject.asObservable();
@@ -266,7 +267,7 @@ export class BibleService {
 
   async downloadEntireBible(bible: Bible): Promise<Track[]> {
     // Reset progress
-    this.progressSubject.next({ downloaded: 0, total: 0, status: 'running' });
+    this.progressSubject.next({ downloaded: 0, total: 0, status: 'running', context: 'full-bible' });
 
     const allTracks: Track[] = [];
 
@@ -284,7 +285,7 @@ export class BibleService {
     await this.wakeLock.request();
     try {
       // Start the bulk download – progress will flow automatically
-      await this.ads.downloadTracks(pendingTracks);
+      await this.ads.downloadTracks(pendingTracks, 'full-bible');
     } finally {
       this.wakeLock.release();
     }

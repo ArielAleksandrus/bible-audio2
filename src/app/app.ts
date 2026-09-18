@@ -6,12 +6,13 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AudioPlayer } from './components/audio-player/audio-player';
 import { InstallPrompt } from './components/install-prompt/install-prompt';
 import { NotificationPrompt } from './components/notification-prompt/notification-prompt';
+import { InAppBrowserOverlay } from './components/in-app-browser-overlay/in-app-browser-overlay';
 import { AnalyticsService } from './services/analytics.service';
 import { SyncService } from './services/sync.service';
 import { AppStateService } from './services/app-state.service';
 import { UpdateService } from './services/update.service';
 import { SafariWarningDialog } from './safari-warning-dialog/safari-warning-dialog';
-import { isIosDevice } from './utils/browser.util';
+import { isIosDevice, isInstagramInAppBrowser } from './utils/browser.util';
 
 // Material components (MDC-based tab nav bar)
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
@@ -34,7 +35,8 @@ const SAFARI_WARNING_DISMISSED_KEY = 'safariWarningDismissed';
     // My components:
     AudioPlayer,
     InstallPrompt,
-    NotificationPrompt
+    NotificationPrompt,
+    InAppBrowserOverlay
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
@@ -89,6 +91,10 @@ export class App {
     if (localStorage.getItem(SAFARI_WARNING_DISMISSED_KEY) === 'true') return;
     if (!isIosDevice()) return;
     if (this.isRunningStandalone()) return;
+    // Instagram's embedded browser has no Share sheet / Add to Home Screen
+    // option to point at — the in-app-browser overlay's "open in a real
+    // browser" instructions apply instead.
+    if (isInstagramInAppBrowser()) return;
 
     const dialogRef = this.dialog.open(SafariWarningDialog, {
       width: '420px',

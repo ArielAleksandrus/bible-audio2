@@ -1,0 +1,22 @@
+<div class="iab-overlay" *ngIf="warning.texts$ | async as texts">
+  <div class="iab-arrow-wrap">
+    <span class="iab-menu-hint">{{ texts.menu_hint }}</span>
+    <svg class="iab-arrow" width="70" height="88" viewBox="0 0 70 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M10 86 C10 38 36 12 54 5" stroke="#111" stroke-width="9" stroke-linecap="round" fill="none"/>
+      <path d="M38 2 L57 2 L55 19" stroke="#111" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="iab-card">
+    <button mat-icon-button class="iab-close" (click)="dismiss()" [attr.aria-label]="texts.dismiss">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <mat-icon class="iab-icon">open_in_browser</mat-icon>
+
+    <div class="iab-text">
+      <strong>{{ texts.title }}</strong>
+      <span>{{ texts.message }}</span>
+    </div>
+  </div>
+</div>

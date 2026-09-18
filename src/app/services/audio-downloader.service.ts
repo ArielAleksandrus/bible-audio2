@@ -35,6 +35,12 @@ export class AudioDownloaderService {
     total: number;
     status: 'idle' | 'running' | 'completed' | 'error';
     currentTrack?: Track;
+    // Distinguishes a full-Bible download (downloadEntireBible) from any
+    // other batch (e.g. the chapters/book the user just tapped in the
+    // picker) — both go through downloadTracks() and this same subject, so
+    // UI that only cares about "the whole Bible is done" (the hero header's
+    // success banner) needs this to avoid firing after a single chapter.
+    context?: 'full-bible' | 'selection';
   }>();
 
   // Public observable for components to subscribe
@@ -93,7 +99,7 @@ export class AudioDownloaderService {
     track.status = "done";
   }
 
-  async downloadTracks(tracks: Track[]): Promise<void> {
+  async downloadTracks(tracks: Track[], context: 'full-bible' | 'selection' = 'selection'): Promise<void> {
     this.tracks = tracks;
 
     const total = tracks.length;
@@ -103,11 +109,11 @@ export class AudioDownloaderService {
     let downloadedCount = total - alreadyDone.pendingCount;
 
     if (alreadyDone.pendingCount === 0) {
-      this.reportProgress(downloadedCount, total, undefined, 'completed');
+      this.reportProgress(downloadedCount, total, undefined, 'completed', context);
       return;
     }
 
-    this.reportProgress(downloadedCount, total);
+    this.reportProgress(downloadedCount, total, undefined, 'running', context);
 
     // Bail out of the whole batch if nothing has completed for a while —
     // most likely the screen got locked and the tab was frozen/throttled.
@@ -135,18 +141,18 @@ export class AudioDownloaderService {
         if (await this.isDownloaded(track)) return;
 
         try {
-          this.reportProgress(downloadedCount, total, track); // show current track
+          this.reportProgress(downloadedCount, total, track, 'running', context); // show current track
           await this.download(track, stallController.signal);
           downloadedCount++;
           lastProgressAt = Date.now();
-          this.reportProgress(downloadedCount, total); // update downloaded count
+          this.reportProgress(downloadedCount, total, undefined, 'running', context); // update downloaded count
         } catch (err) {
           if (stallController.signal.aborted) return; // bailing out entirely, not a single-chapter failure
           console.error('Failed to download track', track, err);
           // Decide: continue or stop? Here we continue
           track.status = 'error';
           lastProgressAt = Date.now(); // still making progress overall, just this file failed
-          this.reportProgress(downloadedCount, total, track);
+          this.reportProgress(downloadedCount, total, track, 'running', context);
         }
 
         // Yield without rAF: requestAnimationFrame never fires while the
@@ -159,12 +165,12 @@ export class AudioDownloaderService {
     }
 
     if (stallController.signal.aborted) {
-      this.reportProgress(downloadedCount, total, undefined, 'error');
+      this.reportProgress(downloadedCount, total, undefined, 'error', context);
       return;
     }
 
     // Final update
-    this.reportProgress(downloadedCount, total, undefined, 'completed');
+    this.reportProgress(downloadedCount, total, undefined, 'completed', context);
   }
 
   async ensureFreeDiskSpace(): Promise<void> {
@@ -238,13 +244,15 @@ export class AudioDownloaderService {
     downloaded: number,
     total: number,
     currentTrack?: Track,
-    status: 'idle' | 'running' | 'completed' | 'error' = 'running'
+    status: 'idle' | 'running' | 'completed' | 'error' = 'running',
+    context?: 'full-bible' | 'selection'
   ) {
     this.downloadProgressSubject.next({
       downloaded,
       total,
       currentTrack,
-      status
+      status,
+      context
     });
   }
 }

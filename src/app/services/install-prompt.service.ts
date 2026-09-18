@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+import { isInstagramInAppBrowser } from '../utils/browser.util';
+
 const DISMISSED_KEY = 'installPromptDismissed';
 const NO_PROMPT_TIMEOUT_MS = 4000;
 
@@ -30,6 +32,14 @@ export class InstallPromptService {
 
   constructor() {
     if (this.alreadyInstalled() || localStorage.getItem(DISMISSED_KEY) === 'true') {
+      this.resolved$.next(true);
+      return;
+    }
+
+    // Its "tap Share -> Add to Home Screen" instructions don't apply inside
+    // Instagram's embedded browser, which has neither — the in-app-browser
+    // overlay's "open in a real browser" message covers this case instead.
+    if (isInstagramInAppBrowser()) {
       this.resolved$.next(true);
       return;
     }

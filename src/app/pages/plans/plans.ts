@@ -8,6 +8,7 @@ import { BibleService } from '../../services/bible.service';
 import { PlanService } from '../../services/plan.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { SyncService } from '../../services/sync.service';
+import { InAppBrowserWarningService } from '../../services/in-app-browser-warning.service';
 
 import { Plan, DailyGoal } from '../../models/plan';
 import { Track } from '../../models/track';
@@ -68,7 +69,8 @@ export class Plans {
     private dialog: MatDialog,
     private translate: TranslateService,
     private analytics: AnalyticsService,
-    private syncServ: SyncService
+    private syncServ: SyncService,
+    private inAppBrowserWarning: InAppBrowserWarningService
   ) {
 
     if(!localStorage.getItem("selectedBible")) {
@@ -113,6 +115,10 @@ export class Plans {
 
   ngOnInit() {
     this._loadPlans();
+
+    // Landing on this page is itself a moment worth reminding the user
+    // about, even if they dismissed the warning earlier elsewhere.
+    this.inAppBrowserWarning.showNow();
 
 
     this.audioService.trackEnded$.subscribe(finishedTrack => {
@@ -308,6 +314,7 @@ export class Plans {
       console.error("Plans::play", "no tracks to play");
       return;
     }
+    this.inAppBrowserWarning.armForNextPlay();
     await this.dlServ.download(start);
     // if we await here, next lines will only run once audio playback is completed.
     this.audioService.playPlaylist(this.tracks, this.curTrackIdx).then(_ => {});
