@@ -367,6 +367,8 @@ export class Plans {
             this.completedPlans.push(plan);
           }
         }
+        // Most-used first: plans with more days completed come to the top.
+        this.startedPlans.sort((a, b) => this.daysCompleted(b) - this.daysCompleted(a));
       }
       this.planServ.fetchPlans().then(res => {
         res.push(SamplePlan);
