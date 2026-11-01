@@ -1,5 +1,5 @@
 import { dbPromise } from './my-db';
-import { isNativeApp, nativeSafeUrl } from '../utils/platform.util';
+import { isNativeApp, nativePlatform, nativeSafeUrl } from '../utils/platform.util';
 import { bypassServiceWorker } from '../utils/sw-bypass.util';
 
 /**
@@ -8,7 +8,8 @@ import { bypassServiceWorker } from '../utils/sw-bypass.util';
  * - Web/PWA: IndexedDB (`audio-db` → `files`), as Blobs — unchanged from
  *   before the native apps existed.
  * - Native (Capacitor): plain files under the app's private data directory
- *   (`Directory.Data/audios/*.mp3`). The OS media player (ExoPlayer /
+ *   (`audios/*.mp3` in Directory.Data on Android, Library/NoCloud on iOS).
+ *   The OS media player (ExoPlayer /
  *   AVPlayer) has to be able to open them by path, which it can't do with a
  *   Blob inside the WebView's IndexedDB — and ~1.3 GB of Blobs in IndexedDB
  *   is also exactly the kind of storage mobile OSes are quickest to evict.
@@ -123,23 +124,33 @@ class FilesystemAudioStorage implements AudioStorage {
   /** id → info, loaded once from a directory listing (1 bridge call instead of ~1200 stats). */
   private index: Promise<Map<string, StoredAudio>> | null = null;
 
-  private fs() {
-    return import('@capacitor/filesystem');
+  /**
+   * `dir` is where the chapters live. On iOS, Directory.Data is Documents/,
+   * which is backed up to iCloud: ~1.3 GB of re-downloadable MP3s there
+   * would eat the user's iCloud quota and breaks App Store Review
+   * Guideline 2.23 (iOS Data Storage Guidelines), a common rejection
+   * reason. Library/NoCloud is private, persistent and never backed up.
+   * Android keeps Directory.Data (the app's files dir, unchanged).
+   */
+  private async fs() {
+    const { Filesystem, Directory } = await import('@capacitor/filesystem');
+    const dir = nativePlatform() === 'ios' ? Directory.LibraryNoCloud : Directory.Data;
+    return { Filesystem, dir };
   }
 
   private getIndex(): Promise<Map<string, StoredAudio>> {
     if (!this.index) {
       this.index = (async () => {
-        const { Filesystem, Directory } = await this.fs();
+        const { Filesystem, dir } = await this.fs();
         const map = new Map<string, StoredAudio>();
         try {
-          const { files } = await Filesystem.readdir({ path: AUDIO_DIR, directory: Directory.Data });
+          const { files } = await Filesystem.readdir({ path: AUDIO_DIR, directory: dir });
           for (const f of files) {
             // Left behind by a download the app was killed in the middle of.
             // Safe to delete here: this listing runs before the first
             // download can start (every download checks has() first).
             if (f.type === 'file' && f.name.endsWith('.part')) {
-              void Filesystem.deleteFile({ path: `${AUDIO_DIR}/${f.name}`, directory: Directory.Data }).catch(() => {});
+              void Filesystem.deleteFile({ path: `${AUDIO_DIR}/${f.name}`, directory: dir }).catch(() => {});
               continue;
             }
             if (f.type !== 'file' || !f.name.endsWith('.mp3')) continue;
@@ -160,14 +171,14 @@ class FilesystemAudioStorage implements AudioStorage {
   }
 
   async download(id: string, url: string): Promise<void> {
-    const { Filesystem, Directory } = await this.fs();
+    const { Filesystem, dir } = await this.fs();
     const { FileTransfer } = await import('@capacitor/file-transfer');
 
     const finalPath = `${AUDIO_DIR}/${idToFileName(id)}`;
     const partPath = `${finalPath}.part`;
 
-    await Filesystem.mkdir({ path: AUDIO_DIR, directory: Directory.Data, recursive: true }).catch(() => {});
-    const { uri: partUri } = await Filesystem.getUri({ path: partPath, directory: Directory.Data });
+    await Filesystem.mkdir({ path: AUDIO_DIR, directory: dir, recursive: true }).catch(() => {});
+    const { uri: partUri } = await Filesystem.getUri({ path: partPath, directory: dir });
 
     // Native HTTP: no CORS, no WebView memory spent on the body, and it keeps
     // going while the WebView is throttled in the background. Written to a
@@ -178,25 +189,25 @@ class FilesystemAudioStorage implements AudioStorage {
       await Filesystem.rename({
         from: partPath,
         to: finalPath,
-        directory: Directory.Data,
-        toDirectory: Directory.Data,
+        directory: dir,
+        toDirectory: dir,
       });
     } catch (err) {
       // A connection drop / HTTP error / full disk mid-transfer leaves a
       // truncated `.part` behind. It's never indexed, but it does keep
       // eating the device's storage until the same chapter is retried.
-      await Filesystem.deleteFile({ path: partPath, directory: Directory.Data }).catch(() => {});
+      await Filesystem.deleteFile({ path: partPath, directory: dir }).catch(() => {});
       throw err;
     }
 
-    const stat = await Filesystem.stat({ path: finalPath, directory: Directory.Data });
+    const stat = await Filesystem.stat({ path: finalPath, directory: dir });
     (await this.getIndex()).set(id, { id, size: stat.size, downloadedAt: Date.now() });
   }
 
   async playableUrl(id: string): Promise<string | null> {
     if (!(await this.has(id))) return null;
-    const { Filesystem, Directory } = await this.fs();
-    const { uri } = await Filesystem.getUri({ path: `${AUDIO_DIR}/${idToFileName(id)}`, directory: Directory.Data });
+    const { Filesystem, dir } = await this.fs();
+    const { uri } = await Filesystem.getUri({ path: `${AUDIO_DIR}/${idToFileName(id)}`, directory: dir });
     return uri;
   }
 
@@ -205,14 +216,14 @@ class FilesystemAudioStorage implements AudioStorage {
   }
 
   async remove(id: string): Promise<void> {
-    const { Filesystem, Directory } = await this.fs();
-    await Filesystem.deleteFile({ path: `${AUDIO_DIR}/${idToFileName(id)}`, directory: Directory.Data }).catch(() => {});
+    const { Filesystem, dir } = await this.fs();
+    await Filesystem.deleteFile({ path: `${AUDIO_DIR}/${idToFileName(id)}`, directory: dir }).catch(() => {});
     (await this.getIndex()).delete(id);
   }
 
   async clear(): Promise<void> {
-    const { Filesystem, Directory } = await this.fs();
-    await Filesystem.rmdir({ path: AUDIO_DIR, directory: Directory.Data, recursive: true }).catch(() => {});
+    const { Filesystem, dir } = await this.fs();
+    await Filesystem.rmdir({ path: AUDIO_DIR, directory: dir, recursive: true }).catch(() => {});
     (await this.getIndex()).clear();
   }
 }
