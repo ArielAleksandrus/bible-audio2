@@ -135,6 +135,13 @@ class FilesystemAudioStorage implements AudioStorage {
         try {
           const { files } = await Filesystem.readdir({ path: AUDIO_DIR, directory: Directory.Data });
           for (const f of files) {
+            // Left behind by a download the app was killed in the middle of.
+            // Safe to delete here: this listing runs before the first
+            // download can start (every download checks has() first).
+            if (f.type === 'file' && f.name.endsWith('.part')) {
+              void Filesystem.deleteFile({ path: `${AUDIO_DIR}/${f.name}`, directory: Directory.Data }).catch(() => {});
+              continue;
+            }
             if (f.type !== 'file' || !f.name.endsWith('.mp3')) continue;
             const id = fileNameToId(f.name);
             map.set(id, { id, size: f.size, downloadedAt: f.mtime });
@@ -166,13 +173,21 @@ class FilesystemAudioStorage implements AudioStorage {
     // going while the WebView is throttled in the background. Written to a
     // `.part` file first so an interrupted download is never mistaken for a
     // finished chapter by the directory index above.
-    await FileTransfer.downloadFile({ url: nativeSafeUrl(url), path: partUri, progress: false });
-    await Filesystem.rename({
-      from: partPath,
-      to: finalPath,
-      directory: Directory.Data,
-      toDirectory: Directory.Data,
-    });
+    try {
+      await FileTransfer.downloadFile({ url: nativeSafeUrl(url), path: partUri, progress: false });
+      await Filesystem.rename({
+        from: partPath,
+        to: finalPath,
+        directory: Directory.Data,
+        toDirectory: Directory.Data,
+      });
+    } catch (err) {
+      // A connection drop / HTTP error / full disk mid-transfer leaves a
+      // truncated `.part` behind. It's never indexed, but it does keep
+      // eating the device's storage until the same chapter is retried.
+      await Filesystem.deleteFile({ path: partPath, directory: Directory.Data }).catch(() => {});
+      throw err;
+    }
 
     const stat = await Filesystem.stat({ path: finalPath, directory: Directory.Data });
     (await this.getIndex()).set(id, { id, size: stat.size, downloadedAt: Date.now() });
