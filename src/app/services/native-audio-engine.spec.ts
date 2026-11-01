@@ -198,4 +198,143 @@ describe('NativeAudioEngine', () => {
     expect(plugin.Playlist.skipBack).not.toHaveBeenCalled();
     expect(plugin.Playlist.seekTo).toHaveBeenCalledWith({ position: 42 });
   });
+
+  describe('playback', () => {
+    const tick = () => new Promise(r => setTimeout(r, 0));
+    const changedTo = (item: { trackId: string }, hasNext: boolean, hasPrevious: boolean) =>
+      plugin.emit({
+        msgType: RmxAudioStatusMessage.RMXSTATUS_TRACK_CHANGED,
+        trackId: item.trackId,
+        value: { currentItem: item, hasNext, hasPrevious },
+      });
+    const completed = (item: { trackId: string }) =>
+      plugin.emit({ msgType: RmxAudioStatusMessage.RMXSTATUS_COMPLETED, trackId: item.trackId, value: {} });
+    const playing = (item: { trackId: string }, pos = 0) =>
+      plugin.emit({ msgType: RmxAudioStatusMessage.RMXSTATUS_PLAYING, trackId: item.trackId, value: { currentPosition: pos, duration: 300 } });
+
+    it('starts at the requested chapter', async () => {
+      const { tracks } = await start(undefined, 1);
+      expect(engine.currentTrack$.value).toBe(tracks[1]);
+      expect(plugin.Playlist.setPlaylistItems.mock.calls[0][0].options).toMatchObject({ startPaused: true });
+      expect(plugin.Playlist.playTrackByIndex).toHaveBeenCalledWith({ index: 1 });
+    });
+
+    it('pauses and resumes through the OS player', async () => {
+      const { items } = await start();
+      playing(items[0]);
+      engine.toggle();
+      await tick();
+      expect(plugin.Playlist.pause).toHaveBeenCalledTimes(1);
+      plugin.emit({ msgType: RmxAudioStatusMessage.RMXSTATUS_PAUSE, trackId: items[0].trackId, value: { currentPosition: 9, duration: 300 } });
+      expect(engine.isPlaying$.value).toBe(false);
+
+      engine.toggle();
+      await tick();
+      expect(plugin.Playlist.play).toHaveBeenCalledTimes(1);
+    });
+
+    it('advances to the next chapter on its own and counts the finished one', async () => {
+      const { items, tracks } = await start();
+      const ended: Track[] = [];
+      engine.trackEnded$.subscribe(t => t && ended.push(t));
+      changedTo(items[0], true, false);
+      playing(items[0], 299);
+
+      completed(items[0]);
+      changedTo(items[1], true, true);
+      playing(items[1], 0);
+
+      expect(ended).toEqual([tracks[0]]);
+      expect(engine.currentTrack$.value).toBe(tracks[1]);
+      expect(engine.isPlaying$.value).toBe(true);
+      expect(engine.timeUpdate$.value).toEqual({ currentTime: 0, duration: 300 });
+    });
+
+    it('stops after the last chapter of the book', async () => {
+      const { items, tracks } = await start();
+      const ended: Track[] = [];
+      engine.trackEnded$.subscribe(t => t && ended.push(t));
+      for (let i = 0; i < 3; i++) {
+        changedTo(items[i], i < 2, i > 0);
+        playing(items[i]);
+        completed(items[i]);
+      }
+      plugin.emit({ msgType: RmxAudioStatusMessage.RMXSTATUS_PLAYLIST_COMPLETED, trackId: 'INVALID', value: {} });
+
+      expect(ended).toEqual(tracks);
+      expect(engine.isPlaying$.value).toBe(false);
+      expect(engine.hasNext()).toBe(false);
+      engine.next();
+      await tick();
+      expect(plugin.Playlist.skipForward).not.toHaveBeenCalled();
+    });
+
+    it('jumps to another chapter of the current queue without rebuilding it', async () => {
+      const { tracks } = await start();
+      plugin.Playlist.setPlaylistItems.mockClear();
+      await engine.playTrack(tracks[2]);
+      expect(plugin.Playlist.setPlaylistItems).not.toHaveBeenCalled();
+      expect(plugin.Playlist.playTrackByIndex).toHaveBeenLastCalledWith({ index: 2 });
+    });
+
+    it('switching to another passage during playback replaces the queue', async () => {
+      const first = await start();
+      playing(first.items[0], 120);
+      plugin.Playlist.setPlaylistItems.mockClear();
+
+      const other = [track('ps1', 1), track('ps2', 2)];
+      await engine.playTrack(other[0], other, 0);
+      const items = plugin.Playlist.setPlaylistItems.mock.calls[0][0].items;
+      expect(items.map((i: { title: string }) => i.title)).toEqual(['João 1', 'João 2']);
+      expect(engine.currentTrack$.value).toBe(other[0]);
+      expect(engine.timeUpdate$.value.currentTime).toBe(0);
+
+      // Late position updates from the old chapter don't move the new one.
+      plugin.emit({ msgType: RmxAudioStatusMessage.RMXSTATUS_PLAYBACK_POSITION, trackId: first.items[0].trackId, value: { currentPosition: 130, duration: 300 } });
+      expect(engine.timeUpdate$.value.currentTime).toBe(0);
+    });
+
+    it('plays a single chapter that is not in the queue as a new queue', async () => {
+      await start();
+      plugin.Playlist.setPlaylistItems.mockClear();
+      const lone = track('rt1', 1);
+      await engine.playTrack(lone);
+      expect(plugin.Playlist.setPlaylistItems.mock.calls[0][0].items).toHaveLength(1);
+      expect(engine.currentTrack$.value).toBe(lone);
+    });
+
+    it('skips within the chapter, clamped to its length', async () => {
+      const { items } = await start();
+      playing(items[0], 100);
+      engine.skip(30);
+      expect(engine.timeUpdate$.value.currentTime).toBe(130);
+      engine.skip(-500);
+      expect(engine.timeUpdate$.value.currentTime).toBe(0);
+      engine.skip(10_000);
+      expect(engine.timeUpdate$.value.currentTime).toBe(300);
+      await tick();
+      expect(plugin.Playlist.seekTo).toHaveBeenLastCalledWith({ position: 300 });
+    });
+
+    it('stop clears the OS queue and ignores anything it still reports', async () => {
+      const { items } = await start();
+      playing(items[0]);
+      engine.stop();
+      await tick();
+      expect(engine.isPlaying$.value).toBe(false);
+      expect(plugin.Playlist.clearAllItems).toHaveBeenCalled();
+
+      const ended = vi.fn();
+      engine.trackEnded$.subscribe(t => t && ended(t));
+      completed(items[0]);
+      expect(ended).not.toHaveBeenCalled();
+      expect(engine.hasNext()).toBe(false);
+    });
+
+    it('does nothing for an empty playlist', async () => {
+      await engine.playPlaylist([]);
+      expect(plugin.Playlist.setPlaylistItems).not.toHaveBeenCalled();
+      expect(engine.currentTrack$.value).toBeNull();
+    });
+  });
 });
