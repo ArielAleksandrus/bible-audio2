@@ -8,6 +8,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import { saveBibleVersion, getBibleVersion, getAllSavedBibles, deleteBibleVersion, AvailableSpace } from '../storage/my-db';
 import { VerseService } from './verse.service';
+import { isNativeApp } from '../utils/platform.util';
 
 
 export const BIBLE_CDN_URL = "https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev";
@@ -74,7 +75,7 @@ export class BibleService {
 
     const space = new AvailableSpace();
     if (!(await space.isSafe(50))) { // deixa 50MB livres
-      alert('Espaço insuficiente no dispositivo');
+      window.alert('Espaço insuficiente no dispositivo');
       return;
     }
 
@@ -98,6 +99,16 @@ export class BibleService {
   // the stream manually so the UI can show real download progress instead
   // of an indefinite "loading" spinner.
   private async fetchJsonWithProgress(url: string): Promise<unknown> {
+    if (isNativeApp()) {
+      // Native HTTP: the WebView's origin (https://localhost /
+      // capacitor://localhost) isn't one the CDN's CORS policy knows about.
+      // No streamed progress here, so the loading screen shows an
+      // indeterminate bar instead.
+      const { CapacitorHttp } = await import('@capacitor/core');
+      const res = await CapacitorHttp.get({ url, responseType: 'json' });
+      if (res.status < 200 || res.status >= 300) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+      return typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+    }
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.status}`);
     if (!response.body) return response.json();

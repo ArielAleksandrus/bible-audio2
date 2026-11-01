@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bíblia Narrada</string>
+    <string name="title_activity_main">Bíblia Narrada</string>
+    <string name="package_name">com.biblianarrada.app</string>
+    <string name="custom_url_scheme">com.biblianarrada.app</string>
+</resources>

@@ -1,26 +1,14 @@
 .video-example-dialog {
   position: relative;
-  padding: 20px;
 
   .close-button {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 4px;
+    right: 4px;
     z-index: 10;
-
-    mat-icon {
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-      color: rgba(0, 0, 0, 0.54);
-    }
-
-    &:hover mat-icon {
-      color: rgba(0, 0, 0, 0.87);
-    }
   }
 
-  mat-dialog-content {
+  .content {
     padding-top: 24px;
     padding-right: 32px;
 
@@ -31,13 +19,20 @@
     }
   }
 
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 16px;
+  }
+
   .video-wrap {
     position: relative;
     width: 100%;
     max-width: 260px;
     // YouTube Shorts are vertical (9:16).
     aspect-ratio: 9 / 16;
-    margin: 24px auto 4px;
+    margin: 32px auto 4px;
     background: #000;
     border-radius: 8px;
     overflow: hidden;

@@ -1,20 +1,17 @@
-<div class="video-example-dialog">
-  <button mat-icon-button class="close-button" (click)="close()" aria-label="Fechar">
-    <mat-icon>close</mat-icon>
-  </button>
+<div class="video-example-dialog ion-padding">
+  <ion-button fill="clear" color="medium" class="close-button" (click)="close()" aria-label="Fechar">
+    <ion-icon slot="icon-only" name="close"></ion-icon>
+  </ion-button>
 
-  <ng-container *ngIf="!showVideo; else video">
-    <mat-dialog-content>
+  @if (!showVideo) {
+    <div class="content">
       <p>{{ 'video_example.confirm_message' | translate }}</p>
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="close()">{{ 'video_example.no' | translate }}</button>
-      <button mat-raised-button color="primary" (click)="confirm()">{{ 'video_example.yes' | translate }}</button>
-    </mat-dialog-actions>
-  </ng-container>
-
-  <ng-template #video>
+    </div>
+    <div class="actions">
+      <ion-button fill="clear" (click)="close()">{{ 'video_example.no' | translate }}</ion-button>
+      <ion-button (click)="confirm()">{{ 'video_example.yes' | translate }}</ion-button>
+    </div>
+  } @else {
     <div class="video-wrap">
       <iframe
         [src]="videoUrl"
@@ -24,5 +21,5 @@
         allowfullscreen>
       </iframe>
     </div>
-  </ng-template>
+  }
 </div>

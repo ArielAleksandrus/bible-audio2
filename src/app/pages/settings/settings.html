@@ -1,180 +1,176 @@
-<div class="settings-container">
-  <header class="settings-header">
-    <mat-icon class="header-icon">settings</mat-icon>
-    <h1>{{ 'settings.title' | translate }}</h1>
-    <p>{{ 'settings.subtitle' | translate }}</p>
-    <p><small><i>(v.{{version}})</i></small></p>
-  </header>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ 'settings.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-  <!-- ACCOUNT / SYNC CARD -->
-  <section class="account-section" *ngIf="authServ.enabled">
-    <mat-card class="session-card mat-elevation-z4">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon color="primary">cloud_sync</mat-icon>
-          {{ 'settings.account.title' | translate }}
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ng-container *ngIf="user; else signedOut">
-          <p class="language-info">
-            {{ 'settings.account.signed_in_as' | translate }}: <strong>{{ user.displayName || user.email }}</strong>
-          </p>
-          <button mat-raised-button color="accent" (click)="signOut()">
-            <mat-icon>logout</mat-icon>
-            {{ 'settings.account.sign_out' | translate }}
-          </button>
-        </ng-container>
-        <ng-template #signedOut>
-          <p class="language-note">
-            <mat-icon class="note-icon">info</mat-icon>
-            {{ 'settings.account.description' | translate }}
-          </p>
-          <button mat-raised-button color="primary" (click)="signIn()">
-            <mat-icon>login</mat-icon>
-            {{ 'settings.account.sign_in' | translate }}
-          </button>
-        </ng-template>
-      </mat-card-content>
-    </mat-card>
-  </section>
+<ion-content>
+  <div class="settings-container">
+    <header class="settings-header">
+      <ion-icon class="header-icon" name="settings-outline"></ion-icon>
+      <p>{{ 'settings.subtitle' | translate }}</p>
+      <p><small><i>(v.{{version}})</i></small></p>
+    </header>
 
-  <!-- DAILY REMINDERS CARD -->
-  <section class="notifications-section" *ngIf="notifServ.enabled">
-    <mat-card class="session-card mat-elevation-z4">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon color="primary">notifications</mat-icon>
-          {{ 'settings.notifications.title' | translate }}
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ng-container *ngIf="notifServ.supported; else notSupported">
-          <p class="language-note">
-            <mat-icon class="note-icon">info</mat-icon>
-            {{ 'settings.notifications.description' | translate }}
-          </p>
-          <button mat-raised-button
-                  [color]="notifSubscribed ? 'accent' : 'primary'"
-                  [disabled]="notifBusy"
-                  (click)="toggleNotifications()">
-            <mat-icon>{{ notifSubscribed ? 'notifications_off' : 'notifications_active' }}</mat-icon>
-            {{ (notifSubscribed ? 'settings.notifications.disable' : 'settings.notifications.enable') | translate }}
-          </button>
-          <p class="warning-note" *ngIf="notifError">
-            <mat-icon class="note-icon">warning</mat-icon>
-            {{ 'settings.notifications.permission_error' | translate }}
-          </p>
-        </ng-container>
-        <ng-template #notSupported>
-          <p class="language-note" *ngIf="notifServ.isIosSafariNotInstalled; else genericUnsupported">
-            <mat-icon class="note-icon">info</mat-icon>
-            {{ 'settings.notifications.ios_install_required' | translate }}
-          </p>
-          <ng-template #genericUnsupported>
+    <!-- ACCOUNT / SYNC CARD -->
+    @if (authServ.enabled) {
+      <ion-card class="session-card">
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon color="primary" name="cloud-outline"></ion-icon>
+            {{ 'settings.account.title' | translate }}
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          @if (user) {
+            <p class="language-info">
+              {{ 'settings.account.signed_in_as' | translate }}: <strong>{{ user.displayName || user.email }}</strong>
+            </p>
+            <ion-button color="secondary" (click)="signOut()">
+              <ion-icon slot="start" name="log-out-outline"></ion-icon>
+              {{ 'settings.account.sign_out' | translate }}
+            </ion-button>
+          } @else {
             <p class="language-note">
-              <mat-icon class="note-icon">info</mat-icon>
+              <ion-icon class="note-icon" name="information-circle-outline"></ion-icon>
+              {{ 'settings.account.description' | translate }}
+            </p>
+            <ion-button [disabled]="signingIn" (click)="signIn()">
+              <ion-icon slot="start" name="log-in-outline"></ion-icon>
+              {{ 'settings.account.sign_in' | translate }}
+            </ion-button>
+          }
+        </ion-card-content>
+      </ion-card>
+    }
+
+    <!-- DAILY REMINDERS CARD -->
+    @if (notifServ.enabled) {
+      <ion-card class="session-card">
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon color="primary" name="notifications-outline"></ion-icon>
+            {{ 'settings.notifications.title' | translate }}
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          @if (notifServ.supported) {
+            <p class="language-note">
+              <ion-icon class="note-icon" name="information-circle-outline"></ion-icon>
+              {{ 'settings.notifications.description' | translate }}
+            </p>
+            <ion-button [color]="notifSubscribed ? 'secondary' : 'primary'"
+                        [disabled]="notifBusy"
+                        (click)="toggleNotifications()">
+              <ion-icon slot="start" [name]="notifSubscribed ? 'notifications-off-outline' : 'notifications-outline'"></ion-icon>
+              {{ (notifSubscribed ? 'settings.notifications.disable' : 'settings.notifications.enable') | translate }}
+            </ion-button>
+            @if (notifError) {
+              <p class="warning-note">
+                <ion-icon class="note-icon" name="warning-outline"></ion-icon>
+                {{ 'settings.notifications.permission_error' | translate }}
+              </p>
+            }
+          } @else if (notifServ.isIosSafariNotInstalled) {
+            <p class="language-note">
+              <ion-icon class="note-icon" name="information-circle-outline"></ion-icon>
+              {{ 'settings.notifications.ios_install_required' | translate }}
+            </p>
+          } @else {
+            <p class="language-note">
+              <ion-icon class="note-icon" name="information-circle-outline"></ion-icon>
               {{ 'settings.notifications.unsupported' | translate }}
             </p>
-          </ng-template>
-        </ng-template>
-      </mat-card-content>
-    </mat-card>
-  </section>
+          }
+        </ion-card-content>
+      </ion-card>
+    }
 
-  <!-- LANGUAGE CARD -->
-  <section class="language-section">
-    <mat-card class="session-card mat-elevation-z4">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon color="primary">language</mat-icon>
+    <!-- LANGUAGE CARD -->
+    <ion-card class="session-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon color="primary" name="language-outline"></ion-icon>
           Idioma / Language
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
         <p class="language-info">
           {{ 'settings.language.current' | translate }}: <strong>{{ currentLanguageName }}</strong>
         </p>
-        <button mat-raised-button color="accent" (click)="resetLanguage()">
-          <mat-icon>refresh</mat-icon>
+        <ion-button color="secondary" (click)="resetLanguage()">
+          <ion-icon slot="start" name="refresh-outline"></ion-icon>
           {{ 'settings.language.reset_button' | translate }}
-        </button>
+        </ion-button>
         <p class="language-note">
-          <mat-icon class="note-icon">info</mat-icon>
+          <ion-icon class="note-icon" name="information-circle-outline"></ion-icon>
           {{ 'settings.language.reset_note' | translate }}
         </p>
-      </mat-card-content>
-    </mat-card>
-  </section>
+      </ion-card-content>
+    </ion-card>
 
-  <!-- STORAGE CARD -->
-  <section class="storage-section" *ngIf="!loading; else loadingBlock">
-    <mat-card class="session-card mat-elevation-z4">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon color="primary">storage</mat-icon>
-          {{ 'settings.storage.title' | translate }}
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="storage-info">
-          <div class="info-row">
-            <span>{{ 'settings.storage.used_by_app' | translate }}</span>
-            <strong>{{ totalUsedMB }} MB</strong>
+    <!-- STORAGE CARD -->
+    @if (!loading) {
+      <ion-card class="session-card">
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon color="primary" name="server-outline"></ion-icon>
+            {{ 'settings.storage.title' | translate }}
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="storage-info">
+            <div class="info-row">
+              <span>{{ 'settings.storage.used_by_app' | translate }}</span>
+              <strong>{{ totalUsedMB }} MB</strong>
+            </div>
+            <div class="info-row sub">
+              <span>→ {{ 'settings.storage.audios' | translate }}</span>
+              <strong>{{ usedByAudiosMB }} MB</strong>
+            </div>
+            <div class="info-row sub">
+              <span>→ {{ 'settings.storage.bibles' | translate }}</span>
+              <strong>{{ usedByBiblesMB }} MB</strong>
+            </div>
+            <div class="info-row sub">
+              <span>→ {{ 'settings.storage.plans' | translate }}</span>
+              <strong>{{ usedByPlansMB }} MB</strong>
+            </div>
+            <div class="info-row">
+              <span>{{ 'settings.storage.available' | translate }}</span>
+              <strong>{{ availableMB }} MB</strong>
+            </div>
           </div>
-          <div class="info-row sub">
-            <span>→ {{ 'settings.storage.audios' | translate }}</span>
-            <strong>{{ usedByAudiosMB }} MB</strong>
-          </div>
-          <div class="info-row sub">
-            <span>→ {{ 'settings.storage.bibles' | translate }}</span>
-            <strong>{{ usedByBiblesMB }} MB</strong>
-          </div>
-          <div class="info-row sub">
-            <span>→ {{ 'settings.storage.plans' | translate }}</span>
-            <strong>{{ usedByPlansMB }} MB</strong>
-          </div>
-          <div class="info-row">
-            <span>{{ 'settings.storage.available' | translate }}</span>
-            <strong>{{ availableMB }} MB</strong>
-          </div>
-        </div>
 
-        <div class="progress-container">
-          <mat-progress-bar
-            mode="determinate"
-            [value]="percentageUsed"
-            color="accent">
-          </mat-progress-bar>
-          <div class="progress-label">
-            {{ percentageUsed | number:'1.0-0' }}% {{ 'settings.storage.used' | translate }}
-            ({{ totalUsedMB }} {{ 'settings.storage.of' | translate }} {{ totalUsedMB + availableMB }} MB)
+          <div class="progress-container">
+            <ion-progress-bar color="secondary" [value]="percentageUsed / 100"></ion-progress-bar>
+            <div class="progress-label">
+              {{ percentageUsed | number:'1.0-0' }}% {{ 'settings.storage.used' | translate }}
+              ({{ totalUsedMB }} {{ 'settings.storage.of' | translate }} {{ totalUsedMB + availableMB }} MB)
+            </div>
           </div>
-        </div>
 
-        <div class="actions">
-          <button mat-raised-button color="warn" class="delete-button" (click)="clearAllAudios()">
-            <mat-icon class="button-icon">delete_forever</mat-icon>
-            <span class="button-text">{{ 'settings.storage.clear_audios' | translate }}</span>
-          </button>
-          <p class="warning-note">
-            <mat-icon class="note-icon">warning</mat-icon>
-            {{ 'settings.storage.clear_warning' | translate:{ size: usedByAudiosMB } }}
-          </p>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </section>
+          <div class="actions">
+            <ion-button color="danger" class="delete-button" (click)="clearAllAudios()">
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              {{ 'settings.storage.clear_audios' | translate }}
+            </ion-button>
+            <p class="warning-note">
+              <ion-icon class="note-icon" name="warning-outline"></ion-icon>
+              {{ 'settings.storage.clear_warning' | translate:{ size: usedByAudiosMB } }}
+            </p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    } @else {
+      <div class="loading-section">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>{{ 'settings.storage.calculating' | translate }}</p>
+      </div>
+    }
 
-  <ng-template #loadingBlock>
-    <div class="loading-section">
-      <mat-spinner diameter="50"></mat-spinner>
-      <p>{{ 'settings.storage.calculating' | translate }}</p>
-    </div>
-  </ng-template>
-
-  <!-- Futuras configurações -->
-  <section class="future-sections">
-    <p class="coming-soon">{{ 'settings.coming_soon' | translate }}</p>
-  </section>
-</div>
+    <section class="future-sections">
+      <p class="coming-soon">{{ 'settings.coming_soon' | translate }}</p>
+    </section>
+  </div>
+</ion-content>

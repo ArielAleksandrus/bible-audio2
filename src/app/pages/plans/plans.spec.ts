@@ -1,23 +1,18 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { Plans } from './plans';
+import { appTestProviders } from '../../../testing/test-providers';
 
 describe('Plans', () => {
-  let component: Plans;
-  let fixture: ComponentFixture<Plans>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Plans]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(Plans);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+      imports: [Plans],
+      providers: appTestProviders(),
+    }).compileComponents();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    const fixture = TestBed.createComponent(Plans);
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

@@ -1,9 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { IonButton, IonIcon, ModalController } from '@ionic/angular';
 
 import { InstallPromptService } from '../../services/install-prompt.service';
 import { SafariWarningDialog } from '../../safari-warning-dialog/safari-warning-dialog';
@@ -17,13 +15,13 @@ import { SafariWarningDialog } from '../../safari-warning-dialog/safari-warning-
 // step-by-step tutorial instead of just dismissing.
 @Component({
   selector: 'app-install-prompt',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, TranslateModule],
+  imports: [CommonModule, TranslatePipe, IonButton, IonIcon],
   templateUrl: './install-prompt.html',
   styleUrl: './install-prompt.scss'
 })
 export class InstallPrompt {
-  constructor(public installServ: InstallPromptService, private dialog: MatDialog) {}
+  installServ = inject(InstallPromptService);
+  private modals = inject(ModalController);
 
   install(): void {
     void this.installServ.install();
@@ -33,8 +31,9 @@ export class InstallPrompt {
     this.installServ.dismiss();
   }
 
-  showTutorial(): void {
+  async showTutorial(): Promise<void> {
     this.installServ.dismiss();
-    this.dialog.open(SafariWarningDialog, { width: '420px', maxWidth: '90vw', autoFocus: false });
+    const modal = await this.modals.create({ component: SafariWarningDialog, cssClass: 'app-dialog-tall' });
+    await modal.present();
   }
 }

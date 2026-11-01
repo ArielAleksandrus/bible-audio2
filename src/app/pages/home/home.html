@@ -1,114 +1,119 @@
-<div class="loading-container" *ngIf="!bibleData">
-  <div class="loading-hint">
-    <ng-container *ngIf="(textDownloadProgress$ | async) as textProgress; else genericLoadingHint">
-      <span class="loading-message">{{ 'loading.bible_selected_language' | translate }}</span>
-      <mat-progress-bar
-        [mode]="textProgress.total > 0 ? 'determinate' : 'indeterminate'"
-        [value]="textProgress.total > 0 ? (textProgress.loaded / textProgress.total) * 100 : 0">
-      </mat-progress-bar>
-      <span *ngIf="textProgress.total > 0">
-        {{ textProgress.loaded / 1024 / 1024 | number:'1.1-1' }} / {{ textProgress.total / 1024 / 1024 | number:'1.1-1' }} MB
-      </span>
-    </ng-container>
-    <ng-template #genericLoadingHint>
-      <mat-spinner diameter="24"></mat-spinner>
-      <span>Loading the Bible in your language</span>
-      <br/>
-      <span>Carregando a bíblia no seu idioma</span>
-      <br/>
-      <span>正在加载您语言的圣经</span>
-    </ng-template>
-  </div>
-</div>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ bibleData ? ('hero.title' | translate) : 'Bíblia Narrada' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-<div class="home-container" *ngIf="bibleData">
-  <header class="hero-header">
-    <mat-icon class="hero-icon">menu_book</mat-icon>
-    <h1>{{ 'hero.title' | translate }}</h1>
-    <p>{{ 'hero.subtitle' | translate }}</p>
-
-    <!-- ÁREA DE DOWNLOAD -->
-    <div class="download-area">
-      <!-- BOTÃO: aparece se houver espaço E NÃO estiver baixando -->
-      <div class="full-download-button-wrapper"
-           *ngIf="availableMB > 1500 && !bibleFullyDownloaded && (progress$ | async)?.status !== 'running'">
-        <button mat-raised-button
-                color="primary"
-                class="full-download-button"
-                (click)="fullDownload()">
-          <mat-icon>download</mat-icon>
-          {{ 'hero.full_download' | translate }}
-        </button>
-        <p class="full-download-description">
-          {{ 'hero.full_download_description' | translate }}
-          <mat-icon class="warning-icon">warning</mat-icon>
-        </p>
+<ion-content>
+  @if (!bibleData) {
+    <div class="loading-container">
+      <div class="loading-hint">
+        @if (textDownloadProgress$ | async; as textProgress) {
+          <span class="loading-message">{{ 'loading.bible_selected_language' | translate }}</span>
+          @if (textProgress.total > 0) {
+            <ion-progress-bar [value]="textProgress.loaded / textProgress.total"></ion-progress-bar>
+            <span>
+              {{ textProgress.loaded / 1024 / 1024 | number:'1.1-1' }} / {{ textProgress.total / 1024 / 1024 | number:'1.1-1' }} MB
+            </span>
+          } @else {
+            <ion-progress-bar type="indeterminate"></ion-progress-bar>
+          }
+        } @else {
+          <ion-spinner name="crescent"></ion-spinner>
+          <span>Loading the Bible in your language</span>
+          <span>Carregando a bíblia no seu idioma</span>
+          <span>正在加载您语言的圣经</span>
+        }
       </div>
+    </div>
+  } @else {
+    <div class="home-container">
+      <header class="hero-header">
+        <ion-icon class="hero-icon" name="book-outline"></ion-icon>
+        <p>{{ 'hero.subtitle' | translate }}</p>
 
-      <!-- PROGRESSO E SUCESSO -->
-      <div *ngIf="progress$ | async as progress">
-        <!-- Progresso durante o download -->
-        <div class="full-download-progress" *ngIf="progress.status === 'running' && progress.total > 0">
-          <p class="progress-title">
-            {{ 'hero.downloading_bible' | translate:{ downloaded: progress.downloaded, total: progress.total } }}
-          </p>
-          <mat-progress-bar
-            mode="determinate"
-            [value]="(progress.downloaded / progress.total) * 100">
-          </mat-progress-bar>
-          <small class="current-chapter">
-            {{ progress.currentTrack?.title || '-' }}
-          </small>
+        <!-- ÁREA DE DOWNLOAD -->
+        <div class="download-area">
+          <!-- BOTÃO: aparece se houver espaço E NÃO estiver baixando -->
+          @if (availableMB > 1500 && !bibleFullyDownloaded && (progress$ | async)?.status !== 'running') {
+            <div class="full-download-button-wrapper">
+              <ion-button class="full-download-button" (click)="fullDownload()">
+                <ion-icon slot="start" name="download-outline"></ion-icon>
+                {{ 'hero.full_download' | translate }}
+              </ion-button>
+              <p class="full-download-description">
+                {{ 'hero.full_download_description' | translate }}
+                <ion-icon class="warning-icon" name="warning-outline"></ion-icon>
+              </p>
+            </div>
+          }
+
+          <!-- PROGRESSO E SUCESSO -->
+          @if (progress$ | async; as progress) {
+            @if (progress.status === 'running' && progress.total > 0) {
+              <div class="full-download-progress">
+                <p class="progress-title">
+                  {{ 'hero.downloading_bible' | translate:{ downloaded: progress.downloaded, total: progress.total } }}
+                </p>
+                <ion-progress-bar [value]="progress.downloaded / progress.total"></ion-progress-bar>
+                <small class="current-chapter">{{ progress.currentTrack?.title || '-' }}</small>
+              </div>
+            }
+
+            <!-- Só quando a Bíblia INTEIRA terminou de baixar, não a cada
+                 capítulo/livro avulso (downloadTracks() serve aos dois). -->
+            @if (progress.status === 'completed' && progress.context === 'full-bible') {
+              <div class="download-complete">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>{{ 'hero.download_complete' | translate }}</span>
+              </div>
+            }
+          }
         </div>
 
-        <!-- Mensagem de sucesso: só quando a Bíblia INTEIRA terminou de
-             baixar, não a cada capítulo/livro avulso que o usuário abre
-             (downloadTracks() é compartilhado por ambos os fluxos). -->
-        <div class="download-complete" *ngIf="progress.status === 'completed' && progress.context === 'full-bible'">
-          <mat-icon color="primary">check_circle</mat-icon>
-          <span>{{ 'hero.download_complete' | translate }}</span>
+        @if (painting) {
+          <div class="loading-hint">
+            <ion-spinner name="crescent"></ion-spinner>
+            <span>{{ 'loading.checking' | translate }}</span>
+          </div>
+        }
+      </header>
+
+      <!-- BIBLE PICKER -->
+      <section class="picker-section">
+        <div class="picker-wrapper">
+          <bible-picker
+            [bible]="bibleData"
+            [select]="'chapter'"
+            [customCSS]="customCSS"
+            (onSelecting)="bpSelecting($event)"
+            (onSelected)="bpSelected($event)">
+          </bible-picker>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <!-- Painting -->
-    <div class="loading-hint" *ngIf="painting">
-      <mat-spinner diameter="24"></mat-spinner>
-      <span>{{ 'loading.checking' | translate }}</span>
+      <!-- LEGENDA -->
+      <section class="legend-section">
+        <div class="legend-items">
+          <div class="legend-item">
+            <span class="square-color partial-dl"></span>
+            <span class="label">{{ 'legend.partial' | translate }}</span>
+          </div>
+          <div class="legend-item">
+            <span class="square-color full-dl"></span>
+            <span class="label">{{ 'legend.full' | translate }}</span>
+          </div>
+        </div>
+      </section>
     </div>
-  </header>
+  }
 
-  <!-- BIBLE PICKER -->
-  <section class="picker-section">
-    <div class="picker-wrapper">
-      <bible-picker
-        [bible]="bibleData"
-        [select]="'chapter'"
-        [customCSS]="customCSS"
-        (onSelecting)="bpSelecting($event)"
-        (onSelected)="bpSelected($event)">
-      </bible-picker>
-    </div>
-  </section>
-
-  <!-- LEGENDA -->
-  <section class="legend-section">
-    <div class="legend-items">
-      <div class="legend-item">
-        <span class="square-color partial-dl"></span>
-        <span class="label">{{ 'legend.partial' | translate }}</span>
-      </div>
-      <div class="legend-item">
-        <span class="square-color full-dl"></span>
-        <span class="label">{{ 'legend.full' | translate }}</span>
-      </div>
-    </div>
-  </section>
-</div>
-
-<app-bible-text-viewer
-  *ngIf="showTextViewer && textBook"
-  [book]="textBook"
-  [chapters]="textChapters"
-  (close)="showTextViewer = false">
-</app-bible-text-viewer>
+  @if (showTextViewer && textBook) {
+    <app-bible-text-viewer
+      slot="fixed"
+      [book]="textBook"
+      [chapters]="textChapters"
+      (close)="showTextViewer = false">
+    </app-bible-text-viewer>
+  }
+</ion-content>

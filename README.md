@@ -1,6 +1,6 @@
 # Bíblia Narrada
 
-A Progressive Web App for listening to the Bible offline, including with the screen locked and from car Bluetooth controls.
+An app (PWA + native Android/iOS via Ionic & Capacitor) for listening to the Bible offline, including with the screen locked and from car Bluetooth controls.
 
 Live app: [https://bible-audio2.vercel.app/](https://bible-audio2.vercel.app/) or [https://biblia-narrada.vercel.app/](https://biblia-narrada.vercel.app/) — same build, deployed twice (see [Deploy](#deploy)).
 
@@ -70,9 +70,69 @@ On **iPhone / iPad**, add the app to the Home Screen (Share → Add to Home Scre
 
 When a new version is deployed, the service worker downloads it and the app offers a **Reload** snackbar.
 
+## Native apps (Android / iOS)
+
+The same Angular code base ships as the PWA **and** as native apps built with
+[Capacitor](https://capacitorjs.com/) (`android/`, `ios/`). The UI uses
+[Ionic](https://ionicframework.com/) components, so it gets iOS styling on
+iPhone and Material styling on Android automatically.
+
+What changes on native (`isNativeApp()` in `src/app/utils/platform.util.ts`):
+
+| | Web / PWA | Native app |
+|---|---|---|
+| Playback | `WebAudioEngine` — two `<audio>` elements + all the locked-screen workarounds (see `.claude/skills/gapless-audio-lockscreen`) | `NativeAudioEngine` — the whole playlist goes to the OS player via [`@dwbn/capacitor-plugin-playlist`](https://www.npmjs.com/package/@dwbn/capacitor-plugin-playlist): Media3/ExoPlayer foreground service on Android, AVQueuePlayer on iOS. Lock screen, notification, headset and car Bluetooth controls are native. |
+| Downloaded chapters | IndexedDB blobs | Files in the app's data dir (`audios/*.mp3`), downloaded with the native HTTP stack (`@capacitor/file-transfer`), so the OS player can open them and downloads continue in the background |
+| Bible JSON | `fetch` with progress | native HTTP (no CORS) |
+| Google sign-in | Firebase popup | native account picker (`@capacitor-firebase/authentication`), then the same Firebase JS SDK/Firestore sync |
+| Daily verse | Web Push from the Vercel cron | 30 days of local notifications scheduled on the device, with verses from the downloaded Bible (works offline, no FCM/APNs needed) |
+| Service worker, install banner, Safari/Instagram warnings | yes | off |
+
+A chapter queued while still streaming is swapped for its local file as soon
+as it finishes downloading, so a playlist started online keeps playing after
+the connection drops.
+
+### Build & run
+
+```bash
+npm run build        # web build → dist/bible-audio2/browser
+npx cap sync         # copy it into android/ and ios/ + update native plugins
+npx cap open android # Android Studio
+npx cap open ios     # Xcode (macOS only)
+```
+
+Run `npm run build && npx cap sync` again after every web change. Icons and
+splash screens are generated from `assets/` with
+`npx capacitor-assets generate --iconBackgroundColor '#eaded0' --splashBackgroundColor '#0f3d3e'`.
+
+### Before the first store upload
+
+- [ ] **App id** — `com.biblianarrada.app` (`capacitor.config.ts`, Android
+      `applicationId`, iOS bundle id). It cannot change after publishing.
+- [ ] **Firebase native apps** — add an Android app and an iOS app with that id
+      in the Firebase console, then put `google-services.json` in
+      `android/app/` and `GoogleService-Info.plist` in `ios/App/App/` (add it to
+      the Xcode target). Without them native Google sign-in fails; everything
+      else works.
+- [ ] **Android Google sign-in** — register the SHA-1 of the debug and
+      release/Play signing keys in the Firebase Android app.
+- [ ] **iOS Google sign-in** — replace `REPLACE_WITH_REVERSED_CLIENT_ID` in
+      `ios/App/App/Info.plist` with `REVERSED_CLIENT_ID` from
+      `GoogleService-Info.plist`.
+- [ ] **Sign in with Apple** (TODO, needs the Apple developer account) — App
+      Store guideline 4.8 requires it when Google sign-in is offered. Enable
+      the capability, the Apple provider in Firebase, add `'apple.com'` to
+      `FirebaseAuthentication.providers` and a button in Settings.
+- [ ] **Store icon** — `assets/icon-only.png` is cropped from the PWA icon
+      (which has a black border and a generator watermark); replace it with a
+      clean 1024×1024 master and regenerate.
+- [ ] Test on real devices: locked-screen playback across chapters, car
+      Bluetooth next/previous, offline playback after a full download.
+
 ## Tech stack
 
-- Angular 21 (standalone components, Material)
+- Angular 21 (standalone components) + Ionic 9
+- Capacitor 8 (Android/iOS shells) + native playlist player
 - Angular service worker (PWA)
 - IndexedDB via `idb`
 - `bible-picker` for book/chapter UI
@@ -120,10 +180,12 @@ Firestore rules live in `firestore.rules`: each signed-in user can only read/wri
 
 ```
 src/app/
-  pages/          Home, Plans, Settings
+  pages/          Tabs shell, Home, Plans, Settings
   components/     audio player, Bible text viewer, install & notification prompts
-  services/       audio, downloader, playlist, bible, plans, auth, sync, push, analytics
-  storage/        IndexedDB schema (`audio-db`) and Firebase helpers
+  services/       audio (web + native engines), downloader, bible, plans, auth, sync, notifications, analytics
+  storage/        IndexedDB schema (`audio-db`), audio file storage (IndexedDB/Filesystem), Firebase helpers
+android/, ios/    Capacitor native projects
+assets/           source images for native icons/splash
 public/assets/
   i18n/           UI translations
   plans/          plan JSON

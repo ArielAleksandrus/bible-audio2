@@ -1,28 +1,25 @@
-<div class="hold-confirm-dialog">
-  <!-- Botão de fechar (X) -->
-  <button mat-icon-button class="close-button" (click)="onCancel()" aria-label="Fechar">
-    <mat-icon>close</mat-icon>
-  </button>
+<div class="hold-confirm-dialog ion-padding">
+  <ion-button fill="clear" color="medium" class="close-button" (click)="onCancel()" aria-label="Fechar">
+    <ion-icon slot="icon-only" name="close"></ion-icon>
+  </ion-button>
 
-  <h2 mat-dialog-title class="title-with-close">{{ title }}</h2>
+  <h2 class="title-with-close">{{ title }}</h2>
 
-  <mat-dialog-content class="text-center">
-    <p [innerHTML]="message"></p>
+  <p [innerHTML]="message"></p>
 
-    <div class="button-container">
-      <button mat-fab
-              color="warn"
-              class="hold-button"
-              (mousedown)="onMouseDown($event)"
-              (touchstart)="onTouchStart($event)"
-              [class.holding]="progress > 0">
-        <mat-progress-spinner mode="determinate"
-                              [value]="progress"
-                              diameter="80"
-                              strokeWidth="8">
-        </mat-progress-spinner>
-        <span class="button-label">OK</span>
-      </button>
-    </div>
-  </mat-dialog-content>
+  <div class="button-container">
+    <button type="button"
+            class="hold-button"
+            [class.holding]="progress > 0"
+            (mousedown)="onMouseDown($event)"
+            (touchstart)="onTouchStart($event)">
+      <svg class="ring" viewBox="0 0 80 80" aria-hidden="true">
+        <circle class="track" cx="40" cy="40" r="36"></circle>
+        <circle class="bar" cx="40" cy="40" r="36"
+                [attr.stroke-dasharray]="circumference"
+                [attr.stroke-dashoffset]="circumference * (1 - progress / 100)"></circle>
+      </svg>
+      <span class="button-label">OK</span>
+    </button>
+  </div>
 </div>

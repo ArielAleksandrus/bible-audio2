@@ -1,6 +1,11 @@
 import { Component, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { Router } from '@angular/router';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import {
+  IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle,
+  IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonProgressBar, IonTitle, IonToolbar,
+  ModalController,
+} from '@ionic/angular';
 
 import { AudioDownloaderService } from '../../services/audio-downloader.service';
 import { AudioService } from '../../services/audio.service';
@@ -9,6 +14,7 @@ import { PlanService } from '../../services/plan.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { SyncService } from '../../services/sync.service';
 import { InAppBrowserWarningService } from '../../services/in-app-browser-warning.service';
+import { UiService } from '../../services/ui.service';
 
 import { Plan, DailyGoal } from '../../models/plan';
 import { Track } from '../../models/track';
@@ -16,27 +22,20 @@ import { SamplePlan } from '../../data/my-plans';
 
 import { Bible } from 'bible-picker';
 
-import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-
-import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialog';
 
 
 const PRELOAD_DAYS = 7;
+/** Days per page in the current plan's day list (a week at a time). */
+const PAGE_SIZE = 7;
 
 @Component({
   selector: 'app-plans',
-  imports: [CommonModule,
-    MatIconModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatButtonModule,
-    MatTooltipModule,
-    TranslateModule],
+  imports: [
+    TranslatePipe,
+    IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonList, IonItem,
+    IonLabel, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent,
+  ],
   templateUrl: './plans.html',
   styleUrl: './plans.scss',
 })
@@ -55,10 +54,23 @@ export class Plans {
   tracks: Track[] = [];
   curTrackIdx: number = 0;
 
-  dataSource = new MatTableDataSource<DailyGoal>([]);
-  displayedColumns: string[] = ['title', 'portions', 'actions'];
-  @ViewChild(MatPaginator, { static: false }) set paginator(p: MatPaginator) {
-    this.dataSource.paginator = p; // seta automaticamente quando aparecer
+  readonly pageSize = PAGE_SIZE;
+  pageIndex = 0;
+
+  @ViewChild(IonContent) private content?: IonContent;
+
+  get pageCount(): number {
+    return this.currentPlan ? Math.ceil(this.currentPlan.goals.length / this.pageSize) : 0;
+  }
+
+  get pagedGoals(): DailyGoal[] {
+    if (!this.currentPlan) return [];
+    const start = this.pageIndex * this.pageSize;
+    return this.currentPlan.goals.slice(start, start + this.pageSize);
+  }
+
+  goToPage(index: number) {
+    this.pageIndex = Math.max(0, Math.min(index, this.pageCount - 1));
   }
 
   constructor(private planServ: PlanService,
@@ -66,7 +78,9 @@ export class Plans {
     private bibleServ: BibleService,
     private audioService: AudioService,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
+    private modals: ModalController,
+    private ui: UiService,
+    private router: Router,
     private translate: TranslateService,
     private analytics: AnalyticsService,
     private syncServ: SyncService,
@@ -74,7 +88,7 @@ export class Plans {
   ) {
 
     if(!localStorage.getItem("selectedBible")) {
-      location.href = "/home";
+      void this.router.navigateByUrl('/home');
       return;
     }
 
@@ -86,8 +100,9 @@ export class Plans {
         if(savedLang) {
           this.translate.use(savedLang);
         }
+        this.cdr.markForCheck();
       } else {
-        location.href = "/home";
+        void this.router.navigateByUrl('/home');
       }
     });
 
@@ -182,7 +197,7 @@ export class Plans {
       this.planServ.incrementCompletionCount(planId).then(count => {
         this.completionCounts[planId] = count;
       });
-      alert("Parabéns, você finalizou o plano de leitura!");
+      void this.ui.alert("Parabéns, você finalizou o plano de leitura!");
     }
   }
 
@@ -191,12 +206,11 @@ export class Plans {
   setPlan(plan?: Plan) {
     if(!plan) {
       this.currentPlan = undefined;
-      this.dataSource.data = [];
+      this.pageIndex = 0;
       return;
     }
 
     this.currentPlan = plan;
-    this.dataSource.data = this.currentPlan.goals;
     this.stoppedAt = this.planServ.stoppedAt(plan);
     // A plan fresh from fetchPlans() (start of a new plan) has no
     // daysRemaining yet — daysCompleted() falls back to 0 via `?? 0`,
@@ -209,28 +223,23 @@ export class Plans {
       this.curTrackIdx = this.stoppedAt.portionIdx;
     }
 
-    // Delay slightly to ensure content has loaded
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 30);
+    this.scrollToTop();
   }
 
-  deletePlan(plan: Plan) {
-    const dialogRef = this.dialog.open(ConfirmationDialog, {
-      width: '380 px',
-      maxWidth: '90vw',
-      autoFocus: false,
-      disableClose: false,
-      panelClass: 'hold-confirm-dialog-panel'
-    });
+  private scrollToTop() {
+    // Delay slightly so the plan header has rendered first.
+    setTimeout(() => void this.content?.scrollToTop(300), 30);
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if(result === true) {
-        this.planServ.delete(plan.id).then(_ => {
-          this._loadPlans();
-        });
-      }
-    });
+  async deletePlan(plan: Plan) {
+    const modal = await this.modals.create({ component: ConfirmationDialog, cssClass: 'app-dialog' });
+    await modal.present();
+    const { data: result } = await modal.onDidDismiss<boolean>();
+    if(result === true) {
+      if (this.currentPlan?.id === plan.id) this.setPlan(undefined);
+      await this.planServ.delete(plan.id);
+      this._loadPlans();
+    }
   }
 
   startPlan(plan: Plan) {
@@ -238,7 +247,7 @@ export class Plans {
     plan.status = "started";
     this.planServ.get(plan.id).then(res => {
       if(res && res.status !== "completed") {
-        alert("Plano já iniciado. Caso queira recomeçá-lo, remova-o antes de adicionar novamente");
+        void this.ui.alert("Plano já iniciado. Caso queira recomeçá-lo, remova-o antes de adicionar novamente");
         return;
       } else {
         this.planServ.save(plan).then(_ => {
@@ -249,10 +258,6 @@ export class Plans {
     });
     this.openPlan(plan);
     this.playGoal(plan.goals[0]);
-    // Delay slightly to ensure content has loaded
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 30);
   }
 
   openPlan(plan: Plan, day?: number) {
@@ -275,19 +280,10 @@ export class Plans {
     this.play().then(_ => {});
   }
 
+  /** Show the page of days that contains where the user stopped (or the day just opened). */
   private _goToStoppedAt(plan: Plan) {
-    setTimeout(() => {
-      if(this.dataSource && this.dataSource.paginator) {
-        let paginator = this.dataSource.paginator;
-        let d = plan.stoppedAt?.day || 1;
-        paginator.pageIndex = Math.floor(d / paginator.pageSize);
-        paginator.page.next({
-          pageIndex: paginator.pageIndex,
-          pageSize: paginator.pageSize,
-          length: paginator.length
-        });
-      }
-    }, 100);
+    const day = this.currentDay || plan.stoppedAt?.day || 1;
+    this.goToPage(Math.floor((Math.max(1, day) - 1) / this.pageSize));
   }
   //////////////////////////////////////////////////
 
@@ -301,7 +297,7 @@ export class Plans {
   async prepareToPlay(): Promise<void> {
     if(!this.currentPlan) {
       console.error("Plans::prepareToPlay", "currentPlan is not set");
-      alert("Erro");
+      void this.ui.alert("Erro");
       return;
     }
     this.tracks = await this.buildTracks(this.currentPlan, this.currentDay, PRELOAD_DAYS);

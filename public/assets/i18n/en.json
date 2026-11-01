@@ -133,7 +133,6 @@
     "menu_hint": "Tap ••• then \"Open in Browser\"",
     "dismiss": "Continue anyway"
   },
-
   "safari_warning": {
     "title": "Suggestion",
     "message": "For better notification and background-playback support, add BibleAudio to your Home Screen (Share -> Add to Home Screen).",
@@ -178,5 +177,8 @@
       "author": "Unknown",
       "description": "When there is no hope: This is for the night you cannot pray without shaking — when the kind words have run out and there is still no light. For seven days Scripture will not rush you: it sits with Job on the ash heap, hides with David in the cave, waits with Paul in chains, and kneels with Christ in Gethsemane, until you are allowed to say the worst things out loud. Only then does it show you the God who does not call advice down from the rim of the valley, but walks it — who answers from the whirlwind, restores the one who lost everything, leaves a tomb empty, and promises a new earth and a new sky, where He Himself will wipe the tears from your face. Start where there is no hope. Walk. He is already there."
     }
+  },
+  "common": {
+    "cancel": "Cancel"
   }
 }

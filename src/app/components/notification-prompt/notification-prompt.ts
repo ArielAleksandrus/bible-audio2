@@ -1,8 +1,7 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { IonButton, IonIcon } from '@ionic/angular';
 import { delay, filter, take } from 'rxjs/operators';
 
 import { InstallPromptService } from '../../services/install-prompt.service';
@@ -19,8 +18,7 @@ const SHOW_AFTER_INSTALL_RESOLVED_MS = 1500;
 // stacked banners at once.
 @Component({
   selector: 'app-notification-prompt',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, TranslateModule],
+  imports: [CommonModule, TranslatePipe, IonButton, IonIcon],
   templateUrl: './notification-prompt.html',
   styleUrl: './notification-prompt.scss'
 })
@@ -61,6 +59,7 @@ export class NotificationPrompt {
     } finally {
       this.busy = false;
       this.visible = false;
+      this.cdr.markForCheck();
     }
   }
 

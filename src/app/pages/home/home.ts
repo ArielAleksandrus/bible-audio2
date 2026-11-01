@@ -1,7 +1,10 @@
 import { Component, ChangeDetectorRef, OnInit, ViewEncapsulation } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import {
+  IonButton, IonContent, IonHeader, IonIcon, IonProgressBar, IonSpinner, IonTitle, IonToolbar,
+  ModalController, ViewWillEnter,
+} from '@ionic/angular';
 
 import { AudioService } from '../../services/audio.service';
 import { AudioDownloaderService } from '../../services/audio-downloader.service';
@@ -9,14 +12,8 @@ import { BibleService, BookDownloadStatus } from '../../services/bible.service';
 import { AvailableSpace } from '../../storage/my-db';
 import { Track } from '../../models/track';
 
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatButtonModule } from '@angular/material/button';
-
 import { BiblePicker, Bible, BibleBook, BibleSelection, OverridableCSS as BibleCSS } from 'bible-picker';
 
-import { MatDialog } from '@angular/material/dialog';
 import { LanguageSelectorDialog } from '../../language-selector-dialog/language-selector-dialog';
 import { BibleTextViewer } from '../../components/bible-text-viewer/bible-text-viewer';
 import { AppStateService } from '../../services/app-state.service';
@@ -24,25 +21,23 @@ import { InAppBrowserWarningService } from '../../services/in-app-browser-warnin
 import { InstallPromptService } from '../../services/install-prompt.service';
 import { InstallSuggestedDialog } from '../../install-suggested-dialog/install-suggested-dialog';
 import { isAppInstalled, isInstagramInAppBrowser, isMobileDevice } from '../../utils/browser.util';
+import { isNativeApp } from '../../utils/platform.util';
+import { UiService } from '../../services/ui.service';
 
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
-  imports: [CommonModule,
-      BiblePicker,
-      MatIconModule,
-      MatProgressSpinnerModule,
-      MatProgressBarModule,
-      MatButtonModule,
-      TranslateModule,
-      BibleTextViewer
+  imports: [
+    AsyncPipe, DecimalPipe, TranslatePipe,
+    IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon, IonProgressBar, IonSpinner,
+    BiblePicker,
+    BibleTextViewer,
   ],
-  standalone: true,
   encapsulation: ViewEncapsulation.None // faz o css definido em home.scss penetrar o bible-picker
 })
-export class Home implements OnInit {
+export class Home implements OnInit, ViewWillEnter {
   tracks: Track[] = [];
   booksDownloadStatus: BookDownloadStatus[] = [];
   currentTrackIndex = 0;
@@ -68,7 +63,8 @@ export class Home implements OnInit {
     private dlServ: AudioDownloaderService,
     private bibleServ: BibleService,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
+    private modals: ModalController,
+    private ui: UiService,
     private translate: TranslateService,
     private appState: AppStateService,
     private inAppBrowserWarning: InAppBrowserWarningService,
@@ -90,6 +86,12 @@ export class Home implements OnInit {
       this.openLanguageSelector();
     else
       this.init();
+  }
+
+  // Tabs keep this page alive; refresh the downloaded/partial colouring when
+  // coming back (e.g. after a plan downloaded chapters from the Plans tab).
+  ionViewWillEnter() {
+    if (this.bibleData && !this.painting) this.checkDownloaded();
   }
 
   init() {
@@ -119,7 +121,7 @@ export class Home implements OnInit {
     });
   }
 
-  fullDownload(): Promise<Track[]> {
+  async fullDownload(): Promise<Track[]> {
     // Instagram's in-app browser can't run the PWA in the background at
     // all (see browser.util.ts), so a 1.3 GB download there is wasted —
     // play Genesis 1 instead, just to show the app works, and point the
@@ -137,27 +139,25 @@ export class Home implements OnInit {
     // only a suggestion, not a gate, so the download below still runs.
     // Desktop has no equivalent installed/not-installed expectation, so it
     // never shows this.
-    if (isMobileDevice() && !isAppInstalled()) {
-      this.dialog.open(InstallSuggestedDialog, { width: '320px', autoFocus: false });
+    if (!isNativeApp() && isMobileDevice() && !isAppInstalled()) {
+      void this.modals.create({ component: InstallSuggestedDialog, cssClass: 'app-dialog' }).then(m => m.present());
     }
 
     // Só avisa quando temos certeza de que a conexão é via dados móveis —
     // a Network Information API (navigator.connection) não existe no
     // Safari/Firefox, então "não sei dizer" não pode ser tratado como
     // "está no celular", ou o aviso apareceria sempre nesses navegadores.
-    if (this.isOnCellular() === true) {
-      const confirm = window.confirm(
+    if (await this.isOnCellular() === true) {
+      const confirm = await this.ui.confirm(
         this.translate.instant('hero.confirm_mobile_data') ||
         'Você não está conectado ao Wi-Fi. O download da Bíblia inteira usa cerca de 1.3 GB de dados. Deseja continuar mesmo assim?'
       );
-      if (!confirm) {
-        return new Promise(res => res([])); // Usuário cancelou
-      }
+      if (!confirm) return []; // Usuário cancelou
     }
 
     let bd = this.bibleData;
     if(!bd)
-      return new Promise(res => res([]));
+      return [];
 
     // Refresh download status/legend once the bulk download settles —
     // whether it finished, errored, or was cut short by a stall — so
@@ -195,20 +195,20 @@ export class Home implements OnInit {
     });
   }
 
-  openLanguageSelector() {
-    const dialogRef = this.dialog.open(LanguageSelectorDialog, {
-      width: '320px',
-      disableClose: true,     // can't close by clicking outside
-      hasBackdrop: true,
-      backdropClass: 'dark-backdrop'
+  async openLanguageSelector() {
+    const modal = await this.modals.create({
+      component: LanguageSelectorDialog,
+      cssClass: 'app-dialog',
+      backdropDismiss: false, // a language is required to use the app
     });
-
-    dialogRef.afterClosed().subscribe(async (langVersion: string) => {
+    await modal.present();
+    const { data: langVersion } = await modal.onDidDismiss<string>();
+    {
       if (langVersion) {
         localStorage.setItem("selectedBible", langVersion);
         let bible: Bible|undefined = await this.bibleServ.downloadAndSaveBible(langVersion.split("-")[0], langVersion.split("-")[1]);
         if(!bible) {
-          alert("Error fetching bible version. Select another language");
+          await this.ui.alert("Error fetching bible version. Select another language");
           localStorage.removeItem("selectedBible");
           this.openLanguageSelector();
           return;
@@ -216,7 +216,7 @@ export class Home implements OnInit {
         this.appState.markLanguageSelected();
         this.init();
       }
-    });
+    }
   }
 
 
@@ -306,7 +306,12 @@ export class Home implements OnInit {
    * (API unsupported, e.g. Safari/Firefox, or `type` not exposed by this
    * browser — Chrome itself only reports it on Android, not desktop).
    */
-  private isOnCellular(): boolean | null {
+  private async isOnCellular(): Promise<boolean | null> {
+    if (isNativeApp()) {
+      const { Network } = await import('@capacitor/network');
+      const status = await Network.getStatus().catch(() => null);
+      return status ? status.connectionType === 'cellular' : null;
+    }
     const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
     if (!connection || typeof connection.type === 'undefined') {
       return null;

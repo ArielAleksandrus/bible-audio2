@@ -1,44 +1,46 @@
-<div class="fixed-player-wrapper" *ngIf="currentTrack">
+@if (currentTrack) {
   <div class="audio-player">
-    <button mat-icon-button class="close-btn" (click)="close()" aria-label="Fechar player">
-      <mat-icon>close</mat-icon>
-    </button>
-
-    <div class="track-info">
-      <div class="title">{{ currentTrack.title }}</div>
-      <div class="subtitle">Bíblia em áudio</div>
+    <div class="header">
+      <div class="track-info">
+        <div class="title">{{ currentTrack.title }}</div>
+        <div class="subtitle">Bíblia Narrada</div>
+      </div>
+      <ion-button fill="clear" color="medium" size="small" class="close-btn" (click)="close()" aria-label="Fechar player">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
     </div>
 
     <div class="controls">
-      <button mat-icon-button (click)="rewind()">
-        <mat-icon>replay_10</mat-icon>
-      </button>
-      <button mat-icon-button (click)="prev()" [disabled]="!audioService.hasPrevious()">
-        <mat-icon>skip_previous</mat-icon>
-      </button>
-      <button mat-fab color="accent" class="play-btn" (click)="togglePlayPause()">
-        <mat-icon *ngIf="!isPlaying" class="large">play_arrow</mat-icon>
-        <mat-icon *ngIf="isPlaying" class="large">pause</mat-icon>
-      </button>
-      <button mat-icon-button (click)="next()" [disabled]="!audioService.hasNext()">
-        <mat-icon>skip_next</mat-icon>
-      </button>
-      <button mat-icon-button (click)="forward()">
-        <mat-icon>forward_10</mat-icon>
-      </button>
+      <ion-button fill="clear" (click)="rewind()" aria-label="-10s">
+        <ion-icon slot="icon-only" name="play-back"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" (click)="prev()" [disabled]="!audioService.hasPrevious()" aria-label="Anterior">
+        <ion-icon slot="icon-only" name="play-skip-back"></ion-icon>
+      </ion-button>
+      <ion-button shape="round" class="play-btn" (click)="togglePlayPause()" [attr.aria-label]="isPlaying ? 'Pausar' : 'Tocar'">
+        <ion-icon slot="icon-only" [name]="isPlaying ? 'pause' : 'play'"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" (click)="next()" [disabled]="!audioService.hasNext()" aria-label="Próximo">
+        <ion-icon slot="icon-only" name="play-skip-forward"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" (click)="forward()" aria-label="+10s">
+        <ion-icon slot="icon-only" name="play-forward"></ion-icon>
+      </ion-button>
     </div>
 
-    <!-- Seek bar embaixo dos controles -->
     <div class="progress-container">
       <span class="time">{{ formatTime(currentTime) }}</span>
-      <mat-slider class="full-width-slider">
-        <input matSliderThumb
-               [value]="(currentTime * 100) / duration"
-               (valueChange)="seek($event)"
-               min="0"
-               max="100">
-      </mat-slider>
+      <ion-range
+        class="seek"
+        aria-label="Posição"
+        [min]="0"
+        [max]="duration || 1"
+        [value]="dragging ? dragValue : currentTime"
+        (ionKnobMoveStart)="dragging = true"
+        (ionInput)="dragValue = $any($event.detail.value)"
+        (ionKnobMoveEnd)="onSeekEnd($any($event.detail.value))">
+      </ion-range>
       <span class="time">{{ formatTime(duration) }}</span>
     </div>
   </div>
-</div>
+}

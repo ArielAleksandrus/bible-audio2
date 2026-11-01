@@ -133,7 +133,6 @@
     "menu_hint": "Toque em ••• e depois em \"Abrir no navegador\"",
     "dismiss": "Continuar mesmo assim"
   },
-
   "safari_warning": {
     "title": "Sugestão",
     "message": "Para melhor suporte a notificações e reprodução em segundo plano, adicione o BibleAudio à tela de início (Compartilhar -> Adicionar à tela de início).",
@@ -178,5 +177,8 @@
       "author": "Desconhecido",
       "description": "Quando não há esperança: Isto é para a noite em que você não consegue orar sem tremer — quando as palavras de consolo já se esgotaram e ainda não há luz nenhuma. Por sete dias, a Escritura não vai apressar você: ela senta com Jó no monte de cinzas, se esconde com Davi na caverna, espera com Paulo acorrentado, e se ajoelha com Cristo no Getsêmani, até que você tenha permissão para dizer em voz alta as coisas mais terríveis. Só então ela te mostra o Deus que não grita conselhos da beira do vale, mas o atravessa com você — que responde do meio do redemoinho, restaura quem perdeu tudo, deixa um túmulo vazio, e promete um novo céu e uma nova terra, onde Ele mesmo enxugará as lágrimas do seu rosto. Comece onde não há esperança. Caminhe. Ele já está lá."
     }
+  },
+  "common": {
+    "cancel": "Cancelar"
   }
 }

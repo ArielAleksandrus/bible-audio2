@@ -133,7 +133,6 @@
     "menu_hint": "Toca ••• y luego \"Abrir en el navegador\"",
     "dismiss": "Continuar de todos modos"
   },
-
   "safari_warning": {
     "title": "Sugerencia",
     "message": "Para un mejor soporte de notificaciones y reproducción en segundo plano, agrega BibleAudio a la pantalla de inicio (Compartir -> Agregar a pantalla de inicio).",
@@ -178,5 +177,8 @@
       "author": "Desconocido",
       "description": "Cuando no hay esperanza: Esto es para la noche en la que no puedes orar sin temblar — cuando las palabras de consuelo ya se han agotado y todavía no hay luz. Durante siete días, la Escritura no te apresurará: se sienta con Job en el montón de cenizas, se esconde con David en la cueva, espera con Pablo encadenado, y se arrodilla con Cristo en Getsemaní, hasta que se te permite decir en voz alta las cosas más terribles. Solo entonces te muestra al Dios que no da consejos desde el borde del valle, sino que lo atraviesa contigo — que responde desde el torbellino, restaura al que lo perdió todo, deja una tumba vacía, y promete un cielo nuevo y una tierra nueva, donde Él mismo enjugará las lágrimas de tu rostro. Comienza donde no hay esperanza. Camina. Él ya está allí."
     }
+  },
+  "common": {
+    "cancel": "Cancelar"
   }
 }

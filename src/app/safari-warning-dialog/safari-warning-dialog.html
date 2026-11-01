@@ -1,34 +1,32 @@
-<div class="safari-warning-dialog">
-  <button mat-icon-button class="close-button" (click)="close()" aria-label="Fechar">
-    <mat-icon>close</mat-icon>
-  </button>
+<div class="safari-warning-dialog ion-padding">
+  <ion-button fill="clear" color="medium" class="close-button" (click)="close()" aria-label="Fechar">
+    <ion-icon slot="icon-only" name="close"></ion-icon>
+  </ion-button>
 
-  <h2 mat-dialog-title class="title-with-close">{{ 'safari_warning.title' | translate }}</h2>
+  <h2 class="title-with-close">{{ 'safari_warning.title' | translate }}</h2>
 
-  <mat-dialog-content>
-    <p>{{ 'safari_warning.message' | translate }}</p>
+  <p>{{ 'safari_warning.message' | translate }}</p>
 
-    <div class="steps-illustration">
-      <div class="step">
-        <div class="step-icon">
-          <mat-icon>ios_share</mat-icon>
-        </div>
-        <span class="step-label">{{ 'safari_warning.step_share' | translate }}</span>
+  <div class="steps-illustration">
+    <div class="step">
+      <div class="step-icon">
+        <ion-icon name="share-outline"></ion-icon>
       </div>
-
-      <mat-icon class="step-arrow">arrow_forward</mat-icon>
-
-      <div class="step">
-        <div class="step-icon highlight">
-          <mat-icon>add_to_home_screen</mat-icon>
-        </div>
-        <span class="step-label">{{ 'safari_warning.step_add' | translate }}</span>
-      </div>
+      <span class="step-label">{{ 'safari_warning.step_share' | translate }}</span>
     </div>
-  </mat-dialog-content>
 
-  <mat-dialog-actions align="end">
-    <button mat-stroked-button class="how-to-button" (click)="showExample()">{{ 'safari_warning.how_to' | translate }}</button>
-    <button mat-button (click)="close()">{{ 'safari_warning.dismiss' | translate }}</button>
-  </mat-dialog-actions>
+    <ion-icon class="step-arrow" name="arrow-forward"></ion-icon>
+
+    <div class="step">
+      <div class="step-icon highlight">
+        <ion-icon name="add-circle-outline"></ion-icon>
+      </div>
+      <span class="step-label">{{ 'safari_warning.step_add' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <ion-button fill="outline" class="how-to-button" (click)="showExample()">{{ 'safari_warning.how_to' | translate }}</ion-button>
+    <ion-button fill="clear" (click)="close()">{{ 'safari_warning.dismiss' | translate }}</ion-button>
+  </div>
 </div>

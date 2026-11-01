@@ -1,30 +1,25 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { Component, inject } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { IonButton, IonIcon, ModalController } from '@ionic/angular';
 
 import { VideoExampleDialog } from '../video-example-dialog/video-example-dialog';
 
+/** Web only (iOS Safari): explains Share → Add to Home Screen. */
 @Component({
   selector: 'app-safari-warning-dialog',
-  standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, TranslateModule],
+  imports: [TranslatePipe, IonButton, IonIcon],
   templateUrl: './safari-warning-dialog.html',
   styleUrl: './safari-warning-dialog.scss'
 })
 export class SafariWarningDialog {
-  constructor(
-    public dialogRef: MatDialogRef<SafariWarningDialog>,
-    private dialog: MatDialog
-  ) {}
+  private modals = inject(ModalController);
 
   close(): void {
-    this.dialogRef.close();
+    void this.modals.dismiss();
   }
 
-  showExample(): void {
-    this.dialog.open(VideoExampleDialog, { width: '320px', maxWidth: '90vw', autoFocus: false });
+  async showExample(): Promise<void> {
+    const modal = await this.modals.create({ component: VideoExampleDialog, cssClass: 'app-dialog' });
+    await modal.present();
   }
 }

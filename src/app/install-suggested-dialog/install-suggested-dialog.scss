@@ -1,24 +1,22 @@
 .install-suggested-dialog {
-  position: relative;
-  padding: 20px;
   text-align: center;
 
   .install-suggested-icon {
     font-size: 40px;
-    width: 40px;
-    height: 40px;
     color: #ff9100;
-    margin-bottom: 8px;
+    margin: 8px 0;
   }
 
-  mat-dialog-content p {
+  p {
     margin: 0;
     font-size: 1rem;
     line-height: 1.4;
   }
 
-  mat-dialog-actions {
-    margin-top: 12px;
+  .actions {
+    display: flex;
     justify-content: center;
+    gap: 4px;
+    margin-top: 12px;
   }
 }

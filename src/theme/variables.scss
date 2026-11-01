@@ -1,0 +1,46 @@
+// Ionic theme — same palette the Material theme used (primary #0f3d3e,
+// secondary #16555a, tertiary from the generated M3 palette).
+// https://ionicframework.com/docs/theming/colors
+:root {
+  --ion-color-primary: #0f3d3e;
+  --ion-color-primary-rgb: 15, 61, 62;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0d3637;
+  --ion-color-primary-tint: #275051;
+
+  --ion-color-secondary: #16555a;
+  --ion-color-secondary-rgb: 22, 85, 90;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #134b4f;
+  --ion-color-secondary-tint: #2d666b;
+
+  --ion-color-tertiary: #645978;
+  --ion-color-tertiary-rgb: 100, 89, 120;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #584e6a;
+  --ion-color-tertiary-tint: #746a86;
+
+  --ion-color-success: #2e7d32;
+  --ion-color-success-rgb: 46, 125, 50;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #296e2c;
+  --ion-color-success-tint: #438a47;
+
+  --ion-color-danger: #ba1a1a;
+  --ion-color-danger-rgb: 186, 26, 26;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #a41717;
+  --ion-color-danger-tint: #c13131;
+
+  --ion-background-color: #f9f9f9;
+  --ion-font-family: Roboto, 'Helvetica Neue', sans-serif;
+
+  // Chapter/book colouring in the picker (downloaded / partially downloaded).
+  --app-downloaded: lightgreen;
+  --app-partial: lightyellow;
+}

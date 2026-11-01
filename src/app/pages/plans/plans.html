@@ -1,154 +1,188 @@
-<div class="plans-container" *ngIf="bibleData">
-  <!-- ============================================= -->
-  <!-- CURRENT PLANS -->
-  <!-- ============================================= -->
-  <div *ngIf="currentPlan" class="current-plan-section">
-    <div class="plan-header">
-      <h2>
-        <mat-icon color="primary" class="header-icon">menu_book</mat-icon>
-        {{ 'plans.current.title' | translate }}: {{ planText(currentPlan, 'title') }}
-        <span *ngIf="completionCount(currentPlan) > 0" class="completion-badge">
-          {{ 'plans.times_completed' | translate: { count: completionCount(currentPlan) } }}
-        </span>
-      </h2>
-      <div class="plan-subtitle" *ngIf="currentPlan.author">
-        {{ 'plans.current.by' | translate }} {{ planText(currentPlan, 'author') }}
-      </div>
-      <div class="plan-description" *ngIf="currentPlan.description">
-        {{ planText(currentPlan, 'description') }}
-      </div>
-      <div class="progress-text">
-        <strong>
-          {{ daysCompleted(currentPlan) }} {{ 'plans.current.of' | translate }} {{ currentPlan.days }} {{ 'plans.current.days_completed' | translate }}
-        </strong>
-      </div>
-      <div class="progress-bar-container">
-        <div class="progress-bar-fill"
-             [style.width.%]="currentPlan.days ? (daysCompleted(currentPlan) / currentPlan.days) * 100 : 0">
-        </div>
-      </div>
-    </div>
+<ion-header>
+  <ion-toolbar color="primary">
+    @if (currentPlan) {
+      <ion-buttons slot="start">
+        <ion-button (click)="closePlan()" aria-label="Voltar">
+          <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+    <ion-title>{{ 'menu.plans' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-    <!-- Tabela de metas/dias -->
-    <table mat-table [dataSource]="dataSource" class="goals-table mat-elevation-z4">
-      <!-- Coluna Dia/Título -->
-      <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef class="header-day">{{ 'plans.table.day' | translate }}</th>
-        <td mat-cell *matCellDef="let goal; let i = index" class="cell-day">
-          <div class="day-title">
-            {{ goal.title || ('plans.current.day' | translate) + ' ' + (paginator.pageIndex * paginator.pageSize + i + 1) }}
-            <mat-icon *ngIf="goal.completed" color="primary" class="completed-icon">check_circle</mat-icon>
-          </div>
-        </td>
-      </ng-container>
-
-      <!-- Coluna Leituras -->
-      <ng-container matColumnDef="portions">
-        <th mat-header-cell *matHeaderCellDef>{{ 'plans.table.readings' | translate }}</th>
-        <td mat-cell *matCellDef="let goal" class="cell-portions">
-          <div class="portion-list">
-            <div *ngFor="let portion of goal.portions" class="portion-item">
-              <span class="book-abbrev">{{ bibleData.books[portion.bookIdx]?.abbrev }} {{ portion.chapter }}</span>
-              <mat-icon *ngIf="portion.completed" class="mini-check">check</mat-icon>
+<ion-content>
+  @if (bibleData) {
+    <div class="plans-container">
+      <!-- ============================================= -->
+      <!-- CURRENT PLAN -->
+      <!-- ============================================= -->
+      @if (currentPlan) {
+        <div class="current-plan-section">
+          <div class="plan-header">
+            <h2>
+              <ion-icon class="header-icon" name="book-outline"></ion-icon>
+              {{ planText(currentPlan, 'title') }}
+            </h2>
+            @if (completionCount(currentPlan) > 0) {
+              <span class="completion-badge">
+                {{ 'plans.times_completed' | translate: { count: completionCount(currentPlan) } }}
+              </span>
+            }
+            @if (currentPlan.author) {
+              <div class="plan-subtitle">
+                {{ 'plans.current.by' | translate }} {{ planText(currentPlan, 'author') }}
+              </div>
+            }
+            @if (currentPlan.description) {
+              <div class="plan-description">{{ planText(currentPlan, 'description') }}</div>
+            }
+            <div class="progress-text">
+              <strong>
+                {{ daysCompleted(currentPlan) }} {{ 'plans.current.of' | translate }} {{ currentPlan.days }} {{ 'plans.current.days_completed' | translate }}
+              </strong>
             </div>
+            <ion-progress-bar class="plan-progress" color="light"
+                              [value]="currentPlan.days ? daysCompleted(currentPlan) / currentPlan.days : 0">
+            </ion-progress-bar>
           </div>
-        </td>
-      </ng-container>
 
-      <!-- Coluna Ações -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef class="header-actions">{{ 'plans.table.actions' | translate }}</th>
-        <td mat-cell *matCellDef="let goal" class="cell-actions">
-          <button mat-icon-button color="accent" (click)="playGoal(goal)" [matTooltip]="'plans.actions.play' | translate">
-            <mat-icon>play_circle</mat-icon>
-          </button>
-          <button mat-icon-button
-                  [color]="goal.completed ? 'warn' : 'primary'"
-                  (click)="setGoalCompleted(goal, !goal.completed)"
-                  [matTooltip]="goal.completed ? ('plans.actions.reset' | translate) : ('plans.actions.mark_complete' | translate)">
-            <mat-icon>{{ goal.completed ? 'refresh' : 'check_circle_outline' }}</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+          <!-- Dias do plano -->
+          <ion-list class="goals-list" lines="full" inset="true">
+            @for (goal of pagedGoals; track goal.day) {
+              <ion-item [class.completed-row]="goal.completed">
+                <ion-label class="ion-text-wrap">
+                  <h3 class="day-title">
+                    {{ goal.title || ('plans.current.day' | translate) + ' ' + goal.day }}
+                    @if (goal.completed) {
+                      <ion-icon class="completed-icon" name="checkmark-circle"></ion-icon>
+                    }
+                  </h3>
+                  <div class="portion-list">
+                    @for (portion of goal.portions; track $index) {
+                      <span class="portion-item" [class.done]="portion.completed">
+                        {{ bibleData.books[portion.bookIdx]?.abbrev }} {{ portion.chapter }}
+                        @if (portion.completed) {
+                          <ion-icon class="mini-check" name="checkmark"></ion-icon>
+                        }
+                      </span>
+                    }
+                  </div>
+                </ion-label>
+                <ion-buttons slot="end">
+                  <ion-button color="primary" (click)="playGoal(goal)" [attr.aria-label]="'plans.actions.play' | translate">
+                    <ion-icon slot="icon-only" name="play-circle-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button [color]="goal.completed ? 'danger' : 'success'"
+                              (click)="setGoalCompleted(goal, !goal.completed)"
+                              [attr.aria-label]="goal.completed ? ('plans.actions.reset' | translate) : ('plans.actions.mark_complete' | translate)">
+                    <ion-icon slot="icon-only" [name]="goal.completed ? 'refresh-outline' : 'checkmark-circle-outline'"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-item>
+            }
+          </ion-list>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"
-          [class.completed-row]="row.completed"></tr>
-    </table>
-
-    <mat-paginator #paginator
-                   [pageSize]="5"
-                   [pageSizeOptions]="[5, 10, 20]"
-                   showFirstLastButtons>
-    </mat-paginator>
-  </div>
-
-  <!-- Mensagem quando não há plano ativo -->
-  <div *ngIf="!currentPlan" class="no-plan-section">
-    <mat-icon class="big-icon">bookmark_border</mat-icon>
-    <h3>{{ 'plans.no_active.title' | translate }}</h3>
-    <p>{{ 'plans.no_active.subtitle' | translate }}</p>
-  </div>
-
-  <!-- ============================================= -->
-  <!-- STARTED PLANS -->
-  <!-- ============================================= -->
-  <div *ngIf="startedPlans.length > 0" class="section">
-    <h3 class="section-title">
-      <mat-icon>history</mat-icon> {{ 'plans.started.title' | translate }}
-    </h3>
-    <div class="plans-list">
-      <div *ngFor="let plan of startedPlans" class="plan-item">
-        <div class="plan-info">
-          <strong>{{ planText(plan, 'title') }}</strong>
-          <span *ngIf="completionCount(plan) > 0" class="completion-badge">
-            {{ 'plans.times_completed' | translate: { count: completionCount(plan) } }}
-          </span>
-          <small *ngIf="plan.author">({{ 'plans.current.by' | translate }}: {{ planText(plan, 'author') }})</small>
-          <div *ngIf="plan.description" class="plan-desc">{{ planText(plan, 'description') }}</div>
-          <div class="plan-days">
-            {{ daysCompleted(plan) }} {{ 'plans.current.of' | translate }} {{ plan.days }} {{ 'plans.current.days_completed' | translate }}
-          </div>
+          @if (pageCount > 1) {
+            <div class="pager">
+              <ion-button fill="clear" [disabled]="pageIndex === 0" (click)="goToPage(pageIndex - 1)" aria-label="Anterior">
+                <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+              </ion-button>
+              <span class="pager-label">{{ pageIndex + 1 }} / {{ pageCount }}</span>
+              <ion-button fill="clear" [disabled]="pageIndex >= pageCount - 1" (click)="goToPage(pageIndex + 1)" aria-label="Próxima">
+                <ion-icon slot="icon-only" name="chevron-forward"></ion-icon>
+              </ion-button>
+            </div>
+          }
         </div>
-        <div class="plan-buttons">
-          <button mat-raised-button color="primary" (click)="resumePlan(plan)">
-            {{ 'plans.buttons.resume' | translate }}
-          </button>
-          <button mat-raised-button (click)="openPlan(plan)">
-            {{ 'plans.buttons.open' | translate }}
-          </button>
-          <button mat-raised-button color="warn" (click)="deletePlan(plan)">
-            {{ 'plans.buttons.delete' | translate }}
-          </button>
+      } @else {
+        <!-- Nenhum plano ativo -->
+        <div class="no-plan-section">
+          <ion-icon class="big-icon" name="bookmark-outline"></ion-icon>
+          <h3>{{ 'plans.no_active.title' | translate }}</h3>
+          <p>{{ 'plans.no_active.subtitle' | translate }}</p>
         </div>
+      }
+
+      <!-- ============================================= -->
+      <!-- STARTED PLANS -->
+      <!-- ============================================= -->
+      @if (startedPlans.length > 0) {
+        <div class="section">
+          <h3 class="section-title">
+            <ion-icon name="time-outline"></ion-icon> {{ 'plans.started.title' | translate }}
+          </h3>
+          @for (plan of startedPlans; track plan.id) {
+            <ion-card class="plan-item">
+              <ion-card-header>
+                <ion-card-title>{{ planText(plan, 'title') }}</ion-card-title>
+                @if (plan.author) {
+                  <ion-card-subtitle>{{ 'plans.current.by' | translate }}: {{ planText(plan, 'author') }}</ion-card-subtitle>
+                }
+              </ion-card-header>
+              <ion-card-content>
+                @if (completionCount(plan) > 0) {
+                  <span class="completion-badge">
+                    {{ 'plans.times_completed' | translate: { count: completionCount(plan) } }}
+                  </span>
+                }
+                @if (plan.description) {
+                  <div class="plan-desc">{{ planText(plan, 'description') }}</div>
+                }
+                <div class="plan-days">
+                  {{ daysCompleted(plan) }} {{ 'plans.current.of' | translate }} {{ plan.days }} {{ 'plans.current.days_completed' | translate }}
+                </div>
+                <div class="plan-buttons">
+                  <ion-button (click)="resumePlan(plan)">
+                    {{ 'plans.buttons.resume' | translate }}
+                  </ion-button>
+                  <ion-button fill="outline" (click)="openPlan(plan)">
+                    {{ 'plans.buttons.open' | translate }}
+                  </ion-button>
+                  <ion-button fill="clear" color="danger" (click)="deletePlan(plan)">
+                    {{ 'plans.buttons.delete' | translate }}
+                  </ion-button>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          }
+        </div>
+      }
+
+      <!-- ============================================= -->
+      <!-- AVAILABLE PLANS -->
+      <!-- ============================================= -->
+      <div class="section">
+        <h3 class="section-title">
+          <ion-icon name="library-outline"></ion-icon> {{ 'plans.available.title' | translate }}
+        </h3>
+        @for (plan of availablePlans; track plan.id) {
+          <ion-card class="plan-item">
+            <ion-card-header>
+              <ion-card-title>{{ planText(plan, 'title') }}</ion-card-title>
+              @if (plan.author) {
+                <ion-card-subtitle>{{ 'plans.current.by' | translate }}: {{ planText(plan, 'author') }}</ion-card-subtitle>
+              }
+            </ion-card-header>
+            <ion-card-content>
+              @if (completionCount(plan) > 0) {
+                <span class="completion-badge">
+                  {{ 'plans.times_completed' | translate: { count: completionCount(plan) } }}
+                </span>
+              }
+              @if (plan.description) {
+                <div class="plan-desc">{{ planText(plan, 'description') }}</div>
+              }
+              <div class="plan-days">{{ plan.days }} {{ 'plans.days' | translate }}</div>
+              <div class="plan-buttons">
+                <ion-button (click)="startPlan(plan)">
+                  {{ 'plans.buttons.start' | translate }}
+                </ion-button>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        }
       </div>
     </div>
-  </div>
-
-  <!-- ============================================= -->
-  <!-- AVAILABLE PLANS -->
-  <!-- ============================================= -->
-  <div class="section">
-    <h3 class="section-title">
-      <mat-icon>library_books</mat-icon> {{ 'plans.available.title' | translate }}
-    </h3>
-    <div class="plans-list">
-      <div *ngFor="let plan of availablePlans" class="plan-item">
-        <div class="plan-info">
-          <strong>{{ planText(plan, 'title') }}</strong>
-          <span *ngIf="completionCount(plan) > 0" class="completion-badge">
-            {{ 'plans.times_completed' | translate: { count: completionCount(plan) } }}
-          </span>
-          <small *ngIf="plan.author">({{ 'plans.current.by' | translate }}: {{ planText(plan, 'author') }})</small>
-          <div *ngIf="plan.description" class="plan-desc">{{ planText(plan, 'description') }}</div>
-          <div class="plan-days">{{ plan.days }} {{ 'plans.days' | translate }}</div>
-        </div>
-        <div class="plan-buttons">
-          <button mat-raised-button color="primary" (click)="startPlan(plan)">
-            {{ 'plans.buttons.start' | translate }}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+  }
+</ion-content>

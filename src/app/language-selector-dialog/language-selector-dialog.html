@@ -1,29 +1,19 @@
-<h2 mat-dialog-title>Escolha o idioma da Bíblia</h2>
+<div class="ion-padding">
+  <h2 class="title">Escolha o idioma da Bíblia</h2>
 
-<mat-dialog-content class="language-list">
-  <button mat-button class="language-btn" (click)="select('pt', 'ara')">
-    <span class="flag">🇧🇷</span>
-    Português - ARA
-  </button>
-  <button mat-button class="language-btn" (click)="select('en', 'niv')">
-    <span class="flag">🇺🇸</span>
-    English - NIV
-  </button>
-  <button mat-button class="language-btn" (click)="select('es', 'nvi')">
-    <span class="flag">🇪🇸</span>
-    Español - NVI
-  </button>
-  <button mat-button class="language-btn" (click)="select('zh', 'cnvs')">
-    <span class="flag">🇨🇳</span>
-    Chinese - CNVS (简体)
-  </button>
-  <button mat-button class="language-btn" (click)="select('ja', 'jcb')">
-    <span class="flag">🇯🇵</span>
-    日本語 - JCB
-  </button>
+  <ion-list lines="full" class="language-list">
+    @for (option of options; track option.lang) {
+      <ion-item button [detail]="false" [disabled]="loading" (click)="select(option.lang, option.version)">
+        <span slot="start" class="flag">{{ option.flag }}</span>
+        <ion-label>{{ option.label }}</ion-label>
+      </ion-item>
+    }
+  </ion-list>
 
-  <div class="loading" *ngIf="loading">
-    <mat-spinner diameter="30"></mat-spinner>
-    <span>Carregando Bíblia...</span>
-  </div>
-</mat-dialog-content>
+  @if (loading) {
+    <div class="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>Carregando Bíblia...</span>
+    </div>
+  }
+</div>

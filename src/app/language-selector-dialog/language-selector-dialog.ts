@@ -1,31 +1,28 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { IonItem, IonLabel, IonList, IonSpinner, ModalController } from '@ionic/angular';
 
+/** First-run (and "reset language") picker. Dismisses with e.g. `'pt-ara'`. */
 @Component({
   selector: 'app-language-selector-dialog',
   templateUrl: './language-selector-dialog.html',
   styleUrl: './language-selector-dialog.scss',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatProgressSpinnerModule
-  ]
+  imports: [IonList, IonItem, IonLabel, IonSpinner],
 })
 export class LanguageSelectorDialog {
+  private modalCtrl = inject(ModalController);
+
   loading = false;
 
-  constructor(
-    public dialogRef: MatDialogRef<LanguageSelectorDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  readonly options = [
+    { lang: 'pt', version: 'ara', flag: '🇧🇷', label: 'Português - ARA' },
+    { lang: 'en', version: 'niv', flag: '🇺🇸', label: 'English - NIV' },
+    { lang: 'es', version: 'nvi', flag: '🇪🇸', label: 'Español - NVI' },
+    { lang: 'zh', version: 'cnvs', flag: '🇨🇳', label: 'Chinese - CNVS (简体)' },
+    { lang: 'ja', version: 'jcb', flag: '🇯🇵', label: '日本語 - JCB' },
+  ];
 
   select(language: string, version: string) {
     this.loading = true;
-    this.dialogRef.close(language + "-" + version);
+    void this.modalCtrl.dismiss(`${language}-${version}`, 'selected');
   }
 }

@@ -1,45 +1,18 @@
-<div class="app-container">
-
-  <app-in-app-browser-overlay></app-in-app-browser-overlay>
+<ion-app>
+  @if (!native) {
+    <app-in-app-browser-overlay></app-in-app-browser-overlay>
+  }
 
   <!-- Install/notification prompts use translate pipes, and no i18n file is
        loaded until a language is picked. They also shouldn't appear while
        the home page is still fetching the Bible JSON, so they wait for the
        picker to actually be on screen, not just for translations. -->
-  <ng-container *ngIf="appState.canShowInstallPrompt$ | async">
-    <app-install-prompt></app-install-prompt>
+  @if (appState.canShowInstallPrompt$ | async) {
+    @if (!native) {
+      <app-install-prompt></app-install-prompt>
+    }
     <app-notification-prompt></app-notification-prompt>
-  </ng-container>
+  }
 
-  <!-- Conteúdo principal + player -->
-  <div class="main-content">
-    <mat-tab-nav-panel #tabPanel class="page-content">
-      <router-outlet></router-outlet>
-
-    </mat-tab-nav-panel>
-
-    <!-- PLAYER GLOBAL – aparece em todas as páginas -->
-    <app-audio-player></app-audio-player>
-  </div>
-
-  <!-- Bottom navigation – sempre visível e por cima do conteúdo -->
-  <nav mat-tab-nav-bar
-       *ngIf="appState.hasSelectedLanguage$ | async"
-       [tabPanel]="tabPanel"
-       class="bottom-nav"
-       backgroundColor="primary"
-       color="accent">
-    <a mat-tab-link routerLink="/home" routerLinkActive #home="routerLinkActive" [active]="home.isActive">
-      <mat-icon>home</mat-icon>
-      <span>{{ 'menu.home' | translate }}</span>
-    </a>
-    <a mat-tab-link routerLink="/plans" routerLinkActive #plans="routerLinkActive" [active]="plans.isActive">
-      <mat-icon>format_list_bulleted</mat-icon>
-      <span>{{ 'menu.plans' | translate }}</span>
-    </a>
-    <a mat-tab-link routerLink="/settings" routerLinkActive #settings="routerLinkActive" [active]="settings.isActive">
-      <mat-icon>settings</mat-icon>
-      <span>{{ 'menu.settings' | translate }}</span>
-    </a>
-  </nav>
-</div>
+  <ion-router-outlet></ion-router-outlet>
+</ion-app>

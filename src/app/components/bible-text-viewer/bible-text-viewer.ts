@@ -1,7 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { IonButton, IonButtons, IonIcon, IonTitle, IonToolbar } from '@ionic/angular';
 
 import { BibleBook } from 'bible-picker';
 import { parseChapter, bookDisplayName, ChapterEntry } from '../../utils/bible-text.util';
@@ -13,8 +11,7 @@ interface RenderedChapter {
 
 @Component({
   selector: 'app-bible-text-viewer',
-  standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule],
+  imports: [IonToolbar, IonTitle, IonButtons, IonButton, IonIcon],
   templateUrl: './bible-text-viewer.html',
   styleUrl: './bible-text-viewer.scss'
 })

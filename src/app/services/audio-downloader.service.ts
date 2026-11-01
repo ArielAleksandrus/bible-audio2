@@ -1,19 +1,10 @@
 import { Injectable } from '@angular/core';
-import { dbPromise, AvailableSpace } from '../storage/my-db';
+import { AvailableSpace } from '../storage/my-db';
+import { audioStorage } from '../storage/audio-storage';
 import { Track } from '../models/track';
-import { bypassServiceWorker } from '../utils/sw-bypass.util';
 import { runWithConcurrency } from '../utils/concurrency.util';
+import { isNativeApp } from '../utils/platform.util';
 import { Subject } from 'rxjs';
-
-/** An AbortSignal that trips as soon as either input signal does. */
-function combineSignals(a: AbortSignal, b: AbortSignal): AbortSignal {
-  if (a.aborted) return a;
-  if (b.aborted) return b;
-  const controller = new AbortController();
-  a.addEventListener('abort', () => controller.abort(a.reason), { once: true });
-  b.addEventListener('abort', () => controller.abort(b.reason), { once: true });
-  return controller.signal;
-}
 
 @Injectable({ providedIn: 'root' })
 export class AudioDownloaderService {
@@ -46,6 +37,9 @@ export class AudioDownloaderService {
   // Public observable for components to subscribe
   downloadProgress$ = this.downloadProgressSubject.asObservable();
 
+  /** Emits each track right after it lands on the device (NativeAudioEngine swaps its queue entry to the local file). */
+  readonly trackDownloaded$ = new Subject<Track>();
+
   getTracks(): Track[] {
     return this.tracks;
   }
@@ -64,39 +58,23 @@ export class AudioDownloaderService {
   }
 
   private async downloadExclusive(track: Track, signal?: AbortSignal): Promise<void> {
-    let downloaded = await this.isDownloaded(track);
-    if(downloaded) {
-      track.status = "done";
+    if (await this.isDownloaded(track)) {
+      track.status = 'done';
       return;
     }
 
     await this.ensureFreeDiskSpace();
 
     track.status = 'downloading';
-    const timeoutSignal = AbortSignal.timeout(120_000);
-    // Query-param bypass only. A custom `ngsw-bypass` header would trigger a
-    // CORS preflight against the R2 CDN and can fail the download entirely.
-    const response = await fetch(bypassServiceWorker(track.url), {
-      mode: 'cors',
-      cache: 'no-store',
-      signal: signal ? combineSignals(timeoutSignal, signal) : timeoutSignal,
-    });
-    if (!response.ok) {
+    try {
+      await audioStorage.download(track.id || track.fileName, track.url, signal);
+    } catch (err) {
       track.status = 'error';
-      console.error(`Falha: ${track.title}`, response);
-      throw new Error(`Falha: ${track.title}`);
+      console.error(`Falha: ${track.title}`, err);
+      throw err instanceof Error ? err : new Error(`Falha: ${track.title}`);
     }
-
-    const blob = new Blob([await response.blob()], { type: 'audio/mpeg' });
-    const db = await dbPromise;
-    await db.put('files', {
-      id: track.id || track.fileName,
-      blob,
-      url: track.url,
-      downloadedAt: Date.now()
-    });
-
-    track.status = "done";
+    track.status = 'done';
+    this.trackDownloaded$.next(track);
   }
 
   async downloadTracks(tracks: Track[], context: 'full-bible' | 'selection' = 'selection'): Promise<void> {
@@ -127,11 +105,14 @@ export class AudioDownloaderService {
         stallController.abort(new Error('Bulk download stalled (screen locked/backgrounded too long)'));
       }
     };
-    const watchdog = setInterval(checkStalled, AudioDownloaderService.STALL_CHECK_INTERVAL_MS);
+    // Native downloads run in the OS HTTP stack and keep going while the
+    // WebView is backgrounded, so a long gap with no JS progress there just
+    // means the screen was off — not a frozen tab. Only the web needs this.
+    const watchdog = isNativeApp() ? undefined : setInterval(checkStalled, AudioDownloaderService.STALL_CHECK_INTERVAL_MS);
     // Re-check the instant the tab is foregrounded again instead of waiting
     // for the next watchdog tick, so the button reappears right on unlock.
     const onVisible = () => {
-      if (document.visibilityState === 'visible') checkStalled();
+      if (!isNativeApp() && document.visibilityState === 'visible') checkStalled();
     };
     document.addEventListener('visibilitychange', onVisible);
 
@@ -160,7 +141,7 @@ export class AudioDownloaderService {
         await new Promise(resolve => setTimeout(resolve, 0));
       });
     } finally {
-      clearInterval(watchdog);
+      if (watchdog) clearInterval(watchdog);
       document.removeEventListener('visibilitychange', onVisible);
     }
 
@@ -185,48 +166,38 @@ export class AudioDownloaderService {
   }
 
   async removeById(trackId: string): Promise<void> {
-    const db = await dbPromise;
-    await db.delete('files', trackId);
+    await audioStorage.remove(trackId);
     console.log(`Removed file ${trackId} from cache`);
   }
 
   async removeOldest(count: number = 1): Promise<string[]> {
-    const db = await dbPromise;
-    const tx = db.transaction('files', 'readwrite');
-    const store = tx.objectStore('files');
-
-    // Get all entries, sort by downloadedAt (oldest first)
-    const all = await store.getAll();
-    const sorted = all.sort((a, b) => a.downloadedAt - b.downloadedAt);
-
+    const sorted = (await audioStorage.list()).sort((a, b) => a.downloadedAt - b.downloadedAt);
     const removedIds: string[] = [];
-
-    for (let i = 0; i < count && i < sorted.length; i++) {
-      const oldest = sorted[i];
-      await store.delete(oldest.id);
+    for (const oldest of sorted.slice(0, count)) {
+      await audioStorage.remove(oldest.id);
       removedIds.push(oldest.id);
     }
-
-    await tx.done;
     console.log(`Removed ${removedIds.length} oldest file(s):`, removedIds);
     return removedIds;
   }
 
-  /** Check if already downloaded */
+  /** Check if already downloaded (`fileName` is the legacy IndexedDB key). */
   async isDownloaded(track: Track): Promise<boolean> {
-    const db = await dbPromise;
-    return !!(await db.get('files', track.id) ||
-              await db.get('files', track.fileName));
+    return (await audioStorage.has(track.id)) || (!!track.fileName && await audioStorage.has(track.fileName));
+  }
+
+  /** A URL the player can open for this track if it's on the device, else null. */
+  async localUrl(track: Track): Promise<string | null> {
+    return (await audioStorage.playableUrl(track.id)) ||
+      (track.fileName ? await audioStorage.playableUrl(track.fileName) : null);
   }
 
   async areDownloaded(tracks: Track[]): Promise<{total: number, pendingCount: number, pending: string[]}> {
-    const db = await dbPromise;
-    let res: {total: number, pendingCount: 0, pending: string[]} = {total: 0, pendingCount: 0, pending: []};
-    for(let track of tracks) {
-      const done = await this.isDownloaded(track);
-      if(done)
+    const res = { total: 0, pendingCount: 0, pending: [] as string[] };
+    for (const track of tracks) {
+      if (await this.isDownloaded(track)) {
         res.total += 1;
-      else {
+      } else {
         res.pendingCount += 1;
         res.pending.push(track.id);
       }
@@ -236,8 +207,16 @@ export class AudioDownloaderService {
 
   /** Total downloaded chapters */
   async getDownloadedCount(): Promise<number> {
-    const db = await dbPromise;
-    return (await db.getAllKeys('files')).length;
+    return (await audioStorage.list()).length;
+  }
+
+  /** Bytes used by downloaded chapters. */
+  async getDownloadedBytes(): Promise<number> {
+    return (await audioStorage.list()).reduce((sum, f) => sum + f.size, 0);
+  }
+
+  async clearAll(): Promise<void> {
+    await audioStorage.clear();
   }
 
   private reportProgress(

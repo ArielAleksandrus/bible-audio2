@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { isNativeApp } from '../utils/platform.util';
 
 // Thin wrapper around the Screen Wake Lock API. This only stops the screen
 // from turning itself off due to inactivity while the tab stays visible —
@@ -22,11 +23,21 @@ export class WakeLockService {
 
   async request(): Promise<void> {
     this.wanted = true;
+    if (isNativeApp()) {
+      // WebViews don't expose navigator.wakeLock; the native flag does the same job.
+      const { KeepAwake } = await import('@capacitor-community/keep-awake');
+      await KeepAwake.keepAwake().catch(() => {});
+      return;
+    }
     await this.acquire();
   }
 
   release(): void {
     this.wanted = false;
+    if (isNativeApp()) {
+      void import('@capacitor-community/keep-awake').then(({ KeepAwake }) => KeepAwake.allowSleep()).catch(() => {});
+      return;
+    }
     const sentinel = this.sentinel;
     this.sentinel = null;
     void sentinel?.release().catch(() => {});

@@ -1,7 +1,7 @@
 .home-container {
-  min-height: 100vh;
+  min-height: 100%;
   background: linear-gradient(135deg, #f5f7fa 0%, #e0e8f5 100%);
-  padding: 40px 20px;
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,23 +14,13 @@
 .hero-header {
   text-align: center;
   max-width: 800px;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
   color: #333;
 }
 
-// Qualified with the element type (not just `.hero-icon`) so this beats
-// Angular Material's own `.mat-icon { height: 24px; width: 24px; }` base
-// rule on specificity alone. Both rules have a single class-level selector,
-// so without the element qualifier it comes down to which stylesheet was
-// inserted into the document last — and Material inserts its own mat-icon
-// styles at runtime, the first time any <mat-icon> renders anywhere in the
-// app, so whether it lands before or after this rule (and thus whether this
-// override wins) depends on page-load order and isn't reliable.
-mat-icon.hero-icon {
-  font-size: 4.5rem;
-  height: 4.5rem;
-  width: 4.5rem;
-  color: var(--mat-sys-primary, #667eea);
+ion-icon.hero-icon {
+  font-size: 4rem;
+  color: var(--ion-color-primary);
   margin-bottom: 16px;
   opacity: 0.9;
 }
@@ -50,7 +40,7 @@ mat-icon.hero-icon {
 }
 
 .loading-container {
-  min-height: 100vh;
+  min-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,12 +58,8 @@ mat-icon.hero-icon {
   text-align: center;
   max-width: 320px;
 
-  mat-progress-bar {
+  ion-progress-bar {
     width: 100%;
-  }
-
-  mat-spinner {
-    margin: 0;
   }
 }
 
@@ -119,17 +105,13 @@ mat-icon.hero-icon {
   font-weight: 500;
   margin-top: 16px;
 
-  mat-icon {
+  ion-icon {
     font-size: 28px;
-    width: 28px;
-    height: 28px;
   }
 }
 
 .warning-icon {
   font-size: 18px;
-  width: 18px;
-  height: 18px;
   vertical-align: middle;
 }
 
@@ -153,16 +135,6 @@ mat-icon.hero-icon {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   overflow: hidden;
   padding: 20px;
-}
-
-/* Melhora o visual interno do bible-picker (graças ao ViewEncapsulation.None) */
-bible-picker {
-  mat-card {
-    margin: 0 auto;
-    max-width: 900px;   // opcional, ajusta pro seu gosto
-    width: 100%;
-    box-sizing: border-box;
-  }
 }
 
 /* ============================================= */
@@ -213,11 +185,11 @@ bible-picker {
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 
   &.partial-dl {
-    background-color: lightyellow;
+    background-color: var(--app-partial);
   }
 
   &.full-dl {
-    background-color: lightgreen;
+    background-color: var(--app-downloaded);
   }
 }
 
@@ -237,10 +209,8 @@ bible-picker {
     font-size: 0.8rem;
   }
 
-  mat-icon.hero-icon {
-    font-size: 3.5rem;
-    height: 3.5rem;
-    width: 3.5rem;
+  ion-icon.hero-icon {
+    font-size: 3rem;
   }
 
   .picker-wrapper {

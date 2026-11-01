@@ -1,5 +1,5 @@
 <div class="install-banner" *ngIf="installServ.visible$ | async">
-  <mat-icon class="banner-icon">install_mobile</mat-icon>
+  <ion-icon class="banner-icon" name="phone-portrait-outline"></ion-icon>
 
   <div class="banner-text">
     <ng-container *ngIf="installServ.mode === 'android'">
@@ -13,14 +13,14 @@
   </div>
 
   <div class="banner-actions">
-    <button mat-raised-button color="accent" *ngIf="installServ.mode === 'android'" (click)="install()">
+    <ion-button color="light" size="small" *ngIf="installServ.mode === 'android'" (click)="install()">
       {{ 'install_prompt.install_button' | translate }}
-    </button>
-    <button mat-icon-button class="close-button" *ngIf="installServ.mode === 'android'" (click)="dismiss()" aria-label="Dismiss">
-      <mat-icon>close</mat-icon>
-    </button>
-    <button mat-icon-button class="close-button" *ngIf="installServ.mode === 'ios'" (click)="showTutorial()" aria-label="Como fazer?">
-      <mat-icon>help_outline</mat-icon>
-    </button>
+    </ion-button>
+    <ion-button fill="clear" class="close-button" *ngIf="installServ.mode === 'android'" (click)="dismiss()" aria-label="Dismiss">
+      <ion-icon slot="icon-only" name="close"></ion-icon>
+    </ion-button>
+    <ion-button fill="clear" class="close-button" *ngIf="installServ.mode === 'ios'" (click)="showTutorial()" aria-label="Como fazer?">
+      <ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
+    </ion-button>
   </div>
 </div>
