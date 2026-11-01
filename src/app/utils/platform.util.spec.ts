@@ -1,32 +1,32 @@
-const platform = vi.hoisted(() => ({ name: 'web' as 'web' | 'android' | 'ios' }));
-
-vi.mock('@capacitor/core', async importOriginal => {
-  const real = await importOriginal<typeof import('@capacitor/core')>();
-  return {
-    ...real,
-    Capacitor: {
-      ...real.Capacitor,
-      isNativePlatform: () => platform.name !== 'web',
-      getPlatform: () => platform.name,
-    },
-  };
-});
+import { Capacitor } from '@capacitor/core';
 
 import { isNativeApp, nativePlatform, nativeSafeUrl } from './platform.util';
 
+// Spy on the shared Capacitor object instead of vi.mock('@capacitor/core'):
+// the Angular unit-test builder bundles specs into shared chunks, so a
+// module mock isn't reliably applied once several spec files run together.
+function runOn(platform: 'web' | 'android' | 'ios') {
+  vi.spyOn(Capacitor, 'isNativePlatform').mockReturnValue(platform !== 'web');
+  vi.spyOn(Capacitor, 'getPlatform').mockReturnValue(platform);
+}
+
 describe('platform.util', () => {
-  afterEach(() => (platform.name = 'web'));
+  afterEach(() => vi.restoreAllMocks());
 
   it('treats the browser/PWA as web, not native', () => {
-    platform.name = 'web';
+    runOn('web');
     expect(isNativeApp()).toBe(false);
     expect(nativePlatform()).toBe('web');
   });
 
   it.each(['android', 'ios'] as const)('reports %s as a native app', name => {
-    platform.name = name;
+    runOn(name);
     expect(isNativeApp()).toBe(true);
     expect(nativePlatform()).toBe(name);
+  });
+
+  it('is web when nothing is stubbed (jsdom = browser)', () => {
+    expect(isNativeApp()).toBe(false);
   });
 });
 
