@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { firebaseEnabled, getFirebaseApp } from '../storage/firebase';
 import { isNativeApp } from '../utils/platform.util';
+import { capacitorPlugins } from '../utils/capacitor-plugins';
 
 // Wraps Firebase Auth. Sign-in is entirely optional — the app works fully
 // signed out; this only exists to let progress follow the user across devices.
@@ -43,7 +44,7 @@ export class AuthService {
     if (!this.enabled) return;
     const auth = await this.getAuth();
     if (isNativeApp()) {
-      const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
+      const { FirebaseAuthentication } = await capacitorPlugins.firebaseAuthentication();
       const { GoogleAuthProvider, signInWithCredential } = await this.getAuthModule();
       const native = await FirebaseAuthentication.signInWithGoogle();
       const idToken = native.credential?.idToken;
@@ -63,7 +64,7 @@ export class AuthService {
     const { signOut } = await this.getAuthModule();
     await signOut(auth);
     if (isNativeApp()) {
-      const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
+      const { FirebaseAuthentication } = await capacitorPlugins.firebaseAuthentication();
       await FirebaseAuthentication.signOut().catch(() => {});
     }
   }

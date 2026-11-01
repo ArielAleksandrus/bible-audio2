@@ -1,3 +1,5 @@
+import { capacitorPlugins } from '../utils/capacitor-plugins';
+
 /**
  * Lock-screen / notification cover art for the native player.
  *
@@ -16,7 +18,7 @@ export function artworkUri(platform: 'android' | 'ios' | 'web'): Promise<string 
   if (platform === 'web') return Promise.resolve(null);
   if (!cached) {
     cached = (async () => {
-      const { Filesystem, Directory } = await import('@capacitor/filesystem');
+      const { Filesystem, Directory } = await capacitorPlugins.filesystem();
       try {
         await Filesystem.stat({ path: TARGET, directory: Directory.Data });
       } catch {

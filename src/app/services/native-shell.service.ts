@@ -6,6 +6,7 @@ import { filter, take } from 'rxjs';
 import { AudioService } from './audio.service';
 import { NotificationsService } from './notifications.service';
 import { isNativeApp, nativePlatform } from '../utils/platform.util';
+import { capacitorPlugins } from '../utils/capacitor-plugins';
 
 /**
  * Native-only app chrome: status bar, splash screen, Android back button,
@@ -56,7 +57,7 @@ export class NativeShellService {
     // when the reason is obvious, rather than on first launch.
     if (nativePlatform() === 'android') {
       this.audio.isPlaying$.pipe(filter(Boolean), take(1)).subscribe(async () => {
-        const { LocalNotifications } = await import('@capacitor/local-notifications');
+        const { LocalNotifications } = await capacitorPlugins.localNotifications();
         const perm = await LocalNotifications.checkPermissions();
         if (perm.display === 'prompt' || perm.display === 'prompt-with-rationale') {
           await LocalNotifications.requestPermissions().catch(() => {});
@@ -65,7 +66,7 @@ export class NativeShellService {
     }
 
     // Tapping a daily-verse notification opens Home.
-    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    const { LocalNotifications } = await capacitorPlugins.localNotifications();
     await LocalNotifications.addListener('localNotificationActionPerformed', action => {
       const url = action.notification.extra?.url;
       if (typeof url === 'string') void this.router.navigateByUrl(url);

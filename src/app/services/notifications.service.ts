@@ -6,6 +6,7 @@ import { getBibleVersion } from '../storage/my-db';
 import { environment } from '../../environments/environment';
 import { isNativeApp } from '../utils/platform.util';
 import { VerseService } from './verse.service';
+import { capacitorPlugins } from '../utils/capacitor-plugins';
 
 const DEVICE_ID_KEY = 'pushDeviceId';
 const SUBSCRIBED_KEY = 'pushSubscribed';
@@ -100,7 +101,7 @@ export class NotificationsService {
   }
 
   private async scheduleNative(askPermission: boolean): Promise<void> {
-    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    const { LocalNotifications } = await capacitorPlugins.localNotifications();
     let perm = await LocalNotifications.checkPermissions();
     if (perm.display !== 'granted' && askPermission) perm = await LocalNotifications.requestPermissions();
     if (perm.display !== 'granted') throw new Error('Notification permission not granted');
@@ -140,7 +141,7 @@ export class NotificationsService {
   }
 
   private async cancelNative(): Promise<void> {
-    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    const { LocalNotifications } = await capacitorPlugins.localNotifications();
     const ids = Array.from({ length: NATIVE_DAYS }, (_, i) => ({ id: NATIVE_ID_BASE + i }));
     await LocalNotifications.cancel({ notifications: ids }).catch(() => {});
   }

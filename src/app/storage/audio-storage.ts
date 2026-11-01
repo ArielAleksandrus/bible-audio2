@@ -1,6 +1,7 @@
 import { dbPromise } from './my-db';
 import { isNativeApp, nativePlatform, nativeSafeUrl } from '../utils/platform.util';
 import { bypassServiceWorker } from '../utils/sw-bypass.util';
+import { capacitorPlugins } from '../utils/capacitor-plugins';
 
 /**
  * Where downloaded chapter MP3s live.
@@ -51,7 +52,7 @@ function combineSignals(a: AbortSignal, b: AbortSignal): AbortSignal {
 // Web (IndexedDB)
 // ---------------------------------------------------------------------------
 
-class IndexedDbAudioStorage implements AudioStorage {
+export class IndexedDbAudioStorage implements AudioStorage {
   async has(id: string): Promise<boolean> {
     const db = await dbPromise;
     return !!(await db.getKey('files', id));
@@ -120,7 +121,7 @@ export function fileNameToId(name: string): string {
     .replace(/_u([0-9a-f]+)_/g, (_, hex: string) => String.fromCodePoint(parseInt(hex, 16)));
 }
 
-class FilesystemAudioStorage implements AudioStorage {
+export class FilesystemAudioStorage implements AudioStorage {
   /** id → info, loaded once from a directory listing (1 bridge call instead of ~1200 stats). */
   private index: Promise<Map<string, StoredAudio>> | null = null;
 
@@ -133,7 +134,7 @@ class FilesystemAudioStorage implements AudioStorage {
    * Android keeps Directory.Data (the app's files dir, unchanged).
    */
   private async fs() {
-    const { Filesystem, Directory } = await import('@capacitor/filesystem');
+    const { Filesystem, Directory } = await capacitorPlugins.filesystem();
     const dir = nativePlatform() === 'ios' ? Directory.LibraryNoCloud : Directory.Data;
     return { Filesystem, dir };
   }
@@ -172,7 +173,7 @@ class FilesystemAudioStorage implements AudioStorage {
 
   async download(id: string, url: string): Promise<void> {
     const { Filesystem, dir } = await this.fs();
-    const { FileTransfer } = await import('@capacitor/file-transfer');
+    const { FileTransfer } = await capacitorPlugins.fileTransfer();
 
     const finalPath = `${AUDIO_DIR}/${idToFileName(id)}`;
     const partPath = `${finalPath}.part`;

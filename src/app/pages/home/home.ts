@@ -22,6 +22,7 @@ import { InstallPromptService } from '../../services/install-prompt.service';
 import { InstallSuggestedDialog } from '../../install-suggested-dialog/install-suggested-dialog';
 import { isAppInstalled, isInstagramInAppBrowser, isMobileDevice } from '../../utils/browser.util';
 import { isNativeApp } from '../../utils/platform.util';
+import { capacitorPlugins } from '../../utils/capacitor-plugins';
 import { UiService } from '../../services/ui.service';
 
 
@@ -308,7 +309,7 @@ export class Home implements OnInit, ViewWillEnter {
    */
   private async isOnCellular(): Promise<boolean | null> {
     if (isNativeApp()) {
-      const { Network } = await import('@capacitor/network');
+      const { Network } = await capacitorPlugins.network();
       const status = await Network.getStatus().catch(() => null);
       return status ? status.connectionType === 'cellular' : null;
     }
