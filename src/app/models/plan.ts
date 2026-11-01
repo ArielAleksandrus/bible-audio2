@@ -21,6 +21,9 @@ export interface Plan {
   // Bumped on every local save; used to resolve conflicts when merging
   // this plan's progress against another device's copy during cloud sync.
   updatedAt?: number;
+  // Last time the user opened, resumed or listened to this plan (ms since
+  // epoch). Orders the "started plans" list, most recently used first.
+  lastUsedAt?: number;
 
   // helper variables
   daysRemaining?: number;

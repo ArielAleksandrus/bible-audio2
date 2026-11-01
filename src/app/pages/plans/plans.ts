@@ -211,6 +211,10 @@ export class Plans {
     }
 
     this.currentPlan = plan;
+    // Saved along with the plan's next progress update (or right away when
+    // opened/resumed from the started list — see useStartedPlan()).
+    plan.lastUsedAt = Date.now();
+    this.sortStartedPlans();
     this.stoppedAt = this.planServ.stoppedAt(plan);
     // A plan fresh from fetchPlans() (start of a new plan) has no
     // daysRemaining yet — daysCompleted() falls back to 0 via `?? 0`,
@@ -274,8 +278,15 @@ export class Plans {
     this.setPlan(undefined);
   }
 
+  /** "Abrir" on a started plan: open it and remember it as the most recently used. */
+  openStartedPlan(plan: Plan) {
+    this.openPlan(plan);
+    void this.planServ.save(plan);
+  }
+
   resumePlan(plan: Plan) {
     this.setPlan(plan);
+    void this.planServ.save(plan);
     this._goToStoppedAt(plan);
     this.play().then(_ => {});
   }
@@ -341,6 +352,13 @@ export class Plans {
   }
 
 
+  /** Most recently used first; plans never opened since this existed fall back to their last save/start. */
+  private sortStartedPlans() {
+    const lastUse = (p: Plan) =>
+      p.lastUsedAt ?? p.updatedAt ?? (p.startedAt ? Date.parse(p.startedAt) || 0 : 0);
+    this.startedPlans.sort((a, b) => lastUse(b) - lastUse(a));
+  }
+
   private _loadPlans() {
     this.planServ.getAllCompletionCounts().then(counts => {
       this.completionCounts = counts;
@@ -364,6 +382,7 @@ export class Plans {
           }
         }
       }
+      this.sortStartedPlans();
       this.planServ.fetchPlans().then(res => {
         res.push(SamplePlan);
         for(let plan of res) {
