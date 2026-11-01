@@ -106,4 +106,30 @@ describe('Plans', () => {
     expect(page.startedPlans.map(p => p.id)).toEqual(['going']);
     expect(page.completedPlans.map(p => p.id)).toEqual(['done']);
   });
+
+  it('moves a plan from "available" to "started" as soon as it is started', async () => {
+    const plans = TestBed.inject(PlanService);
+    await plans.save(plan('other'));
+    const { page, fixture } = await openPage();
+    vi.spyOn(page, 'play').mockResolvedValue(); // playback is covered elsewhere
+
+    const cards = [...fixture.nativeElement.querySelectorAll('ion-card.plan-item')] as HTMLElement[];
+    const toStart = cards.find(c => c.querySelector('ion-card-title')?.textContent?.trim() === 'catalogue-0')!;
+    (toStart.querySelector('ion-button') as HTMLElement).click();
+
+    await vi.waitFor(() => expect(page.startedPlans.map(p => p.id)).toContain('catalogue-0'));
+    // The catalogue is re-read from the network; serve it again.
+    const http = TestBed.inject(HttpTestingController);
+    for (let i = 0; i < 5; i++) {
+      const req = await vi.waitFor(() => {
+        const [r] = http.match(() => true);
+        if (!r) throw new Error('waiting for the plan catalogue');
+        return r;
+      });
+      req.flush(plan(`catalogue-${i}`, { status: undefined }));
+    }
+    await vi.waitFor(() => expect(page.availablePlans.map(p => p.id)).not.toContain('catalogue-0'));
+    await fixture.whenStable();
+  });
 });
+
