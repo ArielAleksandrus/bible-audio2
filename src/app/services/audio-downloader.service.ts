@@ -159,7 +159,12 @@ export class AudioDownloaderService {
 
     while(!await space.isSafe()) {
       console.warn(`AudioDownloaderService::ensureFreeDiskSpace -> You have only ${await space.inMB()}Mb of storage left. Removing 3 oldest audios`);
-      await this.removeOldest(3); // remove the oldest three tracks
+      const removed = await this.removeOldest(3); // remove the oldest three tracks
+      // Nothing left to evict: the space is taken by something else (or, in
+      // the native app, the WebView quota estimate doesn't even cover the
+      // audio files). Looping here would spin forever and hang every
+      // download waiting on it — let the download try and fail on its own.
+      if (removed.length === 0) return;
       // little pause to ensure Safari updates our usage
       await new Promise(r => setTimeout(r, 100));
     }
