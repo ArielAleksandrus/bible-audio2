@@ -585,6 +585,11 @@ export class WebAudioEngine implements AudioEngine {
   private maybeAdvanceIfStuckAtEnd(el: HTMLAudioElement) {
     if (el !== this.activeAudio) return;
     if (!this.autoAdvance || this.transitioning || this.advancing) return;
+    // timeupdate/waiting/stalled also fire while paused (e.g. the user drags
+    // the seek bar to the end). A real pause must not start the next
+    // chapter; spurious OS pauses don't set userPaused, so the locked-screen
+    // early hand-off is unaffected.
+    if (this.userPaused) return;
     const { currentTime, duration } = el;
     if (!duration || !isFinite(duration)) return;
     if (currentTime < duration - 0.35) return;
