@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ (android:dataExtractionRules). Same reasoning as
+     backup_rules.xml: keep re-downloadable chapter MP3s out of cloud backup
+     so the 25 MB Auto Backup cap isn't blown and plan progress (WebView
+     storage) still gets backed up. Device-to-device transfer has no such
+     cap, so it keeps the defaults: a new phone set up from the old one
+     gets the chapters too, without re-downloading 1.3 GB. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="audios/" />
+    </cloud-backup>
+</data-extraction-rules>
