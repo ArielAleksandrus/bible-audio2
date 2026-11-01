@@ -255,6 +255,11 @@ export class Plans {
         return;
       } else {
         this.planServ.save(plan).then(_ => {
+          // Move it from "available" to "started" now. Before the Ionic tabs
+          // this happened as a side effect of the page being re-created on
+          // every visit; a tab page stays alive, so the lists would stay
+          // stale until a full reload.
+          this._loadPlans();
           this.openPlan(plan, 1);
         });
         this.analytics.planStarted(plan.id);
