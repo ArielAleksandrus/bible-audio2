@@ -1,5 +1,5 @@
 import { dbPromise } from './my-db';
-import { isNativeApp } from '../utils/platform.util';
+import { isNativeApp, nativeSafeUrl } from '../utils/platform.util';
 import { bypassServiceWorker } from '../utils/sw-bypass.util';
 
 /**
@@ -166,7 +166,7 @@ class FilesystemAudioStorage implements AudioStorage {
     // going while the WebView is throttled in the background. Written to a
     // `.part` file first so an interrupted download is never mistaken for a
     // finished chapter by the directory index above.
-    await FileTransfer.downloadFile({ url, path: partUri, progress: false });
+    await FileTransfer.downloadFile({ url: nativeSafeUrl(url), path: partUri, progress: false });
     await Filesystem.rename({
       from: partPath,
       to: finalPath,

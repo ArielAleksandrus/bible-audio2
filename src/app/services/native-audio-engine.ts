@@ -13,7 +13,7 @@ import { AudioEngine } from './audio-engine';
 import { AudioDownloaderService } from './audio-downloader.service';
 import { AnalyticsService } from './analytics.service';
 import { Track } from '../models/track';
-import { nativePlatform } from '../utils/platform.util';
+import { nativePlatform, nativeSafeUrl } from '../utils/platform.util';
 import { artworkUri } from '../storage/artwork';
 
 const ARTIST = 'Bíblia Narrada';
@@ -278,7 +278,7 @@ export class NativeAudioEngine implements AudioEngine {
     const local = await this.downloader.localUrl(track).catch(() => null);
     return {
       trackId: this.nativeId(gen, index, track),
-      assetUrl: local || track.url,
+      assetUrl: local || nativeSafeUrl(track.url),
       isStream: false,
       title: track.title,
       artist: ARTIST,
@@ -324,7 +324,7 @@ export class NativeAudioEngine implements AudioEngine {
       if (i === this.index || !ids.has(track.id)) continue;
       try {
         const item = await this.toNativeItem(track, i, gen);
-        if (item.assetUrl === track.url) continue; // not actually local yet
+        if (item.assetUrl === nativeSafeUrl(track.url)) continue; // not actually local yet
         await this.Playlist.replaceItem({ index: i, item });
       } catch (err) {
         console.warn('NativeAudioEngine: could not swap in local file for', track.id, err);

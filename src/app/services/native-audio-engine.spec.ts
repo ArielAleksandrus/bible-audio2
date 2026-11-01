@@ -95,6 +95,12 @@ describe('NativeAudioEngine', () => {
     expect(plugin.Playlist.playTrackByIndex).toHaveBeenCalledWith({ index: 0 });
   });
 
+  it('percent-encodes the space in CDN chapter URLs (iOS < 17 URL(string:) rejects it)', async () => {
+    const gn1 = { ...track('gn1', 1), url: 'https://cdn.example/GN/GN 1.mp3' };
+    const { items } = await start([gn1]);
+    expect(items[0].assetUrl).toBe('https://cdn.example/GN/GN%201.mp3');
+  });
+
   it('keeps duplicate chapters as distinct queue entries', async () => {
     const { items } = await start([track('ps23', 23), track('ps23', 23)]);
     expect(items[0].trackId).not.toBe(items[1].trackId);

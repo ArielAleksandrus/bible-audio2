@@ -16,3 +16,15 @@ export function isNativeApp(): boolean {
 export function nativePlatform(): 'android' | 'ios' | 'web' {
   return Capacitor.getPlatform() as 'android' | 'ios' | 'web';
 }
+
+/**
+ * Chapter URLs on the CDN contain a literal space (`…/GN/GN 1.mp3`). Browsers
+ * encode that on their own, but the native side doesn't: iOS < 17's
+ * `URL(string:)` — used by both the playlist plugin (AudioTrack.swift) and
+ * @capacitor/file-transfer — returns nil for it, so the chapter is silently
+ * dropped from the queue / the download fails. Only spaces are encoded, so an
+ * already-encoded URL (`%20`, `%C3%A9`…) is left untouched.
+ */
+export function nativeSafeUrl(url: string): string {
+  return url.replace(/ /g, '%20');
+}
