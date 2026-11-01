@@ -8,7 +8,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // can't be changed once the app is published — confirm it before the first
 // upload to either store.
 const config: CapacitorConfig = {
-  appId: 'com.biblianarrada.app',
+  appId: 'live.nlabs.biblia',
   appName: 'Bíblia Narrada',
   webDir: 'dist/bible-audio2/browser',
   android: {

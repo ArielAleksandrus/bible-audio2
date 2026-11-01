@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Bíblia Narrada</string>
     <string name="title_activity_main">Bíblia Narrada</string>
-    <string name="package_name">com.biblianarrada.app</string>
-    <string name="custom_url_scheme">com.biblianarrada.app</string>
+    <string name="package_name">live.nlabs.biblia</string>
+    <string name="custom_url_scheme">live.nlabs.biblia</string>
 </resources>
