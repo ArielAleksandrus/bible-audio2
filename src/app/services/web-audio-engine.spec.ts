@@ -400,4 +400,128 @@ describe('WebAudioEngine auto-advance', () => {
     expect(playingEl.src).toContain('j2.mp3');
     expect(playingEl.src).toContain('ngsw-bypass');
   });
+
+  describe('controls', () => {
+    const flush = async () => { for (let i = 0; i < 5; i++) await Promise.resolve(); };
+
+    it('pauses and resumes the current chapter', async () => {
+      await startTwoChapterPlaylist();
+      service.pause();
+      expect(service.isPlaying$.value).toBe(false);
+      expect(navigator.mediaSession.playbackState).toBe('paused');
+
+      service.play();
+      expect(service.isPlaying$.value).toBe(true);
+      expect(service.currentTrack$.value?.id).toBe('j1');
+
+      service.toggle();
+      expect(service.isPlaying$.value).toBe(false);
+      service.toggle();
+      expect(service.isPlaying$.value).toBe(true);
+    });
+
+    it('a user pause near the end of a chapter does not auto-advance', async () => {
+      await startTwoChapterPlaylist();
+      const el = instances[0];
+      service.pause();
+      el.currentTime = el.duration - 0.1;
+      el.dispatchEvent(new Event('timeupdate'));
+      await flush();
+      expect(service.currentTrack$.value?.id).toBe('j1');
+      expect(service.isPlaying$.value).toBe(false);
+    });
+
+    it('seeks and skips within the chapter', async () => {
+      await startTwoChapterPlaylist();
+      service.seekTo(30);
+      expect(service.timeUpdate$.value).toEqual({ currentTime: 30, duration: 120 });
+      service.skip(10);
+      expect(service.timeUpdate$.value.currentTime).toBe(40);
+      service.skip(-100);
+      expect(service.timeUpdate$.value.currentTime).toBe(0);
+      service.skip(500);
+      expect(service.timeUpdate$.value.currentTime).toBe(120);
+    });
+
+    it('reports where it is in the playlist', async () => {
+      await service.playPlaylist([track('j1', 1), track('j2', 2), track('j3', 3)], 1);
+      expect(service.currentTrack$.value?.id).toBe('j2');
+      expect(service.hasPrevious()).toBe(true);
+      expect(service.hasNext()).toBe(true);
+    });
+
+    it('skips to the next/previous chapter without counting it as completed', async () => {
+      const ended: unknown[] = [];
+      service.trackEnded$.subscribe(t => t && ended.push(t));
+      await service.playPlaylist([track('j1', 1), track('j2', 2), track('j3', 3)], 0);
+
+      service.next();
+      await vi.waitFor(() => expect(service.currentTrack$.value?.id).toBe('j2'));
+      service.previous();
+      await vi.waitFor(() => expect(service.currentTrack$.value?.id).toBe('j1'));
+
+      expect(ended).toEqual([]);
+      expect(analytics.chapterCompleted).not.toHaveBeenCalled();
+      expect(service.isPlaying$.value).toBe(true);
+    });
+
+    it('switching to another passage mid-chapter replaces the playlist cleanly', async () => {
+      const ended: unknown[] = [];
+      service.trackEnded$.subscribe(t => t && ended.push(t));
+      await startTwoChapterPlaylist();
+      instances[0].currentTime = 50;
+
+      await service.playPlaylist([track('ps1', 1), track('ps2', 2)], 0);
+      expect(service.currentTrack$.value?.id).toBe('ps1');
+      expect(instances[0].src).toContain('ps1.mp3');
+      expect(ended).toEqual([]);
+
+      // The new passage auto-advances within itself, not back into John.
+      finish(instances[0]);
+      await flush();
+      expect(service.currentTrack$.value?.id).toBe('ps2');
+      expect(ended.map(t => (t as { id: string }).id)).toEqual(['ps1']);
+    });
+
+    it('plays a whole book through to its last chapter, then stops', async () => {
+      const book = [track('j1', 1), track('j2', 2), track('j3', 3)];
+      const ended: string[] = [];
+      service.trackEnded$.subscribe(t => t && ended.push(t.id));
+      await service.playPlaylist(book, 0);
+
+      for (const expected of ['j2', 'j3']) {
+        finish(instances[0]);
+        await vi.waitFor(() => expect(service.currentTrack$.value?.id).toBe(expected));
+      }
+      finish(instances[0]);
+      await flush();
+
+      expect(ended).toEqual(['j1', 'j2', 'j3']);
+      expect(service.currentTrack$.value?.id).toBe('j3');
+      expect(service.isPlaying$.value).toBe(false);
+    });
+
+    it('plays a downloaded chapter from the device instead of the network', async () => {
+      downloader.localUrl.mockImplementation(async (t: Track) => (t.id === 'j1' ? 'blob:j1' : null));
+      await startTwoChapterPlaylist();
+      expect(instances[0].src).toBe('blob:j1');
+      expect(downloader.download).not.toHaveBeenCalledWith(expect.objectContaining({ id: 'j1' }));
+    });
+
+    it('streams a chapter that is not downloaded and caches it in the background', async () => {
+      await startTwoChapterPlaylist();
+      expect(instances[0].src).toContain('https://example.com/j1.mp3');
+      expect(downloader.download).toHaveBeenCalledWith(expect.objectContaining({ id: 'j1' }));
+    });
+
+    it('stop silences playback and does not auto-advance afterwards', async () => {
+      await startTwoChapterPlaylist();
+      service.stop();
+      expect(service.isPlaying$.value).toBe(false);
+      finish(instances[0]);
+      await flush();
+      expect(service.currentTrack$.value?.id).toBe('j1');
+      expect(analytics.chapterCompleted).not.toHaveBeenCalled();
+    });
+  });
 });
