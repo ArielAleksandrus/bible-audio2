@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:coverage": "ng test --watch=false --coverage --coverage-reporters=text-summary --coverage-reporters=html --coverage-include=src/app/**/*.ts"
   },
   "prettier": {
     "printWidth": 100,
@@ -64,6 +65,7 @@
     "@types/node": "^25.0.8",
     "@types/web-push": "^3.6.4",
     "@vercel/node": "^10.0.0",
+    "@vitest/coverage-v8": "^4.0.13",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
