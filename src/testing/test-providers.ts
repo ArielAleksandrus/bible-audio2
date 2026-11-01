@@ -6,15 +6,6 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideServiceWorker } from '@angular/service-worker';
 import { AlertController, ModalController, ToastController, provideIonicAngular } from '@ionic/angular';
 
-// jsdom has no matchMedia (used by the PWA install/standalone checks).
-if (typeof window !== 'undefined' && !window.matchMedia) {
-  window.matchMedia = ((query: string) => ({
-    matches: false, media: query, onchange: null,
-    addListener: () => {}, removeListener: () => {},
-    addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => false,
-  })) as unknown as typeof window.matchMedia;
-}
-
 const overlay = () => ({
   create: vi.fn().mockResolvedValue({
     present: vi.fn().mockResolvedValue(undefined),

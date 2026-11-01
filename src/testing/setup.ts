@@ -11,3 +11,12 @@ import 'fake-indexeddb/auto';
 // which logs "TypeError: Invalid URL" under jsdom.
 import { registerIcons } from '../app/icons';
 registerIcons();
+
+// jsdom has no matchMedia (used by the PWA install/standalone checks).
+if (typeof window !== 'undefined' && !window.matchMedia) {
+  window.matchMedia = ((query: string) => ({
+    matches: false, media: query, onchange: null,
+    addListener: () => {}, removeListener: () => {},
+    addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => false,
+  })) as unknown as typeof window.matchMedia;
+}
