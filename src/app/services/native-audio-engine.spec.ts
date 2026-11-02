@@ -95,6 +95,27 @@ describe('NativeAudioEngine', () => {
     expect(plugin.Playlist.playTrackByIndex).toHaveBeenCalledWith({ index: 0 });
   });
 
+  it('re-initializes the plugin before every playback on Android (restarts its position ticker)', async () => {
+    await start();
+    const initCalls = plugin.Playlist.initialize.mock.calls.length;
+    const order = (fn: { mock: { invocationCallOrder: number[] } }) => fn.mock.invocationCallOrder.at(-1)!;
+    expect(order(plugin.Playlist.initialize)).toBeLessThan(order(plugin.Playlist.setPlaylistItems));
+
+    engine.play();
+    await vi.waitFor(() => expect(plugin.Playlist.play).toHaveBeenCalled());
+    expect(plugin.Playlist.initialize.mock.calls.length).toBe(initCalls + 1);
+  });
+
+  it('does not re-initialize the plugin on iOS', async () => {
+    engine = create('ios');
+    await vi.waitFor(() => expect(plugin.Playlist.addListener).toHaveBeenCalledTimes(2)); // both engines' init done
+    plugin.Playlist.initialize.mockClear();
+    await start();
+    engine.play();
+    await vi.waitFor(() => expect(plugin.Playlist.play).toHaveBeenCalled());
+    expect(plugin.Playlist.initialize).not.toHaveBeenCalled();
+  });
+
   it('percent-encodes the space in CDN chapter URLs (iOS < 17 URL(string:) rejects it)', async () => {
     const gn1 = { ...track('gn1', 1), url: 'https://cdn.example/GN/GN 1.mp3' };
     const { items } = await start([gn1]);

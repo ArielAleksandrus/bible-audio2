@@ -82,6 +82,21 @@ export class NativeAudioEngine implements AudioEngine {
     await this.Playlist.addListener('status', ({ status }) => this.onStatus(status));
   }
 
+  /**
+   * Plugin bug (capacitor-plugin-playlist 8.4.x, Android): the ticker that
+   * emits PLAYBACK_POSITION is started only by initialize(), and stopped for
+   * good when the media service is destroyed (player closed, or idle for a
+   * while). The next playback then runs with no position/duration events —
+   * the in-app player sits at 0:00 while the notification (which reads
+   * ExoPlayer directly) is fine — until the app is restarted. initialize()
+   * just re-wires the plugin's status callback and restarts the ticker, so
+   * call it again whenever playback (re)starts.
+   */
+  private restartPositionTicker(): Promise<void> {
+    if (this.platform !== 'android') return Promise.resolve();
+    return this.Playlist.initialize().catch(err => console.warn('NativeAudioEngine: initialize failed', err));
+  }
+
   // === PLAYBACK ===
 
   async playTrack(track: Track, playlist?: Track[], startIndex = 0): Promise<void> {
@@ -92,6 +107,7 @@ export class NativeAudioEngine implements AudioEngine {
     const idx = this.playlist.findIndex(t => t.id === track.id);
     if (idx >= 0) {
       await this.ready;
+      await this.restartPositionTicker();
       await this.Playlist.playTrackByIndex({ index: idx });
     } else {
       await this.playPlaylist([track], 0);
@@ -111,6 +127,7 @@ export class NativeAudioEngine implements AudioEngine {
     const items = await Promise.all(tracks.map((t, i) => this.toNativeItem(t, i, gen)));
     if (gen !== this.generation) return;
 
+    await this.restartPositionTicker();
     await this.Playlist.setPlaylistItems({
       items,
       options: { startPaused: true, retainPosition: false },
@@ -125,7 +142,10 @@ export class NativeAudioEngine implements AudioEngine {
   }
 
   play(): void {
-    void this.ready.then(() => this.Playlist.play());
+    void this.ready.then(async () => {
+      await this.restartPositionTicker();
+      await this.Playlist.play();
+    });
   }
 
   pause(): void {
