@@ -16,7 +16,7 @@ workflows:
       #   # Holds GCLOUD_SERVICE_ACCOUNT_CREDENTIALS (service account JSON).
       #   - google_play
       vars:
-        PACKAGE_NAME: live.nlabs.bible
+        PACKAGE_NAME: live.nlabs.biblia
     # No `triggering` block: builds start manually from the Codemagic UI.
     scripts:
       - name: Install dependencies

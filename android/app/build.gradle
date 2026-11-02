@@ -4,7 +4,7 @@ android {
     namespace = "live.nlabs.bible"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "live.nlabs.bible"
+        applicationId "live.nlabs.biblia"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // CI (codemagic.yaml) sets these; local builds fall back to 1 / "1.0".

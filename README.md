@@ -107,9 +107,11 @@ splash screens are generated from `assets/` with
 
 ### Before the first store upload
 
-- [x] **App id** — `live.nlabs.bible`, the package already registered in
-      Firebase (`capacitor.config.ts`, Android `applicationId`, iOS bundle id).
-      It cannot change after publishing.
+- [x] **App id** — Android uses `live.nlabs.biblia` (`capacitor.config.ts`,
+      `applicationId`); `live.nlabs.bible` is permanently taken on Google Play
+      by an old app. The Java namespace and the iOS bundle id are still
+      `live.nlabs.bible`. Both packages are registered in Firebase. The Play
+      package cannot change after publishing.
 - [ ] **Privacy policy URL** — both stores require one; any public page works
       (e.g. a `/privacy` page on the Vercel deploy or on `biblia.nlabs.live`).
 - [ ] **Firebase native apps** — add an Android app and an iOS app with that id
