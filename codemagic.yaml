@@ -45,7 +45,9 @@ workflows:
     publishing:
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: internal
+        # Business account: no closed-testing requirement, so go straight to
+        # production. The release lands as a draft; roll it out in Play Console.
+        track: production
         # Required while the app has never been published on Play
         # ("Only releases with status draft may be created on draft app").
         # Switch to false after the first release goes out.
