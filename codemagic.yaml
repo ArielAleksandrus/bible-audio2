@@ -9,7 +9,7 @@ workflows:
       android_signing:
         # Reference name of the keystore uploaded in
         # Team settings → Code signing identities → Android keystores.
-        - bible_keystore
+        - upload
       groups:
         # Holds GCLOUD_SERVICE_ACCOUNT_CREDENTIALS (service account JSON).
         - google_play
