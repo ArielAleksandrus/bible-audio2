@@ -15,10 +15,7 @@ workflows:
         - google_play
       vars:
         PACKAGE_NAME: live.nlabs.bible
-    triggers:
-      # Builds start manually from the Codemagic UI. To build on tag push:
-      # events: [tag] with tag_patterns.
-      events: []
+    # No `triggering` block: builds start manually from the Codemagic UI.
     scripts:
       - name: Install dependencies
         script: npm ci
