@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "708812956918",
+    "project_id": "bible-audio-ab851",
+    "storage_bucket": "bible-audio-ab851.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708812956918:android:68ff8cc727ed9be41b78d7",
+        "android_client_info": {
+          "package_name": "live.nlabs.bible"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708812956918-j5odi306i4tcc3ftgaa0and42k9orm4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCs6VRkvmmcKJIg8nHjLPAKbuh1RFYeR-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "708812956918-j5odi306i4tcc3ftgaa0and42k9orm4r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708812956918:android:dee45f4d2c340e8c1b78d7",
+        "android_client_info": {
+          "package_name": "live.nlabs.biblia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708812956918-j5odi306i4tcc3ftgaa0and42k9orm4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCs6VRkvmmcKJIg8nHjLPAKbuh1RFYeR-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "708812956918-j5odi306i4tcc3ftgaa0and42k9orm4r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

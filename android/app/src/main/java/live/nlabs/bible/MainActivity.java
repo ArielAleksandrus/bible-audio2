@@ -1,4 +1,4 @@
-package live.nlabs.biblia;
+package live.nlabs.bible;
 
 import com.getcapacitor.BridgeActivity;
 

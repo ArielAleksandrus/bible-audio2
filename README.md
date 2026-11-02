@@ -107,8 +107,8 @@ splash screens are generated from `assets/` with
 
 ### Before the first store upload
 
-- [x] **App id** — `live.nlabs.biblia` (reverse of the `biblia.nlabs.live`
-      domain; `capacitor.config.ts`, Android `applicationId`, iOS bundle id).
+- [x] **App id** — `live.nlabs.bible`, the package already registered in
+      Firebase (`capacitor.config.ts`, Android `applicationId`, iOS bundle id).
       It cannot change after publishing.
 - [ ] **Privacy policy URL** — both stores require one; any public page works
       (e.g. a `/privacy` page on the Vercel deploy or on `biblia.nlabs.live`).

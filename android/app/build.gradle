@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "live.nlabs.biblia"
+    namespace = "live.nlabs.bible"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "live.nlabs.biblia"
+        applicationId "live.nlabs.bible"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
