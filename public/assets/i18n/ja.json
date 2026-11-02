@@ -7,7 +7,11 @@
     "downloading_bible": "聖書をダウンロード中：{{total}}章中{{downloaded}}章",
     "current_chapter": "現在の章",
     "download_complete": "聖書のダウンロードが完了しました！",
-    "confirm_mobile_data": "Wi-Fiに接続されていません。聖書全体をダウンロードすると約1.3 GBのデータを使用します。それでも続行しますか？"
+    "confirm_mobile_data": "Wi-Fiに接続されていません。聖書全体をダウンロードすると約1.3 GBのデータを使用します。それでも続行しますか？",
+    "download_incomplete": "{{failed}}章をダウンロードできませんでした。「聖書全体をダウンロード」をタップしてもう一度お試しください。",
+    "notif_title": "聖書をダウンロード中",
+    "notif_progress": "{{total}}章中{{downloaded}}章",
+    "notif_incomplete": "{{failed}}章をダウンロードできませんでした"
   },
   "loading": {
     "bible": "あなたの言語で聖書を読み込んでいます",

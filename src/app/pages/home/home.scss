@@ -96,6 +96,22 @@ ion-icon.hero-icon {
   font-style: italic;
 }
 
+.download-incomplete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--ion-color-warning-shade, #b26a00);
+  font-weight: 500;
+  margin-top: 16px;
+  text-align: left;
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 24px;
+  }
+}
+
 .download-complete {
   display: flex;
   align-items: center;

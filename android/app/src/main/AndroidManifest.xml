@@ -29,6 +29,12 @@
             android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- Full-Bible download that survives leaving the app (BulkDownloadService.java). -->
+        <service
+            android:name=".BulkDownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 
     <!-- Permissions -->
@@ -37,4 +43,8 @@
     <!-- Android 13+: needed for the media playback notification (lock screen /
          shade controls) and the daily verse reminder. Requested at runtime. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Full-Bible download in a foreground service. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 </manifest>

@@ -1,4 +1,5 @@
-import { Component, ChangeDetectorRef, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ChangeDetectorRef, DestroyRef, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
@@ -72,6 +73,18 @@ export class Home implements OnInit, ViewWillEnter {
   ) {
     this.progress$ = this.bibleServ.downloadProgress$;
     this.textDownloadProgress$ = this.bibleServ.textDownloadProgress$;
+
+    // Repaint the picker whenever a full-Bible download ends — finished,
+    // failed or cancelled. On Android it runs in a service and can end
+    // while the app was closed, so the fullDownload() promise can't be the
+    // only trigger.
+    let lastFullStatus: string | undefined;
+    this.progress$.pipe(takeUntilDestroyed(inject(DestroyRef))).subscribe(p => {
+      if (p.context !== 'full-bible') return;
+      const was = lastFullStatus;
+      lastFullStatus = p.status;
+      if (was === 'running' && p.status !== 'running' && this.bibleData) this.checkDownloaded();
+    });
   }
 
   ngOnInit() {
@@ -159,12 +172,15 @@ export class Home implements OnInit, ViewWillEnter {
     if(!bd)
       return [];
 
-    // Refresh download status/legend once the bulk download settles —
-    // whether it finished, errored, or was cut short by a stall — so
-    // bibleFullyDownloaded (and the button it gates) reflects reality.
-    return this.bibleServ.downloadEntireBible(bd).then(tracks => {
-      this.checkDownloaded();
-      return tracks;
+    // The picker/legend refresh when it settles comes from the progress$
+    // subscription in the constructor.
+    const t = (key: string, params?: object) => this.translate.instant(key, params);
+    return this.bibleServ.downloadEntireBible(bd, {
+      title: t('hero.notif_title'),
+      progress: t('hero.notif_progress', { downloaded: '{done}', total: '{total}' }),
+      complete: t('hero.download_complete'),
+      incomplete: t('hero.notif_incomplete', { failed: '{failed}' }),
+      cancel: t('common.cancel'),
     });
   }
 

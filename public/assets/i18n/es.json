@@ -7,7 +7,11 @@
     "downloading_bible": "Descargando la Biblia: {{downloaded}} de {{total}} capítulos",
     "current_chapter": "Capítulo actual",
     "download_complete": "¡Descarga de la Biblia completa!",
-    "confirm_mobile_data": "No estás conectado a Wi-Fi. Descargar toda la Biblia usa aproximadamente 1.3 GB de datos. ¿Deseas continuar de todos modos?"
+    "confirm_mobile_data": "No estás conectado a Wi-Fi. Descargar toda la Biblia usa aproximadamente 1.3 GB de datos. ¿Deseas continuar de todos modos?",
+    "download_incomplete": "{{failed}} capítulos no se descargaron. Toca “Descargar toda la Biblia” para intentarlo de nuevo.",
+    "notif_title": "Descargando la Biblia",
+    "notif_progress": "{{downloaded}} de {{total}} capítulos",
+    "notif_incomplete": "{{failed}} capítulos no se descargaron"
   },
   "loading": {
     "bible": "Cargando la Biblia en tu idioma",

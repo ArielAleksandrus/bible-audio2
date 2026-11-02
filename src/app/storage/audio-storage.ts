@@ -35,6 +35,10 @@ export interface AudioStorage {
   list(): Promise<StoredAudio[]>;
   remove(id: string): Promise<void>;
   clear(): Promise<void>;
+  /** Record a file written by someone else (the native bulk-download service). */
+  markStored(id: string, size: number): Promise<void>;
+  /** Forget cached state so the next call re-reads what is actually stored. */
+  invalidate(): void;
 }
 
 /** An AbortSignal that trips as soon as either input does (AbortSignal.any needs iOS 17.4+). */
@@ -95,6 +99,10 @@ class IndexedDbAudioStorage implements AudioStorage {
     const db = await dbPromise;
     await db.clear('files');
   }
+
+  // Nothing cached and no one else writes to IndexedDB.
+  async markStored(): Promise<void> {}
+  invalidate(): void {}
 }
 
 // ---------------------------------------------------------------------------
@@ -123,6 +131,8 @@ export function fileNameToId(name: string): string {
 class FilesystemAudioStorage implements AudioStorage {
   /** id → info, loaded once from a directory listing (1 bridge call instead of ~1200 stats). */
   private index: Promise<Map<string, StoredAudio>> | null = null;
+  /** `.part` cleanup is only safe on the very first listing (see getIndex). */
+  private firstListing = true;
 
   /**
    * `dir` is where the chapters live. On iOS, Directory.Data is Documents/,
@@ -140,6 +150,8 @@ class FilesystemAudioStorage implements AudioStorage {
 
   private getIndex(): Promise<Map<string, StoredAudio>> {
     if (!this.index) {
+      const cleanUp = this.firstListing;
+      this.firstListing = false;
       this.index = (async () => {
         const { Filesystem, dir } = await this.fs();
         const map = new Map<string, StoredAudio>();
@@ -147,10 +159,11 @@ class FilesystemAudioStorage implements AudioStorage {
           const { files } = await Filesystem.readdir({ path: AUDIO_DIR, directory: dir });
           for (const f of files) {
             // Left behind by a download the app was killed in the middle of.
-            // Safe to delete here: this listing runs before the first
-            // download can start (every download checks has() first).
+            // Safe to delete on the first listing only: it runs before the
+            // first download can start (every download checks has() first).
+            // A later re-listing (invalidate()) may race a live download.
             if (f.type === 'file' && f.name.endsWith('.part')) {
-              void Filesystem.deleteFile({ path: `${AUDIO_DIR}/${f.name}`, directory: dir }).catch(() => {});
+              if (cleanUp) void Filesystem.deleteFile({ path: `${AUDIO_DIR}/${f.name}`, directory: dir }).catch(() => {});
               continue;
             }
             if (f.type !== 'file' || !f.name.endsWith('.mp3')) continue;
@@ -225,6 +238,14 @@ class FilesystemAudioStorage implements AudioStorage {
     const { Filesystem, dir } = await this.fs();
     await Filesystem.rmdir({ path: AUDIO_DIR, directory: dir, recursive: true }).catch(() => {});
     (await this.getIndex()).clear();
+  }
+
+  async markStored(id: string, size: number): Promise<void> {
+    (await this.getIndex()).set(id, { id, size, downloadedAt: Date.now() });
+  }
+
+  invalidate(): void {
+    this.index = null;
   }
 }
 

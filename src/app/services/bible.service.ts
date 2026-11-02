@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { Track } from '../models/track';
 import { Bible, BibleBook } from 'bible-picker';
 import { Plan, DailyGoal, ReadingPortion } from "../models/plan";
-import { AudioDownloaderService } from './audio-downloader.service';
+import { AudioDownloaderService, BulkDownloadStrings, DownloadProgress } from './audio-downloader.service';
 import { WakeLockService } from './wake-lock.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { saveBibleVersion, getBibleVersion, getAllSavedBibles, deleteBibleVersion, AvailableSpace } from '../storage/my-db';
-import { isNativeApp } from '../utils/platform.util';
+import { isNativeApp, nativePlatform } from '../utils/platform.util';
 
 
 export const BIBLE_CDN_URL = "https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev";
@@ -33,15 +33,9 @@ export type BookDownloadStatus = {
 @Injectable({ providedIn: 'root' })
 export class BibleService {
   // Public progress observable for components
-  private progressSubject = new BehaviorSubject<{
-    downloaded: number;
-    total: number;
-    currentTrack?: Track;
-    status: 'idle' | 'running' | 'completed' | 'error';
-    context?: 'full-bible' | 'selection';
-  }>({ downloaded: 0, total: 0, status: 'idle' });
+  private progressSubject = new BehaviorSubject<DownloadProgress>({ downloaded: 0, total: 0, status: 'idle' });
 
-  downloadProgress$: Observable<any> = this.progressSubject.asObservable();
+  downloadProgress$: Observable<DownloadProgress> = this.progressSubject.asObservable();
 
   // Progress for the Bible *text* JSON download specifically (a few MB,
   // separate from the audio-download progress above). null when idle.
@@ -258,7 +252,7 @@ export class BibleService {
     return tracks;
   }
 
-  async downloadEntireBible(bible: Bible): Promise<Track[]> {
+  async downloadEntireBible(bible: Bible, strings: BulkDownloadStrings): Promise<Track[]> {
     // Reset progress
     this.progressSubject.next({ downloaded: 0, total: 0, status: 'running', context: 'full-bible' });
 
@@ -272,15 +266,17 @@ export class BibleService {
     // Filter only pending tracks (optional optimization)
     const pendingTracks = allTracks.filter(t => t.status !== 'done');
 
-    // Keep the screen from auto-locking while this runs. Doesn't survive a
-    // manual power-button lock — see WakeLockService — but that's handled
-    // by downloadTracks()'s own stall detection instead.
-    await this.wakeLock.request();
+    // Native: a foreground service on Android, which doesn't need the
+    // screen on. Web/iOS: keep the screen from auto-locking while this runs.
+    // Doesn't survive a manual power-button lock — see WakeLockService —
+    // but that's handled by downloadTracks()'s own stall detection instead.
+    const holdScreen = nativePlatform() !== 'android';
+    if (holdScreen) await this.wakeLock.request();
     try {
-      // Start the bulk download – progress will flow automatically
-      await this.ads.downloadTracks(pendingTracks, 'full-bible');
+      // Progress flows through downloadProgress$.
+      await this.ads.downloadInBackground(pendingTracks, strings);
     } finally {
-      this.wakeLock.release();
+      if (holdScreen) this.wakeLock.release();
     }
 
     // Return all tracks (with updated status)

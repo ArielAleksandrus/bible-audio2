@@ -68,6 +68,13 @@
                 <span>{{ 'hero.download_complete' | translate }}</span>
               </div>
             }
+
+            @if (progress.status === 'error' && progress.context === 'full-bible' && progress.failed) {
+              <div class="download-incomplete">
+                <ion-icon name="warning-outline"></ion-icon>
+                <span>{{ 'hero.download_incomplete' | translate:{ failed: progress.failed } }}</span>
+              </div>
+            }
           }
         </div>
 
