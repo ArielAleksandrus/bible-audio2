@@ -10,11 +10,9 @@ workflows:
         # Reference name of the keystore uploaded in
         # Team settings → Code signing identities → Android keystores.
         - upload
-      # Re-enable together with `publishing` below once the service account
-      # credentials are set up.
-      # groups:
-      #   # Holds GCLOUD_SERVICE_ACCOUNT_CREDENTIALS (service account JSON).
-      #   - google_play
+      groups:
+        # Holds GCLOUD_SERVICE_ACCOUNT_CREDENTIALS (service account JSON).
+        - google_play
       vars:
         PACKAGE_NAME: live.nlabs.biblia
     # No `triggering` block: builds start manually from the Codemagic UI.
@@ -44,11 +42,11 @@ workflows:
     artifacts:
       - android/app/build/outputs/bundle/release/*.aab
       - android/app/build/outputs/mapping/release/mapping.txt
-    # publishing:
-    #   google_play:
-    #     credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-    #     track: internal
-    #     # Required while the app has never been published on Play
-    #     # ("Only releases with status draft may be created on draft app").
-    #     # Switch to false after the first release goes out.
-    #     submit_as_draft: true
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        # Required while the app has never been published on Play
+        # ("Only releases with status draft may be created on draft app").
+        # Switch to false after the first release goes out.
+        submit_as_draft: true
