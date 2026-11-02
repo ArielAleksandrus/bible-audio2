@@ -16,6 +16,8 @@ ext {
 
     // @dwbn/capacitor-plugin-playlist: one Media3 version for the whole APK.
     media3Version = '1.11.1'
+    // @dwbn/capacitor-plugin-playlist is written in Kotlin and reads this.
+    kotlin_version = '2.4.20'
     // @capacitor-firebase/authentication: include the Google Sign-In SDK.
     rgcfaIncludeGoogle = true
 }
