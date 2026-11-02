@@ -1,0 +1,902 @@
+[
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 6,
+    "verse": 6,
+    "ref": "Deuteronomy 6:6",
+    "theme": "scripture",
+    "text": "我今日吩咐你的这些话，都要记在你的心上；"
+  },
+  {
+    "book": 5,
+    "abbrev": "JOS",
+    "chapter": 1,
+    "verse": 8,
+    "ref": "Joshua 1:8",
+    "theme": "scripture",
+    "text": "这律法书不可离开你的口，要昼夜默诵，好使你谨守遵行书中所记的一切；这样，你的道路就必顺利，你必一路亨通。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 1,
+    "verse": 2,
+    "ref": "Psalms 1:2",
+    "theme": "scripture",
+    "text": "他喜爱的是耶和华的律法，他昼夜默诵的也是耶和华的律法。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 19,
+    "verse": 7,
+    "ref": "Psalms 19:7",
+    "theme": "scripture",
+    "text": "耶和华的律法是完全的，能使人心苏醒；耶和华的法度是坚定的，能使愚人有智慧。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 11,
+    "ref": "Psalms 119:11",
+    "theme": "scripture",
+    "text": "我把你的话藏在心里，免得我得罪你。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 105,
+    "ref": "Psalms 119:105",
+    "theme": "scripture",
+    "text": "你的话是我脚前的灯，是我路上的光。"
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 30,
+    "verse": 5,
+    "ref": "Proverbs 30:5",
+    "theme": "scripture",
+    "text": "神所说的话句句都是炼净的，投靠他的，他就作他们的盾牌。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 55,
+    "verse": 11,
+    "ref": "Isaiah 55:11",
+    "theme": "scripture",
+    "text": "从我的口所出的话也必这样，必不徒然返回我这里，却要作成我所喜悦的，使它在我差遣它去作的事上必然亨通。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 4,
+    "verse": 4,
+    "ref": "Matthew 4:4",
+    "theme": "scripture",
+    "text": "耶稣回答：“经上记着：‘人活着，不是单靠食物，更要靠 神口里所出的一切话。’”"
+  },
+  {
+    "book": 41,
+    "abbrev": "LUK",
+    "chapter": 11,
+    "verse": 28,
+    "ref": "Luke 11:28",
+    "theme": "scripture",
+    "text": "他说：“是的，却还不如听 神的道而遵守的人有福。”"
+  },
+  {
+    "book": 43,
+    "abbrev": "ACT",
+    "chapter": 17,
+    "verse": 11,
+    "ref": "Acts 17:11",
+    "theme": "scripture",
+    "text": "这里的人，比帖撒罗尼迦人开明，热切接受主的道，天天考查圣经，要知道所听的是否与圣经相符。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 10,
+    "verse": 17,
+    "ref": "Romans 10:17",
+    "theme": "scripture",
+    "text": "可见信心是从所听的道来的，所听的道是借着基督的话来的。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 15,
+    "verse": 4,
+    "ref": "Romans 15:4",
+    "theme": "scripture",
+    "text": "从前经上所写的，都是为教训我们而写的，好使我们借着忍耐和圣经中的安慰得着盼望。"
+  },
+  {
+    "book": 54,
+    "abbrev": "2TI",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "2 Timothy 3:16",
+    "theme": "scripture",
+    "text": "全部圣经都是 神所默示的，在教训、责备、矫正和公义的训练各方面，都是有益的，"
+  },
+  {
+    "book": 57,
+    "abbrev": "HEB",
+    "chapter": 4,
+    "verse": 12,
+    "ref": "Hebrews 4:12",
+    "theme": "scripture",
+    "text": "因为 神的道是活的，是有效的，比一切两刃的剑更锋利，甚至可以刺入剖开魂与灵，关节与骨髓，并且能够辨明心中的思想和意念。"
+  },
+  {
+    "book": 58,
+    "abbrev": "JAS",
+    "chapter": 1,
+    "verse": 22,
+    "ref": "James 1:22",
+    "theme": "scripture",
+    "text": "你们应该作行道的人，不要单作听道的人，自己欺骗自己；"
+  },
+  {
+    "book": 59,
+    "abbrev": "1PE",
+    "chapter": 1,
+    "verse": 23,
+    "ref": "1 Peter 1:23",
+    "theme": "scripture",
+    "text": "你们得了重生，并不是由于能坏的种子，却是由于不能朽坏的，就是借着 神永活长存的道。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 27,
+    "verse": 4,
+    "ref": "Psalms 27:4",
+    "theme": "connection",
+    "text": "有一件事我求过耶和华，我还要寻求；我要一生一世住在耶和华的殿里，瞻仰他的荣美，在他的殿中求问。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 46,
+    "verse": 1,
+    "ref": "Psalms 46:1",
+    "theme": "connection",
+    "text": "神是我们的避难所，是我们的力量，是我们在患难中随时都可得到的帮助。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 62,
+    "verse": 8,
+    "ref": "Psalms 62:8",
+    "theme": "connection",
+    "text": "众民哪！你们要常常倚靠他，在他面前倾心吐意；因为 神是我们的避难所。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 63,
+    "verse": 1,
+    "ref": "Psalms 63:1",
+    "theme": "connection",
+    "text": "神啊！你是我的 神，我要切切寻求你；在干旱、疲乏、无水之地，我的心，我的身，都渴想你，切慕你。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 105,
+    "verse": 4,
+    "ref": "Psalms 105:4",
+    "theme": "connection",
+    "text": "你们要追求耶和华与他的能力，常常寻求他的面。"
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 3,
+    "verse": 5,
+    "ref": "Proverbs 3:5",
+    "theme": "connection",
+    "text": "你要一心仰赖耶和华，不可倚靠自己的聪明；"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 41,
+    "verse": 10,
+    "ref": "Isaiah 41:10",
+    "theme": "connection",
+    "text": "不要惧怕，因为我与你同在；不要四处张望，因为我是你的 神，我必坚固你，我必帮助你；我必用公义的右手扶持你。"
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 29,
+    "verse": 11,
+    "ref": "Jeremiah 29:11",
+    "theme": "connection",
+    "text": "因我自己知道我为你们所定的计划，是使你们得平安，而不是遭受灾祸的计划；要赐给你们美好的前程和盼望。这是耶和华的宣告。"
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 29,
+    "verse": 13,
+    "ref": "Jeremiah 29:13",
+    "theme": "connection",
+    "text": "你们要寻找我，只要一心寻求，就必寻见。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 6,
+    "verse": 33,
+    "ref": "Matthew 6:33",
+    "theme": "connection",
+    "text": "你们要先求他的国和他的义，这一切都必加给你们。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 7,
+    "verse": 7,
+    "ref": "Matthew 7:7",
+    "theme": "connection",
+    "text": "你们祈求，就给你们；寻找，就寻见；叩门，就给你们开门。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 11,
+    "verse": 28,
+    "ref": "Matthew 11:28",
+    "theme": "connection",
+    "text": "你们所有劳苦担重担的人哪，到我这里来吧！我必使你们得安息。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 14,
+    "verse": 6,
+    "ref": "John 14:6",
+    "theme": "connection",
+    "text": "耶稣对他说：“我就是道路、真理、生命，如果不是借着我，没有人能到父那里去。”"
+  },
+  {
+    "book": 49,
+    "abbrev": "PHP",
+    "chapter": 4,
+    "verse": 6,
+    "ref": "Philippians 4:6",
+    "theme": "connection",
+    "text": "应当毫无忧虑，只要凡事借着祷告祈求，带着感恩的心，把你们所要的告诉 神。"
+  },
+  {
+    "book": 58,
+    "abbrev": "JAS",
+    "chapter": 4,
+    "verse": 8,
+    "ref": "James 4:8",
+    "theme": "connection",
+    "text": "你们应当亲近 神， 神就亲近你们。"
+  },
+  {
+    "book": 65,
+    "abbrev": "REV",
+    "chapter": 3,
+    "verse": 20,
+    "ref": "Revelation 3:20",
+    "theme": "connection",
+    "text": "看哪！我站在门外敲门；如果有人听见我的声音就开门的，我要进到他那里去，我要跟他在一起，他也要跟我在一起吃饭。"
+  },
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 7,
+    "verse": 9,
+    "ref": "Deuteronomy 7:9",
+    "theme": "love",
+    "text": "所以你要知道耶和华你的 神，他是 神，是信实可靠的 神；他向爱他和守他诫命的人，守约并且施慈爱，直到千代。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 36,
+    "verse": 7,
+    "ref": "Psalms 36:7",
+    "theme": "love",
+    "text": "神啊！你的慈爱多么宝贵；世人都投靠在你的翅膀荫下。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 100,
+    "verse": 5,
+    "ref": "Psalms 100:5",
+    "theme": "love",
+    "text": "因为耶和华本是美善的，他的慈爱存到永远，他的信实直到万代。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 103,
+    "verse": 11,
+    "ref": "Psalms 103:11",
+    "theme": "love",
+    "text": "天离地有多高，他的慈爱向敬畏他的人也有多大。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 136,
+    "verse": 1,
+    "ref": "Psalms 136:1",
+    "theme": "love",
+    "text": "你们要称谢耶和华，因他本是良善的，他的慈爱永远长存。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 145,
+    "verse": 9,
+    "ref": "Psalms 145:9",
+    "theme": "love",
+    "text": "耶和华善待万有，他的怜悯临到他一切所造的。"
+  },
+  {
+    "book": 35,
+    "abbrev": "ZEP",
+    "chapter": 3,
+    "verse": 17,
+    "ref": "Zephaniah 3:17",
+    "theme": "love",
+    "text": "耶和华你的 神在你中间，他是施行拯救的大能者，必因你欢欣快乐，必默然爱你，而且必因你喜乐欢唱。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "John 3:16",
+    "theme": "love",
+    "text": "神爱世人，甚至把他的独生子赐给他们，叫一切信他的，不至灭亡，反得永生。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 15,
+    "verse": 9,
+    "ref": "John 15:9",
+    "theme": "love",
+    "text": "父怎样爱我，我也怎样爱你们；你们要住在我的爱里。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 15,
+    "verse": 13,
+    "ref": "John 15:13",
+    "theme": "love",
+    "text": "人为朋友舍命，人间的爱没有比这个更大的了。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 5,
+    "verse": 8,
+    "ref": "Romans 5:8",
+    "theme": "love",
+    "text": "唯有基督在我们还作罪人的时候为我们死， 神对我们的爱就在此显明了。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 8,
+    "verse": 38,
+    "ref": "Romans 8:38–39",
+    "theme": "love",
+    "text": "因为我深信：无论是死、是生，是天使、是掌权的，是现在的事，是将来的事，是有能力的，是高天的、是深渊的，或是任何别的被造之物，都不能叫我们与 神的爱隔绝，这爱是在我们的主耶稣基督里的。"
+  },
+  {
+    "book": 47,
+    "abbrev": "GAL",
+    "chapter": 2,
+    "verse": 20,
+    "ref": "Galatians 2:20",
+    "theme": "love",
+    "text": "我已经与基督同钉十字架；现在活着的，不再是我，而是基督活在我里面；如今在肉身中活着的我，是因信 神的儿子而活的；他爱我，为我舍己。"
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 2,
+    "verse": 4,
+    "ref": "Ephesians 2:4",
+    "theme": "love",
+    "text": "然而 神满有怜悯，因着他爱我们的大爱，"
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 3,
+    "verse": 19,
+    "ref": "Ephesians 3:19",
+    "theme": "love",
+    "text": "并且知道他的爱是超过人所能理解的，使你们被充满，得着 神的一切丰盛。"
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 8,
+    "ref": "1 John 4:8",
+    "theme": "love",
+    "text": "不爱人的，就不认识 神，因为 神就是爱。"
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 19,
+    "ref": "1 John 4:19",
+    "theme": "love",
+    "text": "我们爱，因为 神先爱我们。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 89,
+    "ref": "Psalms 119:89",
+    "theme": "scripture",
+    "text": "耶和华啊！你的话存到永远，坚立在天上。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 18,
+    "ref": "Psalms 119:18",
+    "theme": "scripture",
+    "text": "求你开我的眼睛，使我能看出你律法的奇妙。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 103,
+    "ref": "Psalms 119:103",
+    "theme": "scripture",
+    "text": "你的话语在我的上膛多么甜美，在我的口中比蜂蜜更甜。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 130,
+    "ref": "Psalms 119:130",
+    "theme": "scripture",
+    "text": "你的话一解开，就发出亮光，使愚人有悟性。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 165,
+    "ref": "Psalms 119:165",
+    "theme": "scripture",
+    "text": "喜爱你律法的必有丰盛的平安，甚么都不能绊倒他们。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 18,
+    "verse": 30,
+    "ref": "Psalms 18:30",
+    "theme": "scripture",
+    "text": "这位 神，他的道路是完全的；耶和华的话是炼净的；凡是投靠他的，他都作他们的盾牌。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 33,
+    "verse": 4,
+    "ref": "Psalms 33:4",
+    "theme": "scripture",
+    "text": "因为耶和华的话是正直的，他的一切作为都是诚实的。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 12,
+    "verse": 6,
+    "ref": "Psalms 12:6",
+    "theme": "scripture",
+    "text": "耶和华的言语是纯净的言语，好象银子在泥炉中炼过，精炼过七次一样。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 40,
+    "verse": 8,
+    "ref": "Isaiah 40:8",
+    "theme": "scripture",
+    "text": "草必枯干，花必凋谢，唯有我们 神的道永远长存。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 24,
+    "verse": 35,
+    "ref": "Matthew 24:35",
+    "theme": "scripture",
+    "text": "天地都要过去，但我的话决不会废去。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 1,
+    "verse": 1,
+    "ref": "John 1:1",
+    "theme": "scripture",
+    "text": "太初有道，道与 神同在，道就是 神。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 6,
+    "verse": 68,
+    "ref": "John 6:68",
+    "theme": "scripture",
+    "text": "西门．彼得回答：“主啊，你有永生之道，我们还跟从谁呢？”"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 17,
+    "verse": 17,
+    "ref": "John 17:17",
+    "theme": "scripture",
+    "text": "求你用真理使他们成圣；你的道就是真理。"
+  },
+  {
+    "book": 50,
+    "abbrev": "COL",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "Colossians 3:16",
+    "theme": "scripture",
+    "text": "你们要让基督的道丰丰富富地住在你们心里，以各样的智慧，彼此教导，互相劝戒，用诗章、圣诗、灵歌，怀着感恩的心歌颂 神。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 23,
+    "verse": 1,
+    "ref": "Psalms 23:1",
+    "theme": "connection",
+    "text": "耶和华是我的牧人，我必不会缺乏。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 27,
+    "verse": 1,
+    "ref": "Psalms 27:1",
+    "theme": "connection",
+    "text": "耶和华是我的亮光，是我的救恩，我还怕谁呢？耶和华是我性命的避难所，我还惧谁呢？"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 34,
+    "verse": 8,
+    "ref": "Psalms 34:8",
+    "theme": "connection",
+    "text": "你们要亲自体验，就知道耶和华是美善的；投靠他的人，都是有福的。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 34,
+    "verse": 18,
+    "ref": "Psalms 34:18",
+    "theme": "connection",
+    "text": "耶和华亲近心中破碎的人，拯救灵里痛悔的人。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 42,
+    "verse": 1,
+    "ref": "Psalms 42:1",
+    "theme": "connection",
+    "text": "神啊！我的心渴慕你，好象鹿渴慕溪水。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 91,
+    "verse": 1,
+    "ref": "Psalms 91:1–2",
+    "theme": "connection",
+    "text": "住在至高者的隐密处的，必在全能者的荫庇下安居。我要对耶和华说：“你是我的避难所，我的保障，你是我的 神，我所倚靠的。”"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 121,
+    "verse": 2,
+    "ref": "Psalms 121:2",
+    "theme": "connection",
+    "text": "我的帮助是从造天地的耶和华而来。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 145,
+    "verse": 18,
+    "ref": "Psalms 145:18",
+    "theme": "connection",
+    "text": "凡是求告耶和华的，耶和华都和他们接近，就是和所有真诚求告他的人接近。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 37,
+    "verse": 4,
+    "ref": "Psalms 37:4",
+    "theme": "connection",
+    "text": "你要以耶和华为乐，他就把你心里所求的赐给你。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 73,
+    "verse": 26,
+    "ref": "Psalms 73:26",
+    "theme": "connection",
+    "text": "我的肉身和我的内心虽然渐渐衰弱，神却永远是我心里的盘石，是我的业分。"
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 16,
+    "verse": 3,
+    "ref": "Proverbs 16:3",
+    "theme": "connection",
+    "text": "当把你所作的交托耶和华，你的计划就必成功。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 26,
+    "verse": 3,
+    "ref": "Isaiah 26:3",
+    "theme": "connection",
+    "text": "专心倚靠你的，你必保护他一切平安，因为他倚靠你。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 40,
+    "verse": 31,
+    "ref": "Isaiah 40:31",
+    "theme": "connection",
+    "text": "但那些仰望耶和华的人，必重新得力；他们必像鹰一样展翅上腾；他们奔跑，也不困倦，他们行走，也不疲乏。"
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 33,
+    "verse": 3,
+    "ref": "Jeremiah 33:3",
+    "theme": "connection",
+    "text": "你呼求我，我就应允你，并且把你所不知道的那些伟大奥秘的事告诉你。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 22,
+    "verse": 37,
+    "ref": "Matthew 22:37",
+    "theme": "connection",
+    "text": "他回答：“你要全心、全性、全意爱主你的 神。”"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 14,
+    "verse": 27,
+    "ref": "John 14:27",
+    "theme": "connection",
+    "text": "我留下平安给你们，我把自己的平安赐给你们；我给你们的，不像世界所给的。你们心里不要难过，也不要恐惧。"
+  },
+  {
+    "book": 59,
+    "abbrev": "1PE",
+    "chapter": 5,
+    "verse": 7,
+    "ref": "1 Peter 5:7",
+    "theme": "connection",
+    "text": "你们要把一切忧虑卸给 神，因为他顾念你们。"
+  },
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 31,
+    "verse": 8,
+    "ref": "Deuteronomy 31:8",
+    "theme": "connection",
+    "text": "耶和华亲自在你前头行，与你同在；他决不撇下你，也不离弃你；你不要害怕，也不要惊慌。"
+  },
+  {
+    "book": 24,
+    "abbrev": "LAM",
+    "chapter": 3,
+    "verse": 22,
+    "ref": "Lamentations 3:22–23",
+    "theme": "love",
+    "text": "耶和华的慈爱永不断绝，他的怜悯永不止息。每天早晨都是新的；你的信实多么广大！"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 103,
+    "verse": 13,
+    "ref": "Psalms 103:13",
+    "theme": "love",
+    "text": "父亲怎样怜恤儿子，耶和华也照样怜恤敬畏他的人。"
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 10,
+    "ref": "1 John 4:10",
+    "theme": "love",
+    "text": "不是我们爱 神，而是 神爱我们，差遣他的儿子为我们的罪作了赎罪祭，这就是爱了。"
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 16,
+    "ref": "1 John 4:16",
+    "theme": "love",
+    "text": "神对我们的爱，我们已经明白了，而且相信了。神就是爱；住在爱里面的，就住在 神里面， 神也住在他里面。"
+  },
+  {
+    "book": 45,
+    "abbrev": "1CO",
+    "chapter": 13,
+    "verse": 4,
+    "ref": "1 Corinthians 13:4",
+    "theme": "love",
+    "text": "爱是恒久忍耐，又有恩慈。爱是不嫉妒，不自夸，不张狂。"
+  },
+  {
+    "book": 45,
+    "abbrev": "1CO",
+    "chapter": 13,
+    "verse": 13,
+    "ref": "1 Corinthians 13:13",
+    "theme": "love",
+    "text": "现在常存的有信、望、爱这三样，其中最大的是爱。"
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 31,
+    "verse": 3,
+    "ref": "Jeremiah 31:3",
+    "theme": "love",
+    "text": "耶和华在古时曾向以色列显现，说：“我以永远的爱爱你，因此，我对你的慈爱延续不息。”"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 54,
+    "verse": 10,
+    "ref": "Isaiah 54:10",
+    "theme": "love",
+    "text": "虽然大山可以挪开，小山可以迁移，但我的慈爱必不从你身上挪开，我和平的约也必不迁移；这是怜悯你的耶和华说的。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 86,
+    "verse": 15,
+    "ref": "Psalms 86:15",
+    "theme": "love",
+    "text": "但是，主啊！你是有怜悯有恩典的 神，你不轻易发怒，并且有极大的慈爱和信实。"
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 2,
+    "verse": 8,
+    "ref": "Ephesians 2:8–9",
+    "theme": "love",
+    "text": "你们得救是靠着恩典，借着信心。这不是出于自己，而是 神所赐的；这也不是出于行为，免得有人自夸。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 6,
+    "verse": 23,
+    "ref": "Romans 6:23",
+    "theme": "love",
+    "text": "因为罪的工价就是死，但 神的恩赏，在我们的主基督耶稣里，却是永生。"
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 1,
+    "verse": 9,
+    "ref": "1 John 1:9",
+    "theme": "love",
+    "text": "我们若承认自己的罪， 神是信实的、公义的，必定赦免我们的罪，洁净我们脱离一切不义。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 13,
+    "verse": 34,
+    "ref": "John 13:34",
+    "theme": "love",
+    "text": "我给你们一条新命令，就是要你们彼此相爱；我怎样爱你们，你们也要怎样彼此相爱。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 49,
+    "verse": 15,
+    "ref": "Isaiah 49:15",
+    "theme": "love",
+    "text": "妇人怎能忘记她吃奶的婴孩，不怜悯她亲生的儿子呢？即使她们可能忘记，我也不会忘记你。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 8,
+    "verse": 28,
+    "ref": "Romans 8:28",
+    "theme": "love",
+    "text": "我们知道，为了爱 神的人，就是按他旨意蒙召的人的益处，万事都一同效力。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 15,
+    "verse": 13,
+    "ref": "Romans 15:13",
+    "theme": "love",
+    "text": "愿那赐盼望的 神，因着你们的信，把一切喜乐平安充满你们，使你们靠着圣灵的大能满有盼望。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 139,
+    "verse": 14,
+    "ref": "Psalms 139:14",
+    "theme": "love",
+    "text": "我要称谢你，因为我的受造奇妙可畏；你的作为奇妙，这是我深深知道的。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 10,
+    "verse": 10,
+    "ref": "John 10:10",
+    "theme": "love",
+    "text": "贼来了，不过是要偷窃、杀害、毁坏；我来了，是要使羊得生命，并且得的更丰盛。"
+  }
+]

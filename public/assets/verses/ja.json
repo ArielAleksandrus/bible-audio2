@@ -1,0 +1,902 @@
+[
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 6,
+    "verse": 6,
+    "ref": "Deuteronomy 6:6",
+    "theme": "scripture",
+    "text": "今日与えるこれらのことばを、一時も忘れてはいけません。"
+  },
+  {
+    "book": 5,
+    "abbrev": "JOS",
+    "chapter": 1,
+    "verse": 8,
+    "ref": "Joshua 1:8",
+    "theme": "scripture",
+    "text": "人々に、律法をいつも思い出させなさい。まずあなたが、昼も夜も律法を忘れず、それを完全に守るよう心がけなさい。模範を示し、どんなことも律法どおりきちんと行わなければならない。成功するもしないも、すべてその一点にかかっている。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 1,
+    "verse": 2,
+    "ref": "Psalms 1:2",
+    "theme": "scripture",
+    "text": "その人は、主がお望みになることを何でも喜んで行い、いつも、主の教えを思い巡らしては、もっと主のみそばを歩もうと考えます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 19,
+    "verse": 7,
+    "ref": "Psalms 19:7",
+    "theme": "scripture",
+    "text": "主のおきては完全で、私たちを守り、賢くし、喜びと光を与えます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 11,
+    "ref": "Psalms 119:11",
+    "theme": "scripture",
+    "text": "私はおことばを深く味わい、心にたくわえました。それによって罪から遠ざかるためです。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 105,
+    "ref": "Psalms 119:105",
+    "theme": "scripture",
+    "text": "あなたのおことばは、つまずかないように道を照らしてくれる明かりです。"
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 30,
+    "verse": 5,
+    "ref": "Proverbs 30:5",
+    "theme": "scripture",
+    "text": "神のことばはすべて真実で、神は頼ってくる者をみな守ってくださいます。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 55,
+    "verse": 11,
+    "ref": "Isaiah 55:11",
+    "theme": "scripture",
+    "text": "わたしのことばも同じだ。送り出せば必ず実を結ぶ。わたしの望みどおりのことをし、送られた先々で大きな影響を及ぼす。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 4,
+    "verse": 4,
+    "ref": "Matthew 4:4",
+    "theme": "scripture",
+    "text": "しかしイエスは、お答えになりました。「いいえ。聖書には、『人はただパンだけで生きるのではなく、神の口から出る一つ一つのことばによる』と書いてある。わたしたちは、神のすべてのことばに従うべきなのです。」"
+  },
+  {
+    "book": 41,
+    "abbrev": "LUK",
+    "chapter": 11,
+    "verse": 28,
+    "ref": "Luke 11:28",
+    "theme": "scripture",
+    "text": "しかしイエスは、「そのとおりです。でも、神のことばを聞いて、そのとおり実行する人のほうが、もっと祝福されているのです」と言われました。"
+  },
+  {
+    "book": 43,
+    "abbrev": "ACT",
+    "chapter": 17,
+    "verse": 11,
+    "ref": "Acts 17:11",
+    "theme": "scripture",
+    "text": "ベレヤの人たちは、テサロニケの人たちに比べてずっと心が広く、喜んで話を聞いてくれます。そればかりか、二人の言うことがそのとおりかどうか、毎日、聖書を調べるほど熱心でした。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 10,
+    "verse": 17,
+    "ref": "Romans 10:17",
+    "theme": "scripture",
+    "text": "信仰は、キリストについてのことばに耳を傾けることから始まるのです。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 15,
+    "verse": 4,
+    "ref": "Romans 15:4",
+    "theme": "scripture",
+    "text": "ずっと昔に書かれたこのことばは、私たちに忍耐を教え、励ますためのものです。また、神が死と罪の力とを打ち破ってくださる時を、私たちが待ち望むためのものです。"
+  },
+  {
+    "book": 54,
+    "abbrev": "2TI",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "2 Timothy 3:16",
+    "theme": "scripture",
+    "text": "神の霊感によって書かれた聖書は、何が真理であり、何が悪であるかをよく教えてくれます。また、私たちの生活をまっすぐにし、正しいことを行う力を与えてくれます。"
+  },
+  {
+    "book": 57,
+    "abbrev": "HEB",
+    "chapter": 4,
+    "verse": 12,
+    "ref": "Hebrews 4:12",
+    "theme": "scripture",
+    "text": "神のことばは生きていて、力があります。それは鋭い刃のように切れ味がよく、心の奥深くに潜んでいる思いや欲望にまでメスを入れ、私たちの赤裸々な姿をさらけ出します。"
+  },
+  {
+    "book": 58,
+    "abbrev": "JAS",
+    "chapter": 1,
+    "verse": 22,
+    "ref": "James 1:22",
+    "theme": "scripture",
+    "text": "また聞くだけでなく、それを実行することも忘れてはなりません。みことばを聞くだけは聞いて、自分を偽った行動をとることがありませんように。"
+  },
+  {
+    "book": 59,
+    "abbrev": "1PE",
+    "chapter": 1,
+    "verse": 23,
+    "ref": "1 Peter 1:23",
+    "theme": "scripture",
+    "text": "あなたがたの新しいいのちは、両親から受けた、やがて朽ち果てるいのちではなく、朽ちることのないいのちです。このいのちは、いつまでも変わらずに生きて働く神のことばによるのです。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 27,
+    "verse": 4,
+    "ref": "Psalms 27:4",
+    "theme": "connection",
+    "text": "私が神にお願いすることは、ただ一つです。私の求めてやまないものとは、主の宮で黙想にふけり、いのちある限り主の前で暮らすこと、比べようもない、主の麗しさと完全と栄光とを喜ぶ特権です。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 46,
+    "verse": 1,
+    "ref": "Psalms 46:1",
+    "theme": "connection",
+    "text": "神は私たちの隠れ家、また力、苦難にあえぐときの確かな助けです。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 62,
+    "verse": 8,
+    "ref": "Psalms 62:8",
+    "theme": "connection",
+    "text": "同胞よ。いつでも神への信頼を失わず、心にある願いを洗いざらい申し上げなさい。神はきっと助けてくださいます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 63,
+    "verse": 1,
+    "ref": "Psalms 63:1",
+    "theme": "connection",
+    "text": "ああ神よ。いったいどこにおられるのですか。一滴の水もない、からからの荒れ地で、私は必死になって神を慕い求めています。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 105,
+    "verse": 4,
+    "ref": "Psalms 105:4",
+    "theme": "connection",
+    "text": "常に主を求め、御力を慕い続けなさい。"
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 3,
+    "verse": 5,
+    "ref": "Proverbs 3:5",
+    "theme": "connection",
+    "text": "とことん主に信頼しなさい。決して自分に頼ってはいけません。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 41,
+    "verse": 10,
+    "ref": "Isaiah 41:10",
+    "theme": "connection",
+    "text": "恐れるな。わたしがついている。取り乱すな。わたしはあなたの神だ。わたしはあなたを力づけ、あなたを助け、勝利の右の手でしっかり支える。"
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 29,
+    "verse": 11,
+    "ref": "Jeremiah 29:11",
+    "theme": "connection",
+    "text": "わたしは、おまえたちのために立てた計画をよく知っている。それは災いではなく祝福を与える計画で、将来と希望を約束する。"
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 29,
+    "verse": 13,
+    "ref": "Jeremiah 29:13",
+    "theme": "connection",
+    "text": "真剣に探し求めるなら、おまえたちはわたしを見つけることができる。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 6,
+    "verse": 33,
+    "ref": "Matthew 6:33",
+    "theme": "connection",
+    "text": "神を第一とし、神が望まれるとおりの生活をしなさい。そうすれば、必要なものは、神が与えてくださいます。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 7,
+    "verse": 7,
+    "ref": "Matthew 7:7",
+    "theme": "connection",
+    "text": "求めなさい。そうすれば与えられます。捜しなさい。そうすれば見つかります。戸をたたきなさい。そうすれば開けてもらえます。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 11,
+    "verse": 28,
+    "ref": "Matthew 11:28",
+    "theme": "connection",
+    "text": "重い束縛を受けて、疲れはてている人たちよ。さあ、わたしのところに来なさい。あなたがたを休ませてあげましょう。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 14,
+    "verse": 6,
+    "ref": "John 14:6",
+    "theme": "connection",
+    "text": "イエスはトマスに言われました。「いいですか。わたしが道です。そして真理でもあり、いのちでもあります。わたしを通らなければ、だれ一人、父のところへは行けません。」"
+  },
+  {
+    "book": 49,
+    "abbrev": "PHP",
+    "chapter": 4,
+    "verse": 6,
+    "ref": "Philippians 4:6",
+    "theme": "connection",
+    "text": "何事も心配しないで、どんな時でも神に祈りなさい。そして、祈りに答えてくださる神に感謝しましょう。"
+  },
+  {
+    "book": 58,
+    "abbrev": "JAS",
+    "chapter": 4,
+    "verse": 8,
+    "ref": "James 4:8",
+    "theme": "connection",
+    "text": "神に近づきなさい。そうすれば、神も近づいてくださいます。"
+  },
+  {
+    "book": 65,
+    "abbrev": "REV",
+    "chapter": 3,
+    "verse": 20,
+    "ref": "Revelation 3:20",
+    "theme": "connection",
+    "text": "見なさい。わたしは戸の外でたたいています。その呼びかけにこたえて戸を開ける人なら、わたしは中に入って、だれとでも親しく語り合います。そして、互いに楽しい時を過ごすのです。"
+  },
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 7,
+    "verse": 9,
+    "ref": "Deuteronomy 7:9",
+    "theme": "love",
+    "text": "このように主は誠実なお方なので、約束されたことは千代のちまでも守り、主を愛し、命令を守る者に最善のことをしてくださいます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 36,
+    "verse": 7,
+    "ref": "Psalms 36:7",
+    "theme": "love",
+    "text": "ああ神よ。尽きることのない愛を、心から感謝します。あらゆる人が御翼の陰に身を隠します。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 100,
+    "verse": 5,
+    "ref": "Psalms 100:5",
+    "theme": "love",
+    "text": "主はいつも正しく、愛と思いやりに満ち、いつまでも変わることのない真実を示されるからです。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 103,
+    "verse": 11,
+    "ref": "Psalms 103:11",
+    "theme": "love",
+    "text": "神を恐れ、あがめる者には、無尽蔵のあわれみをかけてくださいます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 136,
+    "verse": 1,
+    "ref": "Psalms 136:1",
+    "theme": "love",
+    "text": "絶え間なく恵みを注いでくださる主に感謝しなさい。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 145,
+    "verse": 9,
+    "ref": "Psalms 145:9",
+    "theme": "love",
+    "text": "だれにでも恵み深い主の思いやりは、造られたすべてのものに注がれます。"
+  },
+  {
+    "book": 35,
+    "abbrev": "ZEP",
+    "chapter": 3,
+    "verse": 17,
+    "ref": "Zephaniah 3:17",
+    "theme": "love",
+    "text": "あなたの神、主が、あなたのうちに住むために到着したからだ。この方は力ある救い主で、勝利をお与えになる。あなたのことをことのほか喜ぶ。あなたを愛し、責めることはなさらない。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "John 3:16",
+    "theme": "love",
+    "text": "実に神は、ひとり子をさえ惜しまず与えるほどに、この世界を愛してくださいました。それは、神の御子を信じる者が、だれ一人滅びず、永遠のいのちを得るためです。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 15,
+    "verse": 9,
+    "ref": "John 15:9",
+    "theme": "love",
+    "text": "父がわたしを愛してくださったように、わたしもあなたがたを愛しました。わたしの愛のうちに生きなさい。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 15,
+    "verse": 13,
+    "ref": "John 15:13",
+    "theme": "love",
+    "text": "愛は何によって測ることができるでしょう。友のためにいのちを投げ出すこと、これより大きな愛はありません。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 5,
+    "verse": 8,
+    "ref": "Romans 5:8",
+    "theme": "love",
+    "text": "しかし、私たちがまだ罪人であった時、神はキリストを遣わしてくださいました。そのキリストが私たちのために死なれたことにより、神は私たちに大きな愛を示してくださったのです。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 8,
+    "verse": 38,
+    "ref": "Romans 8:38–39",
+    "theme": "love",
+    "text": "神の愛から私たちを引き離すことができるものは何一つない、と確信しています。死もいのちも、そんなことはできません。天使にもできません。地獄の全勢力が結集しても、神の愛から私たちを遠ざけることはできません。恐れも、不安も同様です。あるいは、私たちが空高くのぼっても、海の底深くもぐっても、どこにいようと、神の愛から私たちを引き離すことはできません。"
+  },
+  {
+    "book": 47,
+    "abbrev": "GAL",
+    "chapter": 2,
+    "verse": 20,
+    "ref": "Galatians 2:20",
+    "theme": "love",
+    "text": "私はキリストと共に十字架につけられました。もはや、私自身が生きているのではありません。キリストが、私のうちに生きておられるのです。私のためにご自身をささげてくださった神の御子を信じた結果、今、私のうちにはほんとうのいのちが与えられています。"
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 2,
+    "verse": 4,
+    "ref": "Ephesians 2:4",
+    "theme": "love",
+    "text": "しかし神は、なんとあわれみに満ちたお方でしょう。こんな私たちを深く愛してくださって、"
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 3,
+    "verse": 19,
+    "ref": "Ephesians 3:19",
+    "theme": "love",
+    "text": "あなたがたがキリストの無限の愛を知って、キリストの愛といのちに満たされますように。"
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 8,
+    "ref": "1 John 4:8",
+    "theme": "love",
+    "text": "反対に、愛のない人に神はわかりません。なぜなら神は愛だからです。"
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 19,
+    "ref": "1 John 4:19",
+    "theme": "love",
+    "text": "私たちが神を愛することができるのは、神がまず私たちを愛してくださったからなのです。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 89,
+    "ref": "Psalms 119:89",
+    "theme": "scripture",
+    "text": "ああ主よ。あなたのおことばは、天にある、びくともしない岩のようです。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 18,
+    "ref": "Psalms 119:18",
+    "theme": "scripture",
+    "text": "私の目を開いて、おことばの中に隠されている、すばらしい祝福を見させてください。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 103,
+    "ref": "Psalms 119:103",
+    "theme": "scripture",
+    "text": "あなたのおことばはみつより甘いので、私はその教えから離れませんでした。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 130,
+    "ref": "Psalms 119:130",
+    "theme": "scripture",
+    "text": "あなたのご計画が明らかにされると、それは心の鈍い者にさえ理解できるのです。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 165,
+    "ref": "Psalms 119:165",
+    "theme": "scripture",
+    "text": "この教えを愛する人は、平安な心を与えられ、過ちを犯すこともありません。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 18,
+    "verse": 30,
+    "ref": "Psalms 18:30",
+    "theme": "scripture",
+    "text": "神はあらゆる点で全く完全です。そのお約束がすべて真実であることは明らかです。その背後に隠れる者には盾となってくださいます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 33,
+    "verse": 4,
+    "ref": "Psalms 33:4",
+    "theme": "scripture",
+    "text": "主のことばには偽りがなく、その行為にも裏切りは決してありません。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 12,
+    "verse": 6,
+    "ref": "Psalms 12:6",
+    "theme": "scripture",
+    "text": "主の約束は確実です。不用意なことばが主の口からもれることはなく、七度も精錬された銀のように、純粋そのものの真理だけをお語りになります。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 40,
+    "verse": 8,
+    "ref": "Isaiah 40:8",
+    "theme": "scripture",
+    "text": "草はしおれ、花はしぼむ。しかし神のおことばは、いつまでもすたれることがない。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 24,
+    "verse": 35,
+    "ref": "Matthew 24:35",
+    "theme": "scripture",
+    "text": "天地は消え去りますが、わたしのことばは永遠に残ります。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 1,
+    "verse": 1,
+    "ref": "John 1:1",
+    "theme": "scripture",
+    "text": "まだこの世界に何もない時から、キリストは神と共におられました。キリストは、いつの時代にも生きておられます。キリストは神だからです。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 6,
+    "verse": 68,
+    "ref": "John 6:68",
+    "theme": "scripture",
+    "text": "シモン・ペテロが即座に答えました。「何をおっしゃるんです、先生。あなたをさしおいて、ほかの人のところへ行くわけがないじゃありませんか。永遠のいのちを与えることばを握っているのは、あなただけなんですから。」"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 17,
+    "verse": 17,
+    "ref": "John 17:17",
+    "theme": "scripture",
+    "text": "あなたの真理のことばによって、彼らを純粋な、きよい者としてください。"
+  },
+  {
+    "book": 50,
+    "abbrev": "COL",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "Colossians 3:16",
+    "theme": "scripture",
+    "text": "キリストの教えを心にとめ、そのことばによって、人生が豊かに潤されるようにしなさい。知恵を尽くして、そのことばを互いに教え合い、忠告し合い、感謝にあふれて心から神に向かって賛美しなさい。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 23,
+    "verse": 1,
+    "ref": "Psalms 23:1",
+    "theme": "connection",
+    "text": "主は私の羊飼いですから、必要なものはみな与えてくださいます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 27,
+    "verse": 1,
+    "ref": "Psalms 27:1",
+    "theme": "connection",
+    "text": "主は私の光、また救いです。だれを恐れる必要がありましょう。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 34,
+    "verse": 8,
+    "ref": "Psalms 34:8",
+    "theme": "connection",
+    "text": "さあ、主に信頼しましょう。そうすれば、どんなに神が恵み深いお方か知ることができます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 34,
+    "verse": 18,
+    "ref": "Psalms 34:18",
+    "theme": "connection",
+    "text": "主は心の砕かれた人のそばにおられ、謙虚に罪を悔いる人を助け出されます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 42,
+    "verse": 1,
+    "ref": "Psalms 42:1",
+    "theme": "connection",
+    "text": "ああ神よ。鹿が水をあえぎ求めるように、私はあなたを慕い求めます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 91,
+    "verse": 1,
+    "ref": "Psalms 91:1–2",
+    "theme": "connection",
+    "text": "私たちは、どんなものにもまさる神によってかくまわれ、この全能のお方のふところに住んでいます。私は宣言します。「神こそ私の避難所、また安全地帯です。この神への信頼を失うことはありません。」"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 121,
+    "verse": 2,
+    "ref": "Psalms 121:2",
+    "theme": "connection",
+    "text": "真の助けは、山々を造られた主から来るのです。主は、天をもお造りになりました。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 145,
+    "verse": 18,
+    "ref": "Psalms 145:18",
+    "theme": "connection",
+    "text": "真心から願い出る人のそば近くにいてくださるのです。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 37,
+    "verse": 4,
+    "ref": "Psalms 37:4",
+    "theme": "connection",
+    "text": "主を喜びとしなさい。主は心の願いをみな、かなえてくださいます。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 73,
+    "verse": 26,
+    "ref": "Psalms 73:26",
+    "theme": "connection",
+    "text": "やがて私の体は衰え、気力も弱ります。しかし神は、いつまでも変わらず、心の支えとなってくださいます。永久に私の神でいてくださいます。"
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 16,
+    "verse": 3,
+    "ref": "Proverbs 16:3",
+    "theme": "connection",
+    "text": "自分でしようとしていることを主にゆだねなさい。そうすればうまくいきます。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 26,
+    "verse": 3,
+    "ref": "Isaiah 26:3",
+    "theme": "connection",
+    "text": "神を信頼し、いつも主のことに思いをはせる者を、神は何の心配もないように守ってくださいます。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 40,
+    "verse": 31,
+    "ref": "Isaiah 40:31",
+    "theme": "connection",
+    "text": "しかし、主を待ち望む者は新しい力がみなぎり、わしのように翼を張って舞い上がることができます。どれだけ走っても疲れず、どんなに歩いても息切れしません。"
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 33,
+    "verse": 3,
+    "ref": "Jeremiah 33:3",
+    "theme": "connection",
+    "text": "わたしに尋ねなさい。そうすれば、この地に起ころうとしている、信じられないほど不思議なことを教える。"
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 22,
+    "verse": 37,
+    "ref": "Matthew 22:37",
+    "theme": "connection",
+    "text": "イエスはお答えになりました。「『心を尽くし、たましいを尽くし、思いを尽くして、あなたの神である主を愛しなさい。』」"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 14,
+    "verse": 27,
+    "ref": "John 14:27",
+    "theme": "connection",
+    "text": "あなたがたに贈り物をあげましょう。あなたがたの思いと心を安らかにすること、それがわたしの贈り物です。わたしが与える平安は、この世のはかない平安とは比べものになりません。だから、どんな時にもおろおろしたり、恐れたりしてはいけません。"
+  },
+  {
+    "book": 59,
+    "abbrev": "1PE",
+    "chapter": 5,
+    "verse": 7,
+    "ref": "1 Peter 5:7",
+    "theme": "connection",
+    "text": "思いわずらいを、すべて神にゆだねなさい。神があなたがたのことを心配してくださるからです。"
+  },
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 31,
+    "verse": 8,
+    "ref": "Deuteronomy 31:8",
+    "theme": "connection",
+    "text": "主が味方だから、恐れてはならない。主はいつも先頭に立ち、途中で見放すことも見捨てることもなさらないのだ。"
+  },
+  {
+    "book": 24,
+    "abbrev": "LAM",
+    "chapter": 3,
+    "verse": 22,
+    "ref": "Lamentations 3:22–23",
+    "theme": "love",
+    "text": "主の恵みは決してなくなることがない、ということです。私たちが滅亡しなかったのは、主の恵みによります。神の真実は限りなく、その恵みは朝ごとに新しくなります。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 103,
+    "verse": 13,
+    "ref": "Psalms 103:13",
+    "theme": "love",
+    "text": "主は、恐れかしこむ者に対しては、父親のように優しい思いやりを示してくださいます。"
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 10,
+    "ref": "1 John 4:10",
+    "theme": "love",
+    "text": "神に対する私たちの愛ではなく、私たちに対する神の愛によって、私たちの罪へのなだめとして、神のひとり子が遣わされました。ここに真の愛があるのです。"
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 16,
+    "ref": "1 John 4:16",
+    "theme": "love",
+    "text": "私たちは、自分がどんなに神に愛されているか知っています。現に、神の愛を身近に感じ、また、私たちを心から愛すると言われた神を信じているのです。神は愛です。愛のうちに生きる人は神と共に生きるのであり、神もまた、その人のうちに生きておられるのです。"
+  },
+  {
+    "book": 45,
+    "abbrev": "1CO",
+    "chapter": 13,
+    "verse": 4,
+    "ref": "1 Corinthians 13:4",
+    "theme": "love",
+    "text": "愛は寛容であり、親切です。愛は決してねたみません。また、決して自慢せず、高慢になりません。"
+  },
+  {
+    "book": 45,
+    "abbrev": "1CO",
+    "chapter": 13,
+    "verse": 13,
+    "ref": "1 Corinthians 13:13",
+    "theme": "love",
+    "text": "いつまでも残るものが三つあります。信仰と希望と愛です。その中で最もすぐれているものは愛です。"
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 31,
+    "verse": 3,
+    "ref": "Jeremiah 31:3",
+    "theme": "love",
+    "text": "わたしの民よ。わたしは永遠の愛をもっておまえを愛してきた。あわれみの綱でおまえを引き寄せてきた。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 54,
+    "verse": 10,
+    "ref": "Isaiah 54:10",
+    "theme": "love",
+    "text": "山々が動いて場所を変え、丘が消えてなくなっても、わたしの愛はあなたから離れない。平安を与えるという約束を、どんなことがあっても破らない。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 86,
+    "verse": 15,
+    "ref": "Psalms 86:15",
+    "theme": "love",
+    "text": "しかし主よ。あなたはあわれみ深くて優しく、短気を起こさず、恵みと真実にあふれておられます。"
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 2,
+    "verse": 8,
+    "ref": "Ephesians 2:8–9",
+    "theme": "love",
+    "text": "あなたがたは、恵みにより、キリストを信じることによって救われたのです。しかも、そのキリストを信じることすらも、あなたがたから自発的に出たことではありません。それもまた、神からの賜物（贈り物）です。救いは、私たちの良い行いに対する報酬ではありません。ですから、だれ一人、それを誇ることはできません。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 6,
+    "verse": 23,
+    "ref": "Romans 6:23",
+    "theme": "love",
+    "text": "罪の支払う報酬は死です。しかし、神が下さる賜物は、私たちの主キリスト・イエスによる永遠のいのちです。"
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 1,
+    "verse": 9,
+    "ref": "1 John 1:9",
+    "theme": "love",
+    "text": "もし自らの罪を神に告白するなら、神は真実な方ですから、その罪を赦し、すべての悪から私たちをきよめてくださいます。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 13,
+    "verse": 34,
+    "ref": "John 13:34",
+    "theme": "love",
+    "text": "新しい戒めを与えましょう。わたしがあなたがたを愛するように、互いに愛し合いなさい。"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 49,
+    "verse": 15,
+    "ref": "Isaiah 49:15",
+    "theme": "love",
+    "text": "母親がわが子を忘れ、愛さなくなることがあるだろうか。たとえそんなことがあっても、わたしはあなたを忘れない。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 8,
+    "verse": 28,
+    "ref": "Romans 8:28",
+    "theme": "love",
+    "text": "私たちは、神を愛し神のご計画のうちを歩んでいる人のためには、その身に起こることはすべて、神が益としてくださることを知っているのです。"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 15,
+    "verse": 13,
+    "ref": "Romans 15:13",
+    "theme": "love",
+    "text": "どうか、希望を与えてくださる神があなたがたを幸せにし、平安で満たしてくださいますように。どうかあなたがたを、聖霊の力によって希望にあふれさせてくださいますように。"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 139,
+    "verse": 14,
+    "ref": "Psalms 139:14",
+    "theme": "love",
+    "text": "こんなにも複雑かつ緻密に仕上げてくださったことを感謝します。想像することもできないくらい、すばらしいことです。あなたのわざは驚くべきもので、私にはとうてい、理解することはできません。"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 10,
+    "verse": 10,
+    "ref": "John 10:10",
+    "theme": "love",
+    "text": "強盗は、盗んだり、殺したり、滅ぼしたりするために来ます。しかしわたしが来たのは、いのちをあふれるほど豊かに与えるためです。"
+  }
+]

@@ -5,6 +5,7 @@ import { firebaseEnabled, getFirestoreDb } from '../storage/firebase';
 import { getBibleVersion } from '../storage/my-db';
 import { environment } from '../../environments/environment';
 import { isNativeApp } from '../utils/platform.util';
+import { bookDisplayName } from '../utils/bible-text.util';
 import { VerseService } from './verse.service';
 
 const DEVICE_ID_KEY = 'pushDeviceId';
@@ -21,9 +22,10 @@ const SUBSCRIBED_KEY = 'pushSubscribed';
 // the UI show that requirement instead of a silently-broken toggle.
 //
 // Native apps: no push server involved at all. The next NATIVE_DAYS days of
-// reminders are scheduled as *local* notifications, each with a verse taken
-// from the Bible already on the device — works offline, needs no FCM/APNs
-// setup, and the reference is shown in the user's own language. The window
+// reminders are scheduled as *local* notifications, each with a verse from
+// the bundled per-language files (VerseService) — works offline, needs no
+// FCM/APNs setup, and the book name comes from the Bible on the device so
+// the reference is in the user's own language. The window
 // is topped up every time the app starts (rescheduleIfSubscribed()).
 const NATIVE_DAYS = 30;
 const NATIVE_ID_BASE = 7000;
@@ -107,9 +109,7 @@ export class NotificationsService {
 
     const selected = localStorage.getItem('selectedBible') || '';
     const saved = selected ? await getBibleVersion(selected) : null;
-    const verses = saved?.data
-      ? await this.verseServ.deriveVerses(saved.data)
-      : await this.verseServ.getEnglishVerses();
+    const verses = await this.verseServ.getVerses(selected.split('-')[0] || 'en');
     if (verses.length === 0) return;
 
     await this.cancelNative();
@@ -122,8 +122,10 @@ export class NotificationsService {
       const at = new Date(first);
       at.setDate(first.getDate() + i);
       const verse = verses[Math.floor(Math.random() * verses.length)];
-      const book = saved?.data?.books?.[verse.book]?.name;
-      const ref = book ? `${book} ${verse.chapter}:${verse.verse}` : verse.ref;
+      // Book name in the user's language; chapter:verse(s) from the English
+      // ref, which also covers ranges like "8:38–39".
+      const book = bookDisplayName(saved?.data?.books?.[verse.book]);
+      const ref = book ? `${book} ${verse.ref.slice(verse.ref.lastIndexOf(' ') + 1)}` : verse.ref;
       return {
         id: NATIVE_ID_BASE + i,
         title: 'Bíblia Narrada',

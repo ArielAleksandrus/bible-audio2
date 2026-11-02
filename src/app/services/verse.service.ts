@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import type { Bible } from 'bible-picker';
 import { firstValueFrom } from 'rxjs';
-
-import { getVerseText } from '../utils/bible-text.util';
 
 export interface VerseEntry {
   book: number;
@@ -15,35 +12,37 @@ export interface VerseEntry {
   text: string;
 }
 
-// 50 curated verses (importance of Scripture, connecting to God, God's love
-// for us) used for daily reminder notifications. English is bundled as a
-// static asset; native local notifications derive other languages here from
-// the downloaded Bible, using the exact same (book, chapter, verse)
-// references. The Web Push cron reads its per-language copies from Firestore
-// `verses/{lang}`, which only scripts/seed-verses.ts writes (the same
-// derivation, run with the Admin SDK) — clients have no access to it.
+// Languages with a translated copy of the reminder verses in
+// public/assets/verses/<lang>.json (see scripts/seed-verses.ts).
+export const VERSE_LANGUAGES = ['en', 'pt', 'es', 'ja', 'zh'];
+
+// 100 curated verses, each one that reads on its own (importance of
+// Scripture, connecting to God, God's love for us), used for daily reminder
+// notifications. Each language is a static,
+// hand-checked file with the same references as the English one — the
+// Bible JSONs have no reliable verse boundaries (poetry split per line,
+// headings, paraphrases that merge verses), so picking "the Nth line" lands
+// on the wrong verse. Native local notifications read these directly; the
+// Web Push cron reads the copies scripts/seed-verses.ts puts in Firestore.
 @Injectable({ providedIn: 'root' })
 export class VerseService {
-  private englishVerses: Promise<VerseEntry[]> | null = null;
+  private cache = new Map<string, Promise<VerseEntry[]>>();
 
   constructor(private http: HttpClient) {}
 
-  getEnglishVerses(): Promise<VerseEntry[]> {
-    if (!this.englishVerses) {
-      this.englishVerses = firstValueFrom(this.http.get<VerseEntry[]>('/assets/verses/en.json'));
+  /** Verses in `lang` (e.g. 'pt'), falling back to English. */
+  getVerses(lang: string): Promise<VerseEntry[]> {
+    const key = VERSE_LANGUAGES.includes(lang) ? lang : 'en';
+    let pending = this.cache.get(key);
+    if (!pending) {
+      pending = firstValueFrom(this.http.get<VerseEntry[]>(`/assets/verses/${key}.json`)).catch(err => {
+        this.cache.delete(key);
+        if (key === 'en') throw err;
+        console.warn('VerseService: falling back to English for', key, err);
+        return this.getVerses('en');
+      });
+      this.cache.set(key, pending);
     }
-    return this.englishVerses;
-  }
-
-  // Derives the same 50 references' text from a fully-downloaded Bible in
-  // another language. Falls back to the English text for any reference that
-  // can't be found in the target language.
-  async deriveVerses(bible: Bible): Promise<VerseEntry[]> {
-    const refs = await this.getEnglishVerses();
-    return refs.map(ref => {
-      const book = bible.books[ref.book];
-      const text = book ? getVerseText(book.chapters, ref.chapter, ref.verse) : undefined;
-      return text ? { ...ref, text } : ref;
-    });
+    return pending;
   }
 }

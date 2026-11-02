@@ -1,0 +1,902 @@
+[
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 6,
+    "verse": 6,
+    "ref": "Deuteronomy 6:6",
+    "theme": "scripture",
+    "text": "Estas palavras que, hoje, te ordeno estarão no teu coração;"
+  },
+  {
+    "book": 5,
+    "abbrev": "JOS",
+    "chapter": 1,
+    "verse": 8,
+    "ref": "Joshua 1:8",
+    "theme": "scripture",
+    "text": "Não cesses de falar deste Livro da Lei; antes, medita nele dia e noite, para que tenhas cuidado de fazer segundo tudo quanto nele está escrito; então, farás prosperar o teu caminho e serás bem-sucedido."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 1,
+    "verse": 2,
+    "ref": "Psalms 1:2",
+    "theme": "scripture",
+    "text": "Antes, o seu prazer está na lei do SENHOR, e na sua lei medita de dia e de noite."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 19,
+    "verse": 7,
+    "ref": "Psalms 19:7",
+    "theme": "scripture",
+    "text": "A lei do SENHOR é perfeita e restaura a alma; o testemunho do SENHOR é fiel e dá sabedoria aos símplices."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 11,
+    "ref": "Psalms 119:11",
+    "theme": "scripture",
+    "text": "Guardo no coração as tuas palavras, para não pecar contra ti."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 105,
+    "ref": "Psalms 119:105",
+    "theme": "scripture",
+    "text": "Lâmpada para os meus pés é a tua palavra e, luz para os meus caminhos."
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 30,
+    "verse": 5,
+    "ref": "Proverbs 30:5",
+    "theme": "scripture",
+    "text": "Toda palavra de Deus é pura; ele é escudo para os que nele confiam."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 55,
+    "verse": 11,
+    "ref": "Isaiah 55:11",
+    "theme": "scripture",
+    "text": "Assim será a palavra que sair da minha boca: não voltará para mim vazia, mas fará o que me apraz e prosperará naquilo para que a designei."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 4,
+    "verse": 4,
+    "ref": "Matthew 4:4",
+    "theme": "scripture",
+    "text": "Jesus, porém, respondeu: Está escrito: Não só de pão viverá o homem, mas de toda palavra que procede da boca de Deus."
+  },
+  {
+    "book": 41,
+    "abbrev": "LUK",
+    "chapter": 11,
+    "verse": 28,
+    "ref": "Luke 11:28",
+    "theme": "scripture",
+    "text": "Ele, porém, respondeu: Antes, bem-aventurados são os que ouvem a palavra de Deus e a guardam!"
+  },
+  {
+    "book": 43,
+    "abbrev": "ACT",
+    "chapter": 17,
+    "verse": 11,
+    "ref": "Acts 17:11",
+    "theme": "scripture",
+    "text": "Ora, estes de Bereia eram mais nobres que os de Tessalônica; pois receberam a palavra com toda a avidez, examinando as Escrituras todos os dias para ver se as coisas eram, de fato, assim."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 10,
+    "verse": 17,
+    "ref": "Romans 10:17",
+    "theme": "scripture",
+    "text": "E, assim, a fé vem pela pregação, e a pregação, pela palavra de Cristo."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 15,
+    "verse": 4,
+    "ref": "Romans 15:4",
+    "theme": "scripture",
+    "text": "Pois tudo quanto, outrora, foi escrito para o nosso ensino foi escrito, a fim de que, pela paciência e pela consolação das Escrituras, tenhamos esperança."
+  },
+  {
+    "book": 54,
+    "abbrev": "2TI",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "2 Timothy 3:16",
+    "theme": "scripture",
+    "text": "Toda a Escritura é inspirada por Deus e útil para o ensino, para a repreensão, para a correção, para a educação na justiça,"
+  },
+  {
+    "book": 57,
+    "abbrev": "HEB",
+    "chapter": 4,
+    "verse": 12,
+    "ref": "Hebrews 4:12",
+    "theme": "scripture",
+    "text": "Porque a palavra de Deus é viva, e eficaz, e mais cortante do que qualquer espada de dois gumes, e penetra até ao ponto de dividir alma e espírito, juntas e medulas, e é apta para discernir os pensamentos e propósitos do coração."
+  },
+  {
+    "book": 58,
+    "abbrev": "JAS",
+    "chapter": 1,
+    "verse": 22,
+    "ref": "James 1:22",
+    "theme": "scripture",
+    "text": "Tornai-vos, pois, praticantes da palavra e não somente ouvintes, enganando-vos a vós mesmos."
+  },
+  {
+    "book": 59,
+    "abbrev": "1PE",
+    "chapter": 1,
+    "verse": 23,
+    "ref": "1 Peter 1:23",
+    "theme": "scripture",
+    "text": "Pois fostes regenerados não de semente corruptível, mas de incorruptível, mediante a palavra de Deus, a qual vive e é permanente."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 27,
+    "verse": 4,
+    "ref": "Psalms 27:4",
+    "theme": "connection",
+    "text": "Uma coisa peço ao SENHOR, e a buscarei: que eu possa morar na Casa do SENHOR todos os dias da minha vida, para contemplar a beleza do SENHOR e meditar no seu templo."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 46,
+    "verse": 1,
+    "ref": "Psalms 46:1",
+    "theme": "connection",
+    "text": "Deus é o nosso refúgio e fortaleza, socorro bem-presente nas tribulações."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 62,
+    "verse": 8,
+    "ref": "Psalms 62:8",
+    "theme": "connection",
+    "text": "Confiai nele, ó povo, em todo tempo; derramai perante ele o vosso coração; Deus é o nosso refúgio."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 63,
+    "verse": 1,
+    "ref": "Psalms 63:1",
+    "theme": "connection",
+    "text": "Ó Deus, tu és o meu Deus forte; eu te busco ansiosamente; a minha alma tem sede de ti; meu corpo te almeja, como terra árida, exausta, sem água."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 105,
+    "verse": 4,
+    "ref": "Psalms 105:4",
+    "theme": "connection",
+    "text": "Buscai o SENHOR e o seu poder; buscai perpetuamente a sua presença."
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 3,
+    "verse": 5,
+    "ref": "Proverbs 3:5",
+    "theme": "connection",
+    "text": "Confia no SENHOR de todo o teu coração e não te estribes no teu próprio entendimento."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 41,
+    "verse": 10,
+    "ref": "Isaiah 41:10",
+    "theme": "connection",
+    "text": "Não temas, porque eu sou contigo; não te assombres, porque eu sou o teu Deus; eu te fortaleço, e te ajudo, e te sustento com a minha destra fiel."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 29,
+    "verse": 11,
+    "ref": "Jeremiah 29:11",
+    "theme": "connection",
+    "text": "Eu é que sei que pensamentos tenho a vosso respeito, diz o SENHOR; pensamentos de paz e não de mal, para vos dar o fim que desejais."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 29,
+    "verse": 13,
+    "ref": "Jeremiah 29:13",
+    "theme": "connection",
+    "text": "Buscar-me-eis e me achareis quando me buscardes de todo o vosso coração."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 6,
+    "verse": 33,
+    "ref": "Matthew 6:33",
+    "theme": "connection",
+    "text": "Buscai, pois, em primeiro lugar, o seu reino e a sua justiça, e todas estas coisas vos serão acrescentadas."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 7,
+    "verse": 7,
+    "ref": "Matthew 7:7",
+    "theme": "connection",
+    "text": "Pedi, e dar-se-vos-á; buscai e achareis; batei, e abrir-se-vos-á."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 11,
+    "verse": 28,
+    "ref": "Matthew 11:28",
+    "theme": "connection",
+    "text": "Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 14,
+    "verse": 6,
+    "ref": "John 14:6",
+    "theme": "connection",
+    "text": "Respondeu-lhe Jesus: Eu sou o caminho, e a verdade, e a vida; ninguém vem ao Pai senão por mim."
+  },
+  {
+    "book": 49,
+    "abbrev": "PHP",
+    "chapter": 4,
+    "verse": 6,
+    "ref": "Philippians 4:6",
+    "theme": "connection",
+    "text": "Não andeis ansiosos de coisa alguma; em tudo, porém, sejam conhecidas, diante de Deus, as vossas petições, pela oração e pela súplica, com ações de graças."
+  },
+  {
+    "book": 58,
+    "abbrev": "JAS",
+    "chapter": 4,
+    "verse": 8,
+    "ref": "James 4:8",
+    "theme": "connection",
+    "text": "Chegai-vos a Deus, e ele se chegará a vós outros."
+  },
+  {
+    "book": 65,
+    "abbrev": "REV",
+    "chapter": 3,
+    "verse": 20,
+    "ref": "Revelation 3:20",
+    "theme": "connection",
+    "text": "Eis que estou à porta e bato; se alguém ouvir a minha voz e abrir a porta, entrarei em sua casa e cearei com ele, e ele, comigo."
+  },
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 7,
+    "verse": 9,
+    "ref": "Deuteronomy 7:9",
+    "theme": "love",
+    "text": "Saberás, pois, que o SENHOR, teu Deus, é Deus, o Deus fiel, que guarda a aliança e a misericórdia até mil gerações aos que o amam e cumprem os seus mandamentos;"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 36,
+    "verse": 7,
+    "ref": "Psalms 36:7",
+    "theme": "love",
+    "text": "Como é preciosa, ó Deus, a tua benignidade! Por isso, os filhos dos homens se acolhem à sombra das tuas asas."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 100,
+    "verse": 5,
+    "ref": "Psalms 100:5",
+    "theme": "love",
+    "text": "Porque o SENHOR é bom, a sua misericórdia dura para sempre, e, de geração em geração, a sua fidelidade."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 103,
+    "verse": 11,
+    "ref": "Psalms 103:11",
+    "theme": "love",
+    "text": "Pois quanto o céu se alteia acima da terra, assim é grande a sua misericórdia para com os que o temem."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 136,
+    "verse": 1,
+    "ref": "Psalms 136:1",
+    "theme": "love",
+    "text": "Rendei graças ao SENHOR, porque ele é bom, porque a sua misericórdia dura para sempre."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 145,
+    "verse": 9,
+    "ref": "Psalms 145:9",
+    "theme": "love",
+    "text": "O SENHOR é bom para todos, e as suas ternas misericórdias permeiam todas as suas obras."
+  },
+  {
+    "book": 35,
+    "abbrev": "ZEP",
+    "chapter": 3,
+    "verse": 17,
+    "ref": "Zephaniah 3:17",
+    "theme": "love",
+    "text": "O SENHOR, teu Deus, está no meio de ti, poderoso para salvar-te; ele se deleitará em ti com alegria; renovar-te-á no seu amor, regozijar-se-á em ti com júbilo."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "John 3:16",
+    "theme": "love",
+    "text": "Porque Deus amou ao mundo de tal maneira que deu o seu Filho unigênito, para que todo o que nele crê não pereça, mas tenha a vida eterna."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 15,
+    "verse": 9,
+    "ref": "John 15:9",
+    "theme": "love",
+    "text": "Como o Pai me amou, também eu vos amei; permanecei no meu amor."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 15,
+    "verse": 13,
+    "ref": "John 15:13",
+    "theme": "love",
+    "text": "Ninguém tem maior amor do que este: de dar alguém a própria vida em favor dos seus amigos."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 5,
+    "verse": 8,
+    "ref": "Romans 5:8",
+    "theme": "love",
+    "text": "Mas Deus prova o seu próprio amor para conosco pelo fato de ter Cristo morrido por nós, sendo nós ainda pecadores."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 8,
+    "verse": 38,
+    "ref": "Romans 8:38–39",
+    "theme": "love",
+    "text": "Porque eu estou bem certo de que nem a morte, nem a vida, nem os anjos, nem os principados, nem as coisas do presente, nem do porvir, nem os poderes, nem a altura, nem a profundidade, nem qualquer outra criatura poderá separar-nos do amor de Deus, que está em Cristo Jesus, nosso Senhor."
+  },
+  {
+    "book": 47,
+    "abbrev": "GAL",
+    "chapter": 2,
+    "verse": 20,
+    "ref": "Galatians 2:20",
+    "theme": "love",
+    "text": "Estou crucificado com Cristo; logo, já não sou eu quem vive, mas Cristo vive em mim; e esse viver que, agora, tenho na carne, vivo pela fé no Filho de Deus, que me amou e a si mesmo se entregou por mim."
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 2,
+    "verse": 4,
+    "ref": "Ephesians 2:4",
+    "theme": "love",
+    "text": "Mas Deus, sendo rico em misericórdia, por causa do grande amor com que nos amou,"
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 3,
+    "verse": 19,
+    "ref": "Ephesians 3:19",
+    "theme": "love",
+    "text": "E conhecer o amor de Cristo, que excede todo entendimento, para que sejais tomados de toda a plenitude de Deus."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 8,
+    "ref": "1 John 4:8",
+    "theme": "love",
+    "text": "Aquele que não ama não conhece a Deus, pois Deus é amor."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 19,
+    "ref": "1 John 4:19",
+    "theme": "love",
+    "text": "Nós amamos porque ele nos amou primeiro."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 89,
+    "ref": "Psalms 119:89",
+    "theme": "scripture",
+    "text": "Para sempre, ó SENHOR, está firmada a tua palavra no céu."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 18,
+    "ref": "Psalms 119:18",
+    "theme": "scripture",
+    "text": "Desvenda os meus olhos, para que eu contemple as maravilhas da tua lei."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 103,
+    "ref": "Psalms 119:103",
+    "theme": "scripture",
+    "text": "Quão doces são as tuas palavras ao meu paladar! Mais que o mel à minha boca."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 130,
+    "ref": "Psalms 119:130",
+    "theme": "scripture",
+    "text": "A revelação das tuas palavras esclarece e dá entendimento aos simples."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 165,
+    "ref": "Psalms 119:165",
+    "theme": "scripture",
+    "text": "Grande paz têm os que amam a tua lei; para eles não há tropeço."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 18,
+    "verse": 30,
+    "ref": "Psalms 18:30",
+    "theme": "scripture",
+    "text": "O caminho de Deus é perfeito; a palavra do SENHOR é provada; ele é escudo para todos os que nele se refugiam."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 33,
+    "verse": 4,
+    "ref": "Psalms 33:4",
+    "theme": "scripture",
+    "text": "Porque a palavra do SENHOR é reta, e todo o seu proceder é fiel."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 12,
+    "verse": 6,
+    "ref": "Psalms 12:6",
+    "theme": "scripture",
+    "text": "As palavras do SENHOR são palavras puras, prata refinada em cadinho de barro, depurada sete vezes."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 40,
+    "verse": 8,
+    "ref": "Isaiah 40:8",
+    "theme": "scripture",
+    "text": "Seca-se a erva, e cai a sua flor, mas a palavra de nosso Deus permanece eternamente."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 24,
+    "verse": 35,
+    "ref": "Matthew 24:35",
+    "theme": "scripture",
+    "text": "Passará o céu e a terra, porém as minhas palavras não passarão."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 1,
+    "verse": 1,
+    "ref": "John 1:1",
+    "theme": "scripture",
+    "text": "No princípio era o Verbo, e o Verbo estava com Deus, e o Verbo era Deus."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 6,
+    "verse": 68,
+    "ref": "John 6:68",
+    "theme": "scripture",
+    "text": "Respondeu-lhe Simão Pedro: Senhor, para quem iremos? Tu tens as palavras da vida eterna."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 17,
+    "verse": 17,
+    "ref": "John 17:17",
+    "theme": "scripture",
+    "text": "Santifica-os na verdade; a tua palavra é a verdade."
+  },
+  {
+    "book": 50,
+    "abbrev": "COL",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "Colossians 3:16",
+    "theme": "scripture",
+    "text": "Habite, ricamente, em vós a palavra de Cristo; instruí-vos e aconselhai-vos mutuamente em toda a sabedoria, louvando a Deus, com salmos, e hinos, e cânticos espirituais, com gratidão, em vosso coração."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 23,
+    "verse": 1,
+    "ref": "Psalms 23:1",
+    "theme": "connection",
+    "text": "O SENHOR é o meu pastor; nada me faltará."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 27,
+    "verse": 1,
+    "ref": "Psalms 27:1",
+    "theme": "connection",
+    "text": "O SENHOR é a minha luz e a minha salvação; de quem terei medo? O SENHOR é a fortaleza da minha vida; a quem temerei?"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 34,
+    "verse": 8,
+    "ref": "Psalms 34:8",
+    "theme": "connection",
+    "text": "Oh! Provai e vede que o SENHOR é bom; bem-aventurado o homem que nele se refugia."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 34,
+    "verse": 18,
+    "ref": "Psalms 34:18",
+    "theme": "connection",
+    "text": "Perto está o SENHOR dos que têm o coração quebrantado e salva os de espírito oprimido."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 42,
+    "verse": 1,
+    "ref": "Psalms 42:1",
+    "theme": "connection",
+    "text": "Como suspira a corça pelas correntes das águas, assim, por ti, ó Deus, suspira a minha alma."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 91,
+    "verse": 1,
+    "ref": "Psalms 91:1–2",
+    "theme": "connection",
+    "text": "O que habita no esconderijo do Altíssimo e descansa à sombra do Onipotente diz ao SENHOR: Meu refúgio e meu baluarte, Deus meu, em quem confio."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 121,
+    "verse": 2,
+    "ref": "Psalms 121:2",
+    "theme": "connection",
+    "text": "O meu socorro vem do SENHOR, que fez o céu e a terra."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 145,
+    "verse": 18,
+    "ref": "Psalms 145:18",
+    "theme": "connection",
+    "text": "Perto está o SENHOR de todos os que o invocam, de todos os que o invocam em verdade."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 37,
+    "verse": 4,
+    "ref": "Psalms 37:4",
+    "theme": "connection",
+    "text": "Agrada-te do SENHOR, e ele satisfará os desejos do teu coração."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 73,
+    "verse": 26,
+    "ref": "Psalms 73:26",
+    "theme": "connection",
+    "text": "Ainda que a minha carne e o meu coração desfaleçam, Deus é a fortaleza do meu coração e a minha herança para sempre."
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 16,
+    "verse": 3,
+    "ref": "Proverbs 16:3",
+    "theme": "connection",
+    "text": "Confia ao SENHOR as tuas obras, e os teus desígnios serão estabelecidos."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 26,
+    "verse": 3,
+    "ref": "Isaiah 26:3",
+    "theme": "connection",
+    "text": "Tu, SENHOR, conservarás em perfeita paz aquele cujo propósito é firme; porque ele confia em ti."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 40,
+    "verse": 31,
+    "ref": "Isaiah 40:31",
+    "theme": "connection",
+    "text": "Mas os que esperam no SENHOR renovam as suas forças, sobem com asas como águias, correm e não se cansam, caminham e não se fatigam."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 33,
+    "verse": 3,
+    "ref": "Jeremiah 33:3",
+    "theme": "connection",
+    "text": "Invoca-me, e te responderei; anunciar-te-ei coisas grandes e ocultas, que não sabes."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 22,
+    "verse": 37,
+    "ref": "Matthew 22:37",
+    "theme": "connection",
+    "text": "Respondeu-lhe Jesus: Amarás o Senhor, teu Deus, de todo o teu coração, de toda a tua alma e de todo o teu entendimento."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 14,
+    "verse": 27,
+    "ref": "John 14:27",
+    "theme": "connection",
+    "text": "Deixo-vos a paz, a minha paz vos dou; não vo-la dou como a dá o mundo. Não se turbe o vosso coração, nem se atemorize."
+  },
+  {
+    "book": 59,
+    "abbrev": "1PE",
+    "chapter": 5,
+    "verse": 7,
+    "ref": "1 Peter 5:7",
+    "theme": "connection",
+    "text": "Lançando sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós."
+  },
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 31,
+    "verse": 8,
+    "ref": "Deuteronomy 31:8",
+    "theme": "connection",
+    "text": "O SENHOR é quem vai adiante de ti; ele será contigo, não te deixará, nem te desamparará; não temas, nem te atemorizes."
+  },
+  {
+    "book": 24,
+    "abbrev": "LAM",
+    "chapter": 3,
+    "verse": 22,
+    "ref": "Lamentations 3:22–23",
+    "theme": "love",
+    "text": "As misericórdias do SENHOR são a causa de não sermos consumidos, porque as suas misericórdias não têm fim; renovam-se cada manhã. Grande é a tua fidelidade."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 103,
+    "verse": 13,
+    "ref": "Psalms 103:13",
+    "theme": "love",
+    "text": "Como um pai se compadece de seus filhos, assim o SENHOR se compadece dos que o temem."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 10,
+    "ref": "1 John 4:10",
+    "theme": "love",
+    "text": "Nisto consiste o amor: não em que nós tenhamos amado a Deus, mas em que ele nos amou e enviou o seu Filho como propiciação pelos nossos pecados."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 16,
+    "ref": "1 John 4:16",
+    "theme": "love",
+    "text": "E nós conhecemos e cremos no amor que Deus tem por nós. Deus é amor, e aquele que permanece no amor permanece em Deus, e Deus, nele."
+  },
+  {
+    "book": 45,
+    "abbrev": "1CO",
+    "chapter": 13,
+    "verse": 4,
+    "ref": "1 Corinthians 13:4",
+    "theme": "love",
+    "text": "O amor é paciente, é benigno; o amor não arde em ciúmes, não se ufana, não se ensoberbece."
+  },
+  {
+    "book": 45,
+    "abbrev": "1CO",
+    "chapter": 13,
+    "verse": 13,
+    "ref": "1 Corinthians 13:13",
+    "theme": "love",
+    "text": "Agora, pois, permanecem a fé, a esperança e o amor, estes três; porém o maior destes é o amor."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 31,
+    "verse": 3,
+    "ref": "Jeremiah 31:3",
+    "theme": "love",
+    "text": "De longe se me deixou ver o SENHOR, dizendo: Com amor eterno eu te amei; por isso, com benignidade te atraí."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 54,
+    "verse": 10,
+    "ref": "Isaiah 54:10",
+    "theme": "love",
+    "text": "Porque os montes se retirarão, e os outeiros serão removidos; mas a minha misericórdia não se apartará de ti, e a aliança da minha paz não será removida, diz o SENHOR, que se compadece de ti."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 86,
+    "verse": 15,
+    "ref": "Psalms 86:15",
+    "theme": "love",
+    "text": "Mas tu, Senhor, és Deus compassivo e cheio de graça, paciente e grande em misericórdia e em verdade."
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 2,
+    "verse": 8,
+    "ref": "Ephesians 2:8–9",
+    "theme": "love",
+    "text": "Porque pela graça sois salvos, mediante a fé; e isto não vem de vós; é dom de Deus; não de obras, para que ninguém se glorie."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 6,
+    "verse": 23,
+    "ref": "Romans 6:23",
+    "theme": "love",
+    "text": "Porque o salário do pecado é a morte, mas o dom gratuito de Deus é a vida eterna em Cristo Jesus, nosso Senhor."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 1,
+    "verse": 9,
+    "ref": "1 John 1:9",
+    "theme": "love",
+    "text": "Se confessarmos os nossos pecados, ele é fiel e justo para nos perdoar os pecados e nos purificar de toda injustiça."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 13,
+    "verse": 34,
+    "ref": "John 13:34",
+    "theme": "love",
+    "text": "Novo mandamento vos dou: que vos ameis uns aos outros; assim como eu vos amei, que também vos ameis uns aos outros."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 49,
+    "verse": 15,
+    "ref": "Isaiah 49:15",
+    "theme": "love",
+    "text": "Acaso, pode uma mulher esquecer-se do filho que ainda mama, de sorte que não se compadeça do filho do seu ventre? Mas ainda que esta viesse a se esquecer dele, eu, todavia, não me esquecerei de ti."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 8,
+    "verse": 28,
+    "ref": "Romans 8:28",
+    "theme": "love",
+    "text": "Sabemos que todas as coisas cooperam para o bem daqueles que amam a Deus, daqueles que são chamados segundo o seu propósito."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 15,
+    "verse": 13,
+    "ref": "Romans 15:13",
+    "theme": "love",
+    "text": "E o Deus da esperança vos encha de todo o gozo e paz no vosso crer, para que sejais ricos de esperança no poder do Espírito Santo."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 139,
+    "verse": 14,
+    "ref": "Psalms 139:14",
+    "theme": "love",
+    "text": "Graças te dou, visto que por modo assombrosamente maravilhoso me formaste; as tuas obras são admiráveis, e a minha alma o sabe muito bem."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 10,
+    "verse": 10,
+    "ref": "John 10:10",
+    "theme": "love",
+    "text": "O ladrão vem somente para roubar, matar e destruir; eu vim para que tenham vida e a tenham em abundância."
+  }
+]

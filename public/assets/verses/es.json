@@ -1,0 +1,902 @@
+[
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 6,
+    "verse": 6,
+    "ref": "Deuteronomy 6:6",
+    "theme": "scripture",
+    "text": "Grábate en el corazón estas palabras que hoy te mando."
+  },
+  {
+    "book": 5,
+    "abbrev": "JOS",
+    "chapter": 1,
+    "verse": 8,
+    "ref": "Joshua 1:8",
+    "theme": "scripture",
+    "text": "Recita siempre el libro de la Ley y medita en él de día y de noche; cumple con cuidado todo lo que en él está escrito. Así prosperarás y tendrás éxito."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 1,
+    "verse": 2,
+    "ref": "Psalms 1:2",
+    "theme": "scripture",
+    "text": "Sino que en la Ley del Señor se deleita y día y noche medita en ella."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 19,
+    "verse": 7,
+    "ref": "Psalms 19:7",
+    "theme": "scripture",
+    "text": "La Ley del Señor es perfecta: infunde nuevo aliento. El mandato del Señor es digno de confianza: da sabiduría al sencillo."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 11,
+    "ref": "Psalms 119:11",
+    "theme": "scripture",
+    "text": "En mi corazón atesoro tus dichos para no pecar contra ti."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 105,
+    "ref": "Psalms 119:105",
+    "theme": "scripture",
+    "text": "Tu palabra es una lámpara a mis pies; es una luz en mi sendero."
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 30,
+    "verse": 5,
+    "ref": "Proverbs 30:5",
+    "theme": "scripture",
+    "text": "Toda palabra de Dios es purificada; Dios es escudo a los que en él buscan refugio."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 55,
+    "verse": 11,
+    "ref": "Isaiah 55:11",
+    "theme": "scripture",
+    "text": "Así es también la palabra que sale de mi boca: No volverá a mí vacía, sino que hará lo que yo deseo y cumplirá con mis propósitos."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 4,
+    "verse": 4,
+    "ref": "Matthew 4:4",
+    "theme": "scripture",
+    "text": "Jesús respondió: —Escrito está: “No solo de pan vive el hombre, sino de toda palabra que sale de la boca de Dios”."
+  },
+  {
+    "book": 41,
+    "abbrev": "LUK",
+    "chapter": 11,
+    "verse": 28,
+    "ref": "Luke 11:28",
+    "theme": "scripture",
+    "text": "—Dichosos más bien —contestó Jesús— los que oyen la palabra de Dios y la obedecen."
+  },
+  {
+    "book": 43,
+    "abbrev": "ACT",
+    "chapter": 17,
+    "verse": 11,
+    "ref": "Acts 17:11",
+    "theme": "scripture",
+    "text": "Estos eran de sentimientos más nobles que los de Tesalónica, de modo que estuvieron muy dispuestos a recibir el mensaje y todos los días examinaban las Escrituras para ver si era verdad lo que se les anunciaba."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 10,
+    "verse": 17,
+    "ref": "Romans 10:17",
+    "theme": "scripture",
+    "text": "Así que la fe viene como resultado de oír el mensaje y el mensaje que se oye es la palabra de Cristo."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 15,
+    "verse": 4,
+    "ref": "Romans 15:4",
+    "theme": "scripture",
+    "text": "De hecho, todo lo que se escribió en el pasado se escribió para enseñarnos, a fin de que alentados por las Escrituras, perseveremos en mantener nuestra esperanza."
+  },
+  {
+    "book": 54,
+    "abbrev": "2TI",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "2 Timothy 3:16",
+    "theme": "scripture",
+    "text": "Toda la Escritura es inspirada por Dios y útil para enseñar, para reprender, para corregir y para instruir en la justicia,"
+  },
+  {
+    "book": 57,
+    "abbrev": "HEB",
+    "chapter": 4,
+    "verse": 12,
+    "ref": "Hebrews 4:12",
+    "theme": "scripture",
+    "text": "Sin duda, la palabra de Dios es viva, eficaz y más cortante que cualquier espada de dos filos. Penetra hasta lo más profundo del alma y del espíritu, hasta la médula de los huesos, y juzga los pensamientos y las intenciones del corazón."
+  },
+  {
+    "book": 58,
+    "abbrev": "JAS",
+    "chapter": 1,
+    "verse": 22,
+    "ref": "James 1:22",
+    "theme": "scripture",
+    "text": "No se contenten solo con oír la palabra, pues así se engañan ustedes mismos. Llévenla a la práctica."
+  },
+  {
+    "book": 59,
+    "abbrev": "1PE",
+    "chapter": 1,
+    "verse": 23,
+    "ref": "1 Peter 1:23",
+    "theme": "scripture",
+    "text": "Pues ustedes han nacido de nuevo, no de simiente perecedera, sino de simiente imperecedera, mediante la palabra de Dios que vive y permanece."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 27,
+    "verse": 4,
+    "ref": "Psalms 27:4",
+    "theme": "connection",
+    "text": "Una sola cosa pido al Señor y es lo único que persigo: habitar en la casa del Señor todos los días de mi vida, para contemplar la hermosura del Señor y buscar orientación en su Templo."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 46,
+    "verse": 1,
+    "ref": "Psalms 46:1",
+    "theme": "connection",
+    "text": "Dios es nuestro refugio y nuestra fortaleza, nuestra segura ayuda en momentos de angustia."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 62,
+    "verse": 8,
+    "ref": "Psalms 62:8",
+    "theme": "connection",
+    "text": "Oh, pueblo, confía en él siempre, derrama ante él tu corazón, pues Dios es nuestro refugio."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 63,
+    "verse": 1,
+    "ref": "Psalms 63:1",
+    "theme": "connection",
+    "text": "Oh Dios, tú eres mi Dios; yo te busco intensamente. Mi alma tiene sed de ti; todo mi ser te anhela, cual tierra seca, sedienta y sin agua."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 105,
+    "verse": 4,
+    "ref": "Psalms 105:4",
+    "theme": "connection",
+    "text": "¡Busquen al Señor y su fuerza; anhelen siempre su rostro!"
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 3,
+    "verse": 5,
+    "ref": "Proverbs 3:5",
+    "theme": "connection",
+    "text": "Confía en el Señor de todo corazón y no te apoyes en tu propia inteligencia."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 41,
+    "verse": 10,
+    "ref": "Isaiah 41:10",
+    "theme": "connection",
+    "text": "Así que no temas, porque yo estoy contigo; no te angusties, porque yo soy tu Dios. Te fortaleceré y te ayudaré; te sostendré con la diestra de mi justicia."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 29,
+    "verse": 11,
+    "ref": "Jeremiah 29:11",
+    "theme": "connection",
+    "text": "Porque yo conozco los planes que tengo para ustedes —afirma el Señor—, planes de bienestar y no de calamidad, a fin de darles un futuro y una esperanza."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 29,
+    "verse": 13,
+    "ref": "Jeremiah 29:13",
+    "theme": "connection",
+    "text": "Me buscarán y me encontrarán cuando me busquen de todo corazón."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 6,
+    "verse": 33,
+    "ref": "Matthew 6:33",
+    "theme": "connection",
+    "text": "Más bien, busquen primeramente el reino de Dios y su justicia, entonces todas estas cosas les serán añadidas."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 7,
+    "verse": 7,
+    "ref": "Matthew 7:7",
+    "theme": "connection",
+    "text": "Pidan y se les dará; busquen y encontrarán; llamen y se les abrirá."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 11,
+    "verse": 28,
+    "ref": "Matthew 11:28",
+    "theme": "connection",
+    "text": "Vengan a mí todos ustedes que están cansados y agobiados; yo les daré descanso."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 14,
+    "verse": 6,
+    "ref": "John 14:6",
+    "theme": "connection",
+    "text": "—Yo soy el camino, la verdad y la vida —contestó Jesús—. Nadie llega al Padre sino por mí."
+  },
+  {
+    "book": 49,
+    "abbrev": "PHP",
+    "chapter": 4,
+    "verse": 6,
+    "ref": "Philippians 4:6",
+    "theme": "connection",
+    "text": "No se preocupen por nada; más bien, en toda ocasión, con oración y ruego, presenten sus peticiones a Dios y denle gracias."
+  },
+  {
+    "book": 58,
+    "abbrev": "JAS",
+    "chapter": 4,
+    "verse": 8,
+    "ref": "James 4:8",
+    "theme": "connection",
+    "text": "Acérquense a Dios y él se acercará a ustedes."
+  },
+  {
+    "book": 65,
+    "abbrev": "REV",
+    "chapter": 3,
+    "verse": 20,
+    "ref": "Revelation 3:20",
+    "theme": "connection",
+    "text": "Mira que estoy a la puerta y llamo. Si alguno oye mi voz y abre la puerta, entraré, cenaré con él y él conmigo."
+  },
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 7,
+    "verse": 9,
+    "ref": "Deuteronomy 7:9",
+    "theme": "love",
+    "text": "Por tanto, reconoce que el Señor tu Dios es el único Dios, el Dios fiel, que cumple su pacto por mil generaciones y muestra su fiel amor a quienes lo aman y obedecen sus mandamientos,"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 36,
+    "verse": 7,
+    "ref": "Psalms 36:7",
+    "theme": "love",
+    "text": "¡Cuán precioso, oh Dios, es tu gran amor! Todo ser humano halla refugio a la sombra de tus alas."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 100,
+    "verse": 5,
+    "ref": "Psalms 100:5",
+    "theme": "love",
+    "text": "Porque el Señor es bueno, su gran amor perdura para siempre y su fidelidad permanece por todas las generaciones."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 103,
+    "verse": 11,
+    "ref": "Psalms 103:11",
+    "theme": "love",
+    "text": "Tan grande es su amor por los que le temen como alto es el cielo sobre la tierra."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 136,
+    "verse": 1,
+    "ref": "Psalms 136:1",
+    "theme": "love",
+    "text": "Den gracias al Señor, porque él es bueno; su gran amor perdura para siempre."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 145,
+    "verse": 9,
+    "ref": "Psalms 145:9",
+    "theme": "love",
+    "text": "El Señor es bueno con todos; él tiene misericordia de todas sus obras."
+  },
+  {
+    "book": 35,
+    "abbrev": "ZEP",
+    "chapter": 3,
+    "verse": 17,
+    "ref": "Zephaniah 3:17",
+    "theme": "love",
+    "text": "El Señor tu Dios, está en medio de ti como poderoso guerrero que salva. Se deleitará en ti con gozo, te renovará con su amor, se alegrará por ti con cantos."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "John 3:16",
+    "theme": "love",
+    "text": "Porque tanto amó Dios al mundo que dio a su Hijo único, para que todo el que cree en él no se pierda, sino que tenga vida eterna."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 15,
+    "verse": 9,
+    "ref": "John 15:9",
+    "theme": "love",
+    "text": "Así como el Padre me ha amado a mí, también yo los he amado a ustedes. Permanezcan en mi amor."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 15,
+    "verse": 13,
+    "ref": "John 15:13",
+    "theme": "love",
+    "text": "Nadie tiene amor más grande que el que da la vida por sus amigos."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 5,
+    "verse": 8,
+    "ref": "Romans 5:8",
+    "theme": "love",
+    "text": "Pero Dios demuestra su amor por nosotros en esto: en que cuando todavía éramos pecadores, Cristo murió por nosotros."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 8,
+    "verse": 38,
+    "ref": "Romans 8:38–39",
+    "theme": "love",
+    "text": "Pues estoy convencido de que ni la muerte ni la vida, ni los ángeles ni los demonios, ni lo presente ni lo por venir, ni los poderes, ni lo alto ni lo profundo, ni cosa alguna en toda la creación podrá apartarnos del amor que Dios nos ha manifestado en Cristo Jesús nuestro Señor."
+  },
+  {
+    "book": 47,
+    "abbrev": "GAL",
+    "chapter": 2,
+    "verse": 20,
+    "ref": "Galatians 2:20",
+    "theme": "love",
+    "text": "He sido crucificado con Cristo, y ya no vivo yo, sino que Cristo vive en mí. Lo que ahora vivo en el cuerpo, lo vivo por la fe en el Hijo de Dios, quien me amó y dio su vida por mí."
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 2,
+    "verse": 4,
+    "ref": "Ephesians 2:4",
+    "theme": "love",
+    "text": "Pero Dios, que es rico en misericordia, por su gran amor por nosotros,"
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 3,
+    "verse": 19,
+    "ref": "Ephesians 3:19",
+    "theme": "love",
+    "text": "En fin, que conozcan ese amor que sobrepasa nuestro conocimiento, para que sean llenos de la plenitud de Dios."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 8,
+    "ref": "1 John 4:8",
+    "theme": "love",
+    "text": "El que no ama no conoce a Dios, porque Dios es amor."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 19,
+    "ref": "1 John 4:19",
+    "theme": "love",
+    "text": "Nosotros amamos porque él nos amó primero."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 89,
+    "ref": "Psalms 119:89",
+    "theme": "scripture",
+    "text": "Tu palabra, Señor, es eterna y está firme en los cielos."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 18,
+    "ref": "Psalms 119:18",
+    "theme": "scripture",
+    "text": "Ábreme los ojos, para que contemple las maravillas de tu Ley."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 103,
+    "ref": "Psalms 119:103",
+    "theme": "scripture",
+    "text": "¡Cuán dulces son a mi paladar tus palabras! ¡Son más dulces que la miel a mi boca!"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 130,
+    "ref": "Psalms 119:130",
+    "theme": "scripture",
+    "text": "La exposición de tus palabras nos da luz y da entendimiento al sencillo."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 165,
+    "ref": "Psalms 119:165",
+    "theme": "scripture",
+    "text": "Los que aman tu Ley disfrutan de gran paz y nada los hace tropezar."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 18,
+    "verse": 30,
+    "ref": "Psalms 18:30",
+    "theme": "scripture",
+    "text": "El camino de Dios es perfecto; la palabra del Señor es intachable. Escudo es Dios a los que se refugian en él."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 33,
+    "verse": 4,
+    "ref": "Psalms 33:4",
+    "theme": "scripture",
+    "text": "La palabra del Señor es justa; fieles son todas sus obras."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 12,
+    "verse": 6,
+    "ref": "Psalms 12:6",
+    "theme": "scripture",
+    "text": "Las palabras del Señor son puras, son como la plata refinada, siete veces purificada en el crisol."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 40,
+    "verse": 8,
+    "ref": "Isaiah 40:8",
+    "theme": "scripture",
+    "text": "La hierba se seca y la flor se marchita, pero la palabra de nuestro Dios permanece para siempre."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 24,
+    "verse": 35,
+    "ref": "Matthew 24:35",
+    "theme": "scripture",
+    "text": "El cielo y la tierra pasarán, pero mis palabras jamás pasarán."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 1,
+    "verse": 1,
+    "ref": "John 1:1",
+    "theme": "scripture",
+    "text": "En el principio ya existía el Verbo, y el Verbo estaba con Dios, y el Verbo era Dios."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 6,
+    "verse": 68,
+    "ref": "John 6:68",
+    "theme": "scripture",
+    "text": "—Señor —contestó Simón Pedro—, ¿a quién iremos? Tú tienes palabras de vida eterna."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 17,
+    "verse": 17,
+    "ref": "John 17:17",
+    "theme": "scripture",
+    "text": "Santifícalos en la verdad; tu palabra es la verdad."
+  },
+  {
+    "book": 50,
+    "abbrev": "COL",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "Colossians 3:16",
+    "theme": "scripture",
+    "text": "Que habite en ustedes la palabra de Cristo con toda su riqueza: instrúyanse y aconséjense unos a otros con toda sabiduría; canten salmos, himnos y canciones espirituales a Dios, con gratitud de corazón."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 23,
+    "verse": 1,
+    "ref": "Psalms 23:1",
+    "theme": "connection",
+    "text": "El Señor es mi pastor, nada me falta."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 27,
+    "verse": 1,
+    "ref": "Psalms 27:1",
+    "theme": "connection",
+    "text": "El Señor es mi luz y mi salvación; ¿a quién temeré? El Señor es el baluarte de mi vida; ¿quién me asustará?"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 34,
+    "verse": 8,
+    "ref": "Psalms 34:8",
+    "theme": "connection",
+    "text": "Prueben y vean que el Señor es bueno; dichosos los que se refugian en él."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 34,
+    "verse": 18,
+    "ref": "Psalms 34:18",
+    "theme": "connection",
+    "text": "El Señor está cerca de los quebrantados de corazón, y salva a los de espíritu abatido."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 42,
+    "verse": 1,
+    "ref": "Psalms 42:1",
+    "theme": "connection",
+    "text": "Como ciervo jadeante que busca las corrientes de agua, así te busca, oh Dios, todo mi ser."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 91,
+    "verse": 1,
+    "ref": "Psalms 91:1–2",
+    "theme": "connection",
+    "text": "El que habita al abrigo del Altísimo descansará a la sombra del Todopoderoso. Yo digo al Señor: «Tú eres mi refugio, mi fortaleza, el Dios en quien confío»."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 121,
+    "verse": 2,
+    "ref": "Psalms 121:2",
+    "theme": "connection",
+    "text": "Mi ayuda proviene del Señor, que hizo el cielo y la tierra."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 145,
+    "verse": 18,
+    "ref": "Psalms 145:18",
+    "theme": "connection",
+    "text": "El Señor está cerca de quienes lo invocan, de quienes lo invocan en verdad."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 37,
+    "verse": 4,
+    "ref": "Psalms 37:4",
+    "theme": "connection",
+    "text": "Deléitate en el Señor y él te concederá los deseos de tu corazón."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 73,
+    "verse": 26,
+    "ref": "Psalms 73:26",
+    "theme": "connection",
+    "text": "Podrán desfallecer mi cuerpo y mi corazón, pero Dios es la roca de mi corazón; él es mi herencia eterna."
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 16,
+    "verse": 3,
+    "ref": "Proverbs 16:3",
+    "theme": "connection",
+    "text": "Pon en manos del Señor todas tus obras y tus proyectos se cumplirán."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 26,
+    "verse": 3,
+    "ref": "Isaiah 26:3",
+    "theme": "connection",
+    "text": "Al de carácter firme lo guardarás en perfecta paz, porque en ti confía."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 40,
+    "verse": 31,
+    "ref": "Isaiah 40:31",
+    "theme": "connection",
+    "text": "Pero los que confían en el Señor renovarán sus fuerzas; levantarán el vuelo como las águilas, correrán y no se fatigarán, caminarán y no se cansarán."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 33,
+    "verse": 3,
+    "ref": "Jeremiah 33:3",
+    "theme": "connection",
+    "text": "Clama a mí y te responderé; te daré a conocer cosas grandes e inaccesibles que tú no sabes."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 22,
+    "verse": 37,
+    "ref": "Matthew 22:37",
+    "theme": "connection",
+    "text": "—“Ama al Señor tu Dios con todo tu corazón, con toda tu alma y con toda tu mente” —respondió Jesús—."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 14,
+    "verse": 27,
+    "ref": "John 14:27",
+    "theme": "connection",
+    "text": "La paz les dejo; mi paz les doy. Yo no se la doy a ustedes como la da el mundo. No se angustien ni se acobarden."
+  },
+  {
+    "book": 59,
+    "abbrev": "1PE",
+    "chapter": 5,
+    "verse": 7,
+    "ref": "1 Peter 5:7",
+    "theme": "connection",
+    "text": "Depositen en él toda ansiedad, porque él cuida de ustedes."
+  },
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 31,
+    "verse": 8,
+    "ref": "Deuteronomy 31:8",
+    "theme": "connection",
+    "text": "El Señor mismo marchará al frente de ti y estará contigo; nunca te dejará ni te abandonará. No temas ni te desanimes."
+  },
+  {
+    "book": 24,
+    "abbrev": "LAM",
+    "chapter": 3,
+    "verse": 22,
+    "ref": "Lamentations 3:22–23",
+    "theme": "love",
+    "text": "Por el gran amor del Señor no hemos sido consumidos y su compasión jamás se agota. Cada mañana se renuevan sus bondades; ¡muy grande es su fidelidad!"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 103,
+    "verse": 13,
+    "ref": "Psalms 103:13",
+    "theme": "love",
+    "text": "Tan compasivo es el Señor con los que le temen como lo es un padre con sus hijos."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 10,
+    "ref": "1 John 4:10",
+    "theme": "love",
+    "text": "En esto consiste el amor: no en que nosotros hayamos amado a Dios, sino en que él nos amó y envió a su Hijo para que fuera ofrecido como sacrificio por el perdón de nuestros pecados."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 16,
+    "ref": "1 John 4:16",
+    "theme": "love",
+    "text": "Y nosotros hemos llegado a saber y creer que Dios nos ama. Dios es amor. El que permanece en amor, en Dios permanece y Dios en él."
+  },
+  {
+    "book": 45,
+    "abbrev": "1CO",
+    "chapter": 13,
+    "verse": 4,
+    "ref": "1 Corinthians 13:4",
+    "theme": "love",
+    "text": "El amor es paciente, es bondadoso. El amor no es envidioso ni presumido ni orgulloso."
+  },
+  {
+    "book": 45,
+    "abbrev": "1CO",
+    "chapter": 13,
+    "verse": 13,
+    "ref": "1 Corinthians 13:13",
+    "theme": "love",
+    "text": "Ahora, pues, permanecen la fe, la esperanza y el amor. Pero el amor es el más importante."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 31,
+    "verse": 3,
+    "ref": "Jeremiah 31:3",
+    "theme": "love",
+    "text": "Hace mucho tiempo se me apareció el Señor y me dijo: «Con amor eterno te he amado; por eso te he prolongado mi fidelidad»."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 54,
+    "verse": 10,
+    "ref": "Isaiah 54:10",
+    "theme": "love",
+    "text": "Aunque cambien de lugar las montañas y se tambaleen las colinas, no cambiará mi fiel amor por ti ni vacilará mi pacto de paz, dice el Señor, que de ti se compadece."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 86,
+    "verse": 15,
+    "ref": "Psalms 86:15",
+    "theme": "love",
+    "text": "Pero tú, Señor, eres Dios compasivo y misericordioso, lento para la ira y grande en amor y fidelidad."
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 2,
+    "verse": 8,
+    "ref": "Ephesians 2:8–9",
+    "theme": "love",
+    "text": "Porque por gracia ustedes han sido salvados mediante la fe. Esto no procede de ustedes, sino que es el regalo de Dios y no por obras, para que nadie se jacte."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 6,
+    "verse": 23,
+    "ref": "Romans 6:23",
+    "theme": "love",
+    "text": "Porque la paga del pecado es muerte, mientras que el regalo de Dios es vida eterna en Cristo Jesús, nuestro Señor."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 1,
+    "verse": 9,
+    "ref": "1 John 1:9",
+    "theme": "love",
+    "text": "Si confesamos nuestros pecados, Dios, que es fiel y justo, nos los perdonará y nos limpiará de toda maldad."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 13,
+    "verse": 34,
+    "ref": "John 13:34",
+    "theme": "love",
+    "text": "Este mandamiento nuevo les doy: que se amen los unos a los otros. Así como yo los he amado, también ustedes deben amarse los unos a los otros."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 49,
+    "verse": 15,
+    "ref": "Isaiah 49:15",
+    "theme": "love",
+    "text": "¿Puede una madre olvidar a su niño de pecho y dejar de amar al hijo que ha dado a luz? Aun cuando ella lo olvidara, ¡yo no te olvidaré!"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 8,
+    "verse": 28,
+    "ref": "Romans 8:28",
+    "theme": "love",
+    "text": "Ahora bien, sabemos que Dios dispone todas las cosas para el bien de quienes lo aman, los que han sido llamados de acuerdo con su propósito."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 15,
+    "verse": 13,
+    "ref": "Romans 15:13",
+    "theme": "love",
+    "text": "Que el Dios de la esperanza los llene de toda alegría y paz a ustedes que creen en él, para que rebosen de esperanza por el poder del Espíritu Santo."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 139,
+    "verse": 14,
+    "ref": "Psalms 139:14",
+    "theme": "love",
+    "text": "¡Te alabo porque soy una creación admirable! ¡Tus obras son maravillosas y esto lo sé muy bien!"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 10,
+    "verse": 10,
+    "ref": "John 10:10",
+    "theme": "love",
+    "text": "El ladrón no viene más que a robar, matar y destruir; yo he venido para que tengan vida y la tengan en abundancia."
+  }
+]

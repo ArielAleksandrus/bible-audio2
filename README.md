@@ -186,7 +186,7 @@ FIREBASE_SERVICE_ACCOUNT="$(cat service-account.json)" npx tsx scripts/seed-vers
 FIREBASE_SERVICE_ACCOUNT="$(cat service-account.json)" npx tsx scripts/seed-verses.ts --write
 ```
 
-Run it again whenever a Bible version is added to the picker (add it to `SEED_VERSIONS`) or a CDN JSON is corrected.
+The verses come from `public/assets/verses/<lang>.json`, hand-checked translations of `en.json` (same references and order) that the native app also uses for its local reminders. Edit those files to fix a verse or add a language (also add it to `VERSE_LANGUAGES` in `verse.service.ts` and `SEED_LANGUAGES` in the script), then run the script again.
 
 ## Project layout
 

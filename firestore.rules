@@ -7,7 +7,7 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // The 50 daily-reminder verses per language, pushed to every Web Push
+    // The daily-reminder verses (100) per language, pushed to every Web Push
     // subscriber by the send-daily-reminder cron. Written only by
     // scripts/seed-verses.ts and read only by the cron — both use the Admin
     // SDK, which bypasses these rules — so clients get no access at all and
