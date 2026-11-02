@@ -7,7 +7,6 @@ import { WakeLockService } from './wake-lock.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { saveBibleVersion, getBibleVersion, getAllSavedBibles, deleteBibleVersion, AvailableSpace } from '../storage/my-db';
-import { VerseService } from './verse.service';
 import { isNativeApp } from '../utils/platform.util';
 
 
@@ -51,7 +50,6 @@ export class BibleService {
 
   constructor(
     private ads: AudioDownloaderService,
-    private verseServ: VerseService,
     private wakeLock: WakeLockService
   ) {
     // Forward progress from AudioDownloaderService
@@ -84,7 +82,6 @@ export class BibleService {
       const bibleData = await this.fetchJsonWithProgress(url);
 
       await saveBibleVersion(language + "-" + versionName, versionName, language, language + "-" + versionName, bibleData);
-      this.seedVerses(<Bible>bibleData, language);
 
       return <Bible>bibleData;
     } catch (err) {
@@ -136,25 +133,10 @@ export class BibleService {
     let obj = await getBibleVersion(id);
 
     if(obj) {
-      // Covers users whose Bible was already cached before daily-reminder
-      // verses existed — downloadAndSaveBible's fresh-download branch only
-      // runs once per device, so without this, their language would never
-      // get seeded and notifications would silently fall back to English.
-      this.seedVerses(obj.data, language);
       return obj.data;
     } else {
       return undefined;
     }
-  }
-
-  // Derives this language's daily-reminder verses from the given Bible and
-  // saves them to Firestore so the notification Cron job (which has no
-  // access to a client's IndexedDB) has them ready to use. saveVersesForLanguage
-  // is idempotent — cheap to call on every load, only actually writes once.
-  private seedVerses(bibleData: Bible, language: string): void {
-    this.verseServ.deriveVerses(bibleData)
-      .then(verses => this.verseServ.saveVersesForLanguage(language, verses))
-      .catch(err => console.warn('BibleService: failed to derive/save verses', err));
   }
 
   // Clears the selected-language flag AND every cached Bible text JSON —

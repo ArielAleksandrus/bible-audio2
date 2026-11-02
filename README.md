@@ -177,7 +177,16 @@ The daily-reminder function (`api/send-daily-reminder.ts`) needs these Vercel en
 
 Both projects point at the same Firebase project, so `biblia-narrada.vercel.app` also needs to be added under Firebase Console → Authentication → Settings → Authorized domains for Google sign-in to work there.
 
-Firestore rules live in `firestore.rules`: each signed-in user can only read/write `users/{uid}/**`; `verses/{lang}` and `push_subscriptions/{deviceId}` are used for reminders.
+Firestore rules live in `firestore.rules` (paste them into Firebase Console → Firestore → Rules to deploy): each signed-in user can only read/write `users/{uid}/**`; devices can create/overwrite/delete their own `push_subscriptions/{deviceId}` but not read any; `verses/{lang}` is closed to clients.
+
+`verses/{lang}` holds the daily-reminder verses the Web Push cron sends for each non-English language. Seed or refresh it with the service account (dry run first, then `--write`):
+
+```
+FIREBASE_SERVICE_ACCOUNT="$(cat service-account.json)" npx tsx scripts/seed-verses.ts
+FIREBASE_SERVICE_ACCOUNT="$(cat service-account.json)" npx tsx scripts/seed-verses.ts --write
+```
+
+Run it again whenever a Bible version is added to the picker (add it to `SEED_VERSIONS`) or a CDN JSON is corrected.
 
 ## Project layout
 

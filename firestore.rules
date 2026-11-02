@@ -7,20 +7,32 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Shared, non-sensitive: the 50 daily-reminder verses per language,
-    // derived client-side from each Bible translation. Public so any device
-    // can seed a language's set without needing to sign in.
+    // The 50 daily-reminder verses per language, pushed to every Web Push
+    // subscriber by the send-daily-reminder cron. Written only by
+    // scripts/seed-verses.ts and read only by the cron — both use the Admin
+    // SDK, which bypasses these rules — so clients get no access at all and
+    // nobody can change the text that goes out to everyone.
     match /verses/{lang} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
 
-    // Daily-reminder push subscriptions. Not tied to a signed-in user —
-    // each device keys its own doc with a random locally-generated id, so
-    // there's no account to authenticate against. The subscription payload
-    // itself isn't sensitive (a device push endpoint + language), so this
-    // stays open like verses/{lang} above.
+    // Web Push subscriptions, one doc per device, keyed by a random UUID
+    // generated on the device (NotificationsService.deviceId). Only the
+    // cron (Admin SDK) reads them, so clients can't read or list any —
+    // the endpoints stay private and nobody can enumerate ids to delete
+    // other people's subscriptions. A device writes and deletes its own
+    // doc by id, which only it knows.
     match /push_subscriptions/{deviceId} {
-      allow read, write: if true;
+      allow read: if false;
+      allow create, update: if deviceId.matches('^[0-9a-f-]{36}$')
+        && request.resource.data.keys().hasOnly(['subscription', 'language', 'updatedAt'])
+        && request.resource.data.language is string
+        && request.resource.data.language.matches('^[a-z]{2,3}$')
+        && request.resource.data.updatedAt is int
+        && request.resource.data.subscription is map
+        && request.resource.data.subscription.endpoint is string
+        && request.resource.data.subscription.endpoint.matches('^https://.{1,1000}$');
+      allow delete: if true;
     }
   }
 }
