@@ -1,23 +1,12 @@
 import { Component, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSliderModule } from '@angular/material/slider';
+import { IonButton, IonIcon, IonRange } from '@ionic/angular';
 import { AudioService } from '../../services/audio.service';
 import { Track } from '../../models/track';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-audio-player',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSliderModule,
-  ],
+  imports: [IonButton, IonIcon, IonRange],
   templateUrl: './audio-player.html',
   styleUrls: ['./audio-player.scss'],
 })
@@ -26,6 +15,9 @@ export class AudioPlayer implements OnDestroy {
   isPlaying = false;
   currentTime = 0;
   duration = 0;
+  /** While the knob is held, show the drag position instead of live playback time. */
+  dragging = false;
+  dragValue = 0;
 
   private subs = new Subscription();
 
@@ -60,8 +52,9 @@ export class AudioPlayer implements OnDestroy {
     this.isPlaying ? this.audioService.pause() : this.audioService.play();
   }
 
-  seek(percentage: number) {
-    this.audioService.seekTo(this.duration * percentage / 100);
+  onSeekEnd(seconds: number) {
+    this.dragging = false;
+    if (typeof seconds === 'number' && isFinite(seconds)) this.audioService.seekTo(seconds);
   }
 
   close() {

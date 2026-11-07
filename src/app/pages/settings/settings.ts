@@ -1,41 +1,37 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DecimalPipe } from '@angular/common';
+import { Router } from '@angular/router';
+import {
+  IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonIcon,
+  IonProgressBar, IonSpinner, IonTitle, IonToolbar, ModalController, ViewWillEnter,
+} from '@ionic/angular';
 import { dbPromise, AvailableSpace } from '../../storage/my-db';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { BibleService } from '../../services/bible.service';
 import { AuthService } from '../../services/auth.service';
 import { NotificationsService } from '../../services/notifications.service';
+import { AudioDownloaderService } from '../../services/audio-downloader.service';
+import { UiService } from '../../services/ui.service';
 import { Bible } from 'bible-picker';
 import type { User } from 'firebase/auth';
 
-import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialog';
 
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-settings',
-  standalone: true,
   imports: [
-    CommonModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatButtonModule,
-    TranslateModule
+    DecimalPipe, TranslatePipe,
+    IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+    IonButton, IonIcon, IonProgressBar, IonSpinner,
   ],
   templateUrl: './settings.html',
   styleUrl: './settings.scss'
 })
-export class Settings {
+export class Settings implements ViewWillEnter {
   usedByAudiosMB: number = 0;
   usedByPlansMB: number = 0;
   usedByBiblesMB: number = 0;
@@ -64,11 +60,15 @@ export class Settings {
   notifSubscribed = false;
   notifBusy = false;
   notifError: string | null = null;
+  signingIn = false;
 
   constructor(
     private translate: TranslateService,
     private bibleServ: BibleService,
-    private dialog: MatDialog,
+    private modals: ModalController,
+    private ui: UiService,
+    private router: Router,
+    private downloader: AudioDownloaderService,
     private cdr: ChangeDetectorRef,
     public authServ: AuthService,
     public notifServ: NotificationsService
@@ -97,7 +97,7 @@ export class Settings {
 
     let bibleJson = localStorage.getItem("selectedBible");
     if(!bibleJson) {
-      location.href = "/home";
+      void this.router.navigateByUrl('/home');
     }
 
     let selected = localStorage.getItem("selectedBible") || "";
@@ -110,14 +110,17 @@ export class Settings {
         }
         //@ts-ignore
         this.currentLanguageName = this.languageMap[savedLang || "pt"] || "Português";
+        this.cdr.markForCheck();
       } else {
-        location.href = "/home";
+        void this.router.navigateByUrl('/home');
       }
     });
 
   }
 
-  ngOnInit() {
+  // Tabs keep this page alive, so recompute storage every time it's shown
+  // (chapters may have been downloaded or played since the last visit).
+  ionViewWillEnter() {
     this.calculateStorage().then(() => {
       this.loading = false;
       this.cdr.detectChanges();
@@ -126,11 +129,20 @@ export class Settings {
 
   async resetLanguage() {
     await this.bibleServ.removeBibleVersion();
+    // Full reload on purpose: every page re-reads the chosen Bible on start.
     location.href = "/home";
   }
 
-  signIn() {
-    this.authServ.signInWithGoogle();
+  async signIn() {
+    this.signingIn = true;
+    try {
+      await this.authServ.signInWithGoogle();
+    } catch (err) {
+      console.warn('Settings::signIn', err);
+    } finally {
+      this.signingIn = false;
+      this.cdr.markForCheck();
+    }
   }
 
   signOut() {
@@ -161,19 +173,10 @@ export class Settings {
     // 1. Espaço disponível total (do dispositivo)
     this.availableMB = this.fixNumber(await this.availableSpace.inMB());
 
-    // 2. Tamanho dos áudios baixados (store 'files')
-    let audiosSize = 0;
-    const db = await dbPromise;
-    const tx = db.transaction('files', 'readonly');
-    const store = tx.objectStore('files');
-    const allFiles = await store.getAll();
-
-    for (const file of allFiles) {
-      if (file.blob) {
-        audiosSize += file.blob.size;
-      }
-    }
+    // 2. Tamanho dos áudios baixados (IndexedDB na web, arquivos no app nativo)
+    const audiosSize = await this.downloader.getDownloadedBytes();
     this.usedByAudiosMB = this.fixNumber(audiosSize / (1024 * 1024));
+    const db = await dbPromise;
 
     // 3. Tamanho dos planos (store 'plans') – geralmente menos de 1 MB
     const plansTx = db.transaction('plans', 'readonly');
@@ -209,26 +212,14 @@ export class Settings {
   }
 
   async clearAllAudios() {
-    const dialogRef = this.dialog.open(ConfirmationDialog, {
-      width: '380 px',
-      maxWidth: '90vw',
-      autoFocus: false,
-      disableClose: false,
-      panelClass: 'hold-confirm-dialog-panel'
-    });
+    const modal = await this.modals.create({ component: ConfirmationDialog, cssClass: 'app-dialog' });
+    await modal.present();
+    const { data: result } = await modal.onDidDismiss<boolean>();
+    if (result !== true) return;
 
-    dialogRef.afterClosed().subscribe(result => {
-      if(result === true) {
-        dbPromise.then(db => {
-          db.clear('files').then(() => {
-            this.calculateStorage().then(() => {
-              this.cdr.detectChanges();
-              alert('Pronto/Done/Listo/好了');
-            });
-          });
-        })
-      }
-    })
-
+    await this.downloader.clearAll();
+    await this.calculateStorage();
+    this.cdr.detectChanges();
+    await this.ui.alert('Pronto/Done/Listo/好了');
   }
 }

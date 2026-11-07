@@ -1,0 +1,54 @@
+workflows:
+  android-release:
+    name: Android release (Play Store)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      node: 24
+      java: 21
+      android_signing:
+        # Reference name of the keystore uploaded in
+        # Team settings → Code signing identities → Android keystores.
+        - upload
+      groups:
+        # Holds GCLOUD_SERVICE_ACCOUNT_CREDENTIALS (service account JSON).
+        - google_play
+      vars:
+        PACKAGE_NAME: live.nlabs.biblia
+    # No `triggering` block: builds start manually from the Codemagic UI.
+    scripts:
+      - name: Install dependencies
+        script: npm ci
+      - name: Build web app
+        script: npm run build
+      - name: Sync Capacitor
+        script: npx cap sync android
+      - name: Build signed AAB
+        script: |
+          # versionCode must grow on every upload: take the highest one on any
+          # Play track and add 1. Before the first upload there is none, so
+          # fall back to Codemagic's build number.
+          LATEST=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" 2>/dev/null || echo "")
+          if [ -z "$LATEST" ]; then
+            export VERSION_CODE=$BUILD_NUMBER
+          else
+            export VERSION_CODE=$((LATEST + 1))
+          fi
+          export VERSION_NAME=$(node -p "require('./package.json').version")
+          echo "versionName=$VERSION_NAME versionCode=$VERSION_CODE"
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/bundle/release/*.aab
+      - android/app/build/outputs/mapping/release/mapping.txt
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        # Business account: no closed-testing requirement, so go straight to
+        # production. The release lands as a draft; roll it out in Play Console.
+        track: production
+        # Required while the app has never been published on Play
+        # ("Only releases with status draft may be created on draft app").
+        # Switch to false after the first release goes out.
+        submit_as_draft: true

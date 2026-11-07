@@ -1,16 +1,14 @@
-<div class="install-suggested-dialog">
-  <mat-icon class="install-suggested-icon">install_mobile</mat-icon>
+<div class="install-suggested-dialog ion-padding">
+  <ion-icon class="install-suggested-icon" name="phone-portrait-outline"></ion-icon>
 
-  <mat-dialog-content>
-    <p>{{ 'install_suggested.message' | translate }}</p>
-  </mat-dialog-content>
+  <p>{{ 'install_suggested.message' | translate }}</p>
 
-  <mat-dialog-actions align="end">
-    <button mat-button (click)="dismiss()">
+  <div class="actions">
+    <ion-button fill="clear" (click)="dismiss()">
       {{ 'install_suggested.dismiss' | translate }}
-    </button>
-    <button mat-raised-button color="primary" (click)="install()">
+    </ion-button>
+    <ion-button (click)="install()">
       {{ 'install_suggested.install' | translate }}
-    </button>
-  </mat-dialog-actions>
+    </ion-button>
+  </div>
 </div>

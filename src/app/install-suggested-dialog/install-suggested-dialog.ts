@@ -1,9 +1,6 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { Component, inject } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { IonButton, IonIcon, ModalController } from '@ionic/angular';
 
 import { InstallPromptService } from '../services/install-prompt.service';
 import { SafariWarningDialog } from '../safari-warning-dialog/safari-warning-dialog';
@@ -18,26 +15,23 @@ import { isIosDevice } from '../utils/browser.util';
 // beforeinstallprompt flow via the existing install banner).
 @Component({
   selector: 'app-install-suggested-dialog',
-  standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, TranslateModule],
+  imports: [TranslatePipe, IonButton, IonIcon],
   templateUrl: './install-suggested-dialog.html',
   styleUrl: './install-suggested-dialog.scss'
 })
 export class InstallSuggestedDialog {
-  constructor(
-    public dialogRef: MatDialogRef<InstallSuggestedDialog>,
-    private dialog: MatDialog,
-    private installServ: InstallPromptService
-  ) {}
+  private modals = inject(ModalController);
+  private installServ = inject(InstallPromptService);
 
   dismiss(): void {
-    this.dialogRef.close();
+    void this.modals.dismiss();
   }
 
-  install(): void {
-    this.dialogRef.close();
+  async install(): Promise<void> {
+    await this.modals.dismiss();
     if (isIosDevice()) {
-      this.dialog.open(SafariWarningDialog, { width: '420px', maxWidth: '90vw', autoFocus: false });
+      const modal = await this.modals.create({ component: SafariWarningDialog, cssClass: 'app-dialog-tall' });
+      await modal.present();
     } else {
       this.installServ.forceShow('android');
     }

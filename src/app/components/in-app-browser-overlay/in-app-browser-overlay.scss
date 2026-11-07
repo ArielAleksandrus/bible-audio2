@@ -68,6 +68,7 @@
 
 .iab-icon {
   flex-shrink: 0;
+  font-size: 24px;
   margin-top: 2px;
 }
 
@@ -97,11 +98,11 @@
   line-height: 20px;
   padding: 0;
   color: rgba(255, 255, 255, 0.3);
+  background: transparent;
+  border: none;
 
-  mat-icon {
+  ion-icon {
     font-size: 13px;
-    width: 13px;
-    height: 13px;
   }
 }
 

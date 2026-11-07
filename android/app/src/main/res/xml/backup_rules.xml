@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 11 and lower (android:fullBackupContent). Downloaded chapters
+     (files/audios, up to ~1.3 GB) can be re-downloaded at any time; leaving
+     them in would push the app over Auto Backup's 25 MB cap, and then
+     nothing is backed up — including the WebView storage that holds the
+     user's reading-plan progress. -->
+<full-backup-content>
+    <exclude domain="file" path="audios/" />
+</full-backup-content>

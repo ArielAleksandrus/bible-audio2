@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import type { Firestore } from 'firebase/firestore';
-import type { Bible } from 'bible-picker';
 import { firstValueFrom } from 'rxjs';
-
-import { firebaseEnabled, getFirestoreDb } from '../storage/firebase';
-import { getVerseText } from '../utils/bible-text.util';
 
 export interface VerseEntry {
   book: number;
@@ -17,68 +12,37 @@ export interface VerseEntry {
   text: string;
 }
 
-// 50 curated verses (importance of Scripture, connecting to God, God's love
-// for us) used for daily reminder notifications. English is bundled as a
-// static asset; other languages are derived client-side, the moment a user
-// downloads a Bible in that language, from the exact same (book, chapter,
-// verse) references, then saved to Firestore so the Cron job that actually
-// sends notifications (which has no access to a client's IndexedDB) can
-// read them back at send time.
+// Languages with a translated copy of the reminder verses in
+// public/assets/verses/<lang>.json (see scripts/seed-verses.ts).
+export const VERSE_LANGUAGES = ['en', 'pt', 'es', 'ja', 'zh'];
+
+// 100 curated verses, each one that reads on its own (importance of
+// Scripture, connecting to God, God's love for us), used for daily reminder
+// notifications. Each language is a static,
+// hand-checked file with the same references as the English one — the
+// Bible JSONs have no reliable verse boundaries (poetry split per line,
+// headings, paraphrases that merge verses), so picking "the Nth line" lands
+// on the wrong verse. Native local notifications read these directly; the
+// Web Push cron reads the copies scripts/seed-verses.ts puts in Firestore.
 @Injectable({ providedIn: 'root' })
 export class VerseService {
-  private englishVerses: Promise<VerseEntry[]> | null = null;
-  private fsModule: Promise<typeof import('firebase/firestore')> | null = null;
-  // Languages confirmed seeded this session — avoids a Firestore existence
-  // check on every page navigation once we already know it's there.
-  private confirmedSeeded = new Set<string>();
+  private cache = new Map<string, Promise<VerseEntry[]>>();
 
   constructor(private http: HttpClient) {}
 
-  getEnglishVerses(): Promise<VerseEntry[]> {
-    if (!this.englishVerses) {
-      this.englishVerses = firstValueFrom(this.http.get<VerseEntry[]>('/assets/verses/en.json'));
+  /** Verses in `lang` (e.g. 'pt'), falling back to English. */
+  getVerses(lang: string): Promise<VerseEntry[]> {
+    const key = VERSE_LANGUAGES.includes(lang) ? lang : 'en';
+    let pending = this.cache.get(key);
+    if (!pending) {
+      pending = firstValueFrom(this.http.get<VerseEntry[]>(`/assets/verses/${key}.json`)).catch(err => {
+        this.cache.delete(key);
+        if (key === 'en') throw err;
+        console.warn('VerseService: falling back to English for', key, err);
+        return this.getVerses('en');
+      });
+      this.cache.set(key, pending);
     }
-    return this.englishVerses;
-  }
-
-  // Derives the same 50 references' text from a fully-downloaded Bible in
-  // another language. Falls back to the English text for any reference that
-  // can't be found in the target language.
-  async deriveVerses(bible: Bible): Promise<VerseEntry[]> {
-    const refs = await this.getEnglishVerses();
-    return refs.map(ref => {
-      const book = bible.books[ref.book];
-      const text = book ? getVerseText(book.chapters, ref.chapter, ref.verse) : undefined;
-      return text ? { ...ref, text } : ref;
-    });
-  }
-
-  // Saves this language's verse set to Firestore, but only the first time —
-  // cheap idempotency check so re-downloading the same language repeatedly
-  // doesn't keep re-writing it.
-  async saveVersesForLanguage(lang: string, verses: VerseEntry[]): Promise<void> {
-    if (!firebaseEnabled || lang === 'en' || this.confirmedSeeded.has(lang)) return;
-    try {
-      const [db, { doc, getDoc, setDoc }] = await Promise.all([this.getDb(), this.getFsModule()]);
-      const ref = doc(db, 'verses', lang);
-      const existing = await getDoc(ref);
-      if (existing.exists()) {
-        this.confirmedSeeded.add(lang);
-        return;
-      }
-      await setDoc(ref, { verses: JSON.parse(JSON.stringify(verses)) });
-      this.confirmedSeeded.add(lang);
-    } catch (err) {
-      console.warn('VerseService: failed to save verses for', lang, err);
-    }
-  }
-
-  private getFsModule() {
-    if (!this.fsModule) this.fsModule = import('firebase/firestore');
-    return this.fsModule;
-  }
-
-  private getDb(): Promise<Firestore> {
-    return getFirestoreDb();
+    return pending;
   }
 }

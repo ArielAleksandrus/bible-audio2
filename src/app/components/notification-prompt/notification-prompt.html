@@ -1,5 +1,5 @@
 <div class="notification-banner" *ngIf="visible">
-  <mat-icon class="banner-icon">notifications_active</mat-icon>
+  <ion-icon class="banner-icon" name="notifications-outline"></ion-icon>
 
   <div class="banner-text">
     <strong>{{ 'settings.notifications.title' | translate }}</strong>
@@ -7,11 +7,11 @@
   </div>
 
   <div class="banner-actions">
-    <button mat-raised-button color="accent" [disabled]="busy" (click)="enable()">
+    <ion-button color="light" size="small" [disabled]="busy" (click)="enable()">
       {{ 'settings.notifications.enable' | translate }}
-    </button>
-    <button mat-icon-button class="close-button" (click)="dismiss()" aria-label="Dismiss">
-      <mat-icon>close</mat-icon>
-    </button>
+    </ion-button>
+    <ion-button fill="clear" class="close-button" (click)="dismiss()" aria-label="Dismiss">
+      <ion-icon slot="icon-only" name="close"></ion-icon>
+    </ion-button>
   </div>
 </div>

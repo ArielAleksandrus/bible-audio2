@@ -1,28 +1,26 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
+// Tab URLs stay the same as before (/home, /plans, /settings) so existing
+// PWA bookmarks and installed shortcuts keep working.
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-
   {
-    path: 'home',
-    loadComponent: () => import('./pages/home/home').then(m => m.Home),
-    data: { label: 'Home', icon: 'home' }
+    path: '',
+    loadComponent: () => import('./pages/tabs/tabs').then(m => m.TabsPage),
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      {
+        path: 'home',
+        loadComponent: () => import('./pages/home/home').then(m => m.Home),
+      },
+      {
+        path: 'plans',
+        loadComponent: () => import('./pages/plans/plans').then(m => m.Plans),
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./pages/settings/settings').then(m => m.Settings),
+      },
+    ],
   },
-  {
-    path: 'plans',
-    loadComponent: () => import('./pages/plans/plans').then(m => m.Plans),
-    data: { label: 'Plans', icon: 'assignment' }
-  },
-  {
-    path: 'settings',
-    loadComponent: () => import('./pages/settings/settings').then(m => m.Settings),
-    data: { label: 'Settings', icon: 'settings' }
-  }
+  { path: '**', redirectTo: 'home' },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }

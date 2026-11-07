@@ -1,10 +1,7 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { IonButton, IonIcon, ModalController } from '@ionic/angular';
 
 // A short YouTube Shorts walkthrough of "Share -> Add to Home Screen" on
 // iOS, offered from SafariWarningDialog's "Como fazer?" button. Confirms
@@ -15,8 +12,7 @@ const EXAMPLE_VIDEO_URL = 'https://www.youtube.com/embed/Bm3VIOUe7ZY?autoplay=1&
 
 @Component({
   selector: 'app-video-example-dialog',
-  standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, TranslateModule],
+  imports: [TranslatePipe, IonButton, IonIcon],
   templateUrl: './video-example-dialog.html',
   styleUrl: './video-example-dialog.scss'
 })
@@ -24,11 +20,10 @@ export class VideoExampleDialog {
   showVideo = false;
   videoUrl: SafeResourceUrl;
 
-  constructor(
-    public dialogRef: MatDialogRef<VideoExampleDialog>,
-    sanitizer: DomSanitizer
-  ) {
-    this.videoUrl = sanitizer.bypassSecurityTrustResourceUrl(EXAMPLE_VIDEO_URL);
+  private modalCtrl = inject(ModalController);
+
+  constructor() {
+    this.videoUrl = inject(DomSanitizer).bypassSecurityTrustResourceUrl(EXAMPLE_VIDEO_URL);
   }
 
   confirm(): void {
@@ -36,6 +31,6 @@ export class VideoExampleDialog {
   }
 
   close(): void {
-    this.dialogRef.close();
+    void this.modalCtrl.dismiss();
   }
 }

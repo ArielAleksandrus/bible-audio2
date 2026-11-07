@@ -7,7 +7,11 @@
     "downloading_bible": "Downloading the Bible: {{downloaded}} of {{total}} chapters",
     "current_chapter": "Current chapter",
     "download_complete": "Bible download complete!",
-    "confirm_mobile_data": "You are not connected to Wi-Fi. Downloading the entire Bible uses about 1.3 GB of data. Do you want to continue anyway?"
+    "confirm_mobile_data": "You are not connected to Wi-Fi. Downloading the entire Bible uses about 1.3 GB of data. Do you want to continue anyway?",
+    "download_incomplete": "{{failed}} chapters were not downloaded. Tap “Download the entire Bible” to try again.",
+    "notif_title": "Downloading the Bible",
+    "notif_progress": "{{downloaded}} of {{total}} chapters",
+    "notif_incomplete": "{{failed}} chapters were not downloaded"
   },
   "loading": {
     "bible": "Loading the Bible in your language",
@@ -133,7 +137,6 @@
     "menu_hint": "Tap ••• then \"Open in Browser\"",
     "dismiss": "Continue anyway"
   },
-
   "safari_warning": {
     "title": "Suggestion",
     "message": "For better notification and background-playback support, add BibleAudio to your Home Screen (Share -> Add to Home Screen).",
@@ -178,5 +181,8 @@
       "author": "Unknown",
       "description": "When there is no hope: This is for the night you cannot pray without shaking — when the kind words have run out and there is still no light. For seven days Scripture will not rush you: it sits with Job on the ash heap, hides with David in the cave, waits with Paul in chains, and kneels with Christ in Gethsemane, until you are allowed to say the worst things out loud. Only then does it show you the God who does not call advice down from the rim of the valley, but walks it — who answers from the whirlwind, restores the one who lost everything, leaves a tomb empty, and promises a new earth and a new sky, where He Himself will wipe the tears from your face. Start where there is no hope. Walk. He is already there."
     }
+  },
+  "common": {
+    "cancel": "Cancel"
   }
 }

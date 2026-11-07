@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { IonIcon } from '@ionic/angular';
 
 import { InAppBrowserWarningService } from '../../services/in-app-browser-warning.service';
 
@@ -11,8 +10,7 @@ import { InAppBrowserWarningService } from '../../services/in-app-browser-warnin
 // plans.ts on manually starting a reading or just landing on the page).
 @Component({
   selector: 'app-in-app-browser-overlay',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, IonIcon],
   templateUrl: './in-app-browser-overlay.html',
   styleUrl: './in-app-browser-overlay.scss'
 })

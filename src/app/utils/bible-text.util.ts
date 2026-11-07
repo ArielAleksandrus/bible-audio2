@@ -1,7 +1,6 @@
 // Shared heading-detection + verse extraction for raw Bible chapter arrays
 // (plain string[] per chapter, no explicit verse-boundary metadata). Used by
-// BibleTextViewer (continuous reading) and VerseService (pinpointing a
-// single reference for notifications).
+// BibleTextViewer (continuous reading).
 //
 // A heading has no explicit flag in the data — it's inferred: short, no
 // trailing sentence punctuation, and every significant (4+ letter) word
@@ -55,21 +54,6 @@ export function parseChapter(raw: string[]): ChapterEntry[] {
     verseNumber++;
     return { heading: false, text, verseNumber };
   });
-}
-
-// Pulls a single verse's text by (chapter, verseNumber) out of a raw chapter
-// array, skipping headings the same way parseChapter does. Returns undefined
-// if the chapter/verse is out of range.
-export function getVerseText(chapters: string[][], chapter: number, verseNumber: number): string | undefined {
-  const raw = chapters[chapter - 1];
-  if (!raw) return undefined;
-  let n = 0;
-  for (const text of raw) {
-    if (isHeading(text)) continue;
-    n++;
-    if (n === verseNumber) return text;
-  }
-  return undefined;
 }
 
 // Bible JSONs aren't consistent on which field carries a book's display name

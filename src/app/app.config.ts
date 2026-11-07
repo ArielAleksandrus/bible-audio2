@@ -1,11 +1,10 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
+import { provideRouter, RouteReuseStrategy } from '@angular/router';
+import { provideIonicAngular, IonicRouteStrategy } from '@ionic/angular';
 
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
-
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatIconModule } from '@angular/material/icon';
+import { isNativeApp } from './utils/platform.util';
 
 import { inject, Injectable } from '@angular/core';
 import { provideTranslateService, provideTranslateLoader, provideMissingTranslationHandler, TranslateLoader } from '@ngx-translate/core';
@@ -33,14 +32,15 @@ class AppTranslateLoader implements TranslateLoader {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    importProvidersFrom(
-      MatTabsModule,
-      MatIconModule
-    ),
     provideBrowserGlobalErrorListeners(),
+    // Ionic picks iOS or Material Design styling from the platform it runs on.
+    provideIonicAngular({}),
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideRouter(routes),
+    // The native apps ship the web bundle inside the binary (updates come
+    // from the stores), so the PWA service worker is web-only.
     provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
+      enabled: !isDevMode() && !isNativeApp(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
     provideHttpClient(),

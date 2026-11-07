@@ -1,0 +1,698 @@
+=====================================================================
+Language: Portuguese (Brazil) — pt-BR
+=====================================================================
+
+App name:
+Bíblia Narrada: Áudio Offline
+
+Short description:
+Ouça a Bíblia em áudio offline, com a tela bloqueada e pelos botões do carro.
+
+Full description:
+Bíblia Narrada é um app para ouvir a Bíblia em áudio, onde você estiver — mesmo sem internet, com a tela bloqueada ou dirigindo.
+
+Escolha um livro e os capítulos que quer ouvir: o primeiro começa a tocar na hora e os seguintes são baixados em segundo plano. Depois de baixados, os áudios ficam no seu celular e você pode ouvir por horas sem gastar dados.
+
+OUÇA OFFLINE
+• Baixe capítulos avulsos ou a Bíblia completa (cerca de 1,3 GB)
+• Os áudios ficam salvos no aparelho — não precisa de Wi-Fi depois do download
+• O app avisa antes de baixar pelos dados móveis e verifica se há espaço livre
+
+FEITO PARA OUVIR SEM INTERRUPÇÕES
+• Continua tocando com a tela bloqueada
+• Os capítulos seguem um após o outro, sem pausas
+• Controle pela tela de bloqueio, fone de ouvido ou botões do carro via Bluetooth: tocar, pausar, avançar, voltar
+• Mini player sempre visível, com avanço e retrocesso de 10 segundos
+
+PLANOS DE LEITURA
+• Primeiros Passos na Bíblia (7 dias)
+• Novo Testamento em 90 Dias
+• Natal em 7 Dias
+• Páscoa em 7 Dias
+• Caminhando pelo Vale da Sombra da Morte (7 dias)
+• Bíblia em um ano (365 dias)
+Comece um plano, ouça a leitura do dia como uma playlist, marque os dias concluídos e continue de onde parou. Os próximos dias já ficam baixados para você ouvir offline.
+
+ACOMPANHE O TEXTO
+Leia o texto bíblico na tela enquanto o capítulo é narrado.
+
+VERSÍCULO DO DIA
+Ative um lembrete diário opcional com um versículo para começar o dia.
+
+VÁRIOS IDIOMAS
+Português, inglês, espanhol, chinês e japonês. O app se adapta ao idioma da Bíblia escolhida.
+
+SEM CADASTRO OBRIGATÓRIO
+O app funciona completo sem conta. Se quiser, entre com o Google para sincronizar o progresso dos planos entre seus aparelhos.
+
+Simples, leve e focado no que importa: ouvir a Palavra de Deus no seu dia a dia — no carro, na caminhada, no trabalho ou antes de dormir.
+
+
+=====================================================================
+Language: Portuguese (Portugal) — pt-PT
+=====================================================================
+
+App name:
+Bíblia Narrada: Áudio Offline
+
+Short description:
+Ouça a Bíblia em áudio offline, com o ecrã bloqueado e pelos botões do carro.
+
+Full description:
+Bíblia Narrada é uma app para ouvir a Bíblia em áudio, onde quer que esteja — mesmo sem internet, com o ecrã bloqueado ou a conduzir.
+
+Escolha um livro e os capítulos que quer ouvir: o primeiro começa a tocar na hora e os seguintes são transferidos em segundo plano. Depois de transferidos, os áudios ficam no seu telemóvel e pode ouvir durante horas sem gastar dados.
+
+OUÇA OFFLINE
+• Transfira capítulos avulsos ou a Bíblia completa (cerca de 1,3 GB)
+• Os áudios ficam salvos no aparelho — não precisa de Wi-Fi depois do download
+• A app avisa antes de transferir com dados móveis e verifica se há espaço livre
+
+FEITO PARA OUVIR SEM INTERRUPÇÕES
+• Continua a tocar com o ecrã bloqueado
+• Os capítulos seguem um após o outro, sem pausas
+• Controle pelo ecrã de bloqueio, auscultadores ou botões do carro via Bluetooth: tocar, pausar, avançar, voltar
+• Mini player sempre visível, com avanço e retrocesso de 10 segundos
+
+PLANOS DE LEITURA
+• Primeiros Passos na Bíblia (7 dias)
+• Novo Testamento em 90 Dias
+• Natal em 7 Dias
+• Páscoa em 7 Dias
+• Caminhando pelo Vale da Sombra da Morte (7 dias)
+• Bíblia em um ano (365 dias)
+Comece um plano, ouça a leitura do dia como uma playlist, marque os dias concluídos e continue de onde parou. Os próximos dias já ficam transferidos para ouvir offline.
+
+ACOMPANHE O TEXTO
+Leia o texto bíblico no ecrã enquanto o capítulo é narrado.
+
+VERSÍCULO DO DIA
+Ative um lembrete diário opcional com um versículo para começar o dia.
+
+VÁRIOS IDIOMAS
+Português, inglês, espanhol, chinês e japonês. A app adapta-se ao idioma da Bíblia escolhida.
+
+SEM REGISTO OBRIGATÓRIO
+A app funciona por completo sem conta. Se quiser, inicie sessão com o Google para sincronizar o progresso dos planos entre os seus dispositivos.
+
+Simples, leve e focado no que importa: ouvir a Palavra de Deus no seu dia a dia — no carro, na caminhada, no trabalho ou antes de dormir.
+
+
+=====================================================================
+Language: English (United States) — en-US
+=====================================================================
+
+App name:
+Narrated Bible: Offline Audio
+
+Short description:
+Listen to the Bible offline, with the screen locked and from your car controls.
+
+Full description:
+Narrated Bible is an app for listening to the Bible wherever you are — even without internet, with the screen locked, or while driving.
+
+Pick a book and the chapters you want to hear: the first one starts playing right away and the rest download in the background. Once downloaded, the audio stays on your phone so you can listen for hours without using data.
+
+LISTEN OFFLINE
+• Download individual chapters or the whole Bible (about 1.3 GB)
+• Audio is saved on your device — no Wi-Fi needed after downloading
+• The app warns you before downloading over mobile data and checks for free space
+
+MADE FOR UNINTERRUPTED LISTENING
+• Keeps playing with the screen locked
+• Chapters play one after another, without gaps
+• Control playback from the lock screen, headphones, or your car's Bluetooth buttons: play, pause, next, previous
+• Always-visible mini player with 10-second skip forward and back
+
+READING PLANS
+• First Steps in the Bible (7 days)
+• New Testament in 90 Days
+• Christmas in 7 Days
+• Easter in 7 Days
+• Walking Through the Valley of the Shadow of Death (7 days)
+• The Bible in a Year (365 days)
+Start a plan, play each day's reading as a playlist, mark days as complete, and pick up where you left off. Upcoming days are downloaded ahead so you can listen offline.
+
+FOLLOW ALONG WITH THE TEXT
+Read the Bible text on screen while the chapter is narrated.
+
+VERSE OF THE DAY
+Turn on an optional daily reminder with a verse to start your day.
+
+MULTIPLE LANGUAGES
+Portuguese, English, Spanish, Chinese, and Japanese. The app adapts to the language of the Bible you choose.
+
+NO ACCOUNT REQUIRED
+The app works fully without an account. If you like, sign in with Google to sync your plan progress across your devices.
+
+Simple, lightweight, and focused on what matters: hearing God's Word in your everyday life — in the car, on a walk, at work, or before bed.
+
+
+=====================================================================
+Language: English (United Kingdom) — en-GB
+=====================================================================
+
+App name:
+Narrated Bible: Offline Audio
+
+Short description:
+Listen to the Bible offline, with the screen locked and from your car controls.
+
+Full description:
+Narrated Bible is an app for listening to the Bible wherever you are — even without internet, with the screen locked, or while driving.
+
+Pick a book and the chapters you want to hear: the first one starts playing right away and the rest download in the background. Once downloaded, the audio stays on your phone so you can listen for hours without using data.
+
+LISTEN OFFLINE
+• Download individual chapters or the whole Bible (about 1.3 GB)
+• Audio is saved on your device — no Wi-Fi needed after downloading
+• The app warns you before downloading over mobile data and checks for free space
+
+MADE FOR UNINTERRUPTED LISTENING
+• Keeps playing with the screen locked
+• Chapters play one after another, without gaps
+• Control playback from the lock screen, headphones, or your car's Bluetooth buttons: play, pause, next, previous
+• Always-visible mini player with 10-second skip forward and back
+
+READING PLANS
+• First Steps in the Bible (7 days)
+• New Testament in 90 Days
+• Christmas in 7 Days
+• Easter in 7 Days
+• Walking Through the Valley of the Shadow of Death (7 days)
+• The Bible in a Year (365 days)
+Start a plan, play each day's reading as a playlist, mark days as complete, and pick up where you left off. Upcoming days are downloaded ahead so you can listen offline.
+
+FOLLOW ALONG WITH THE TEXT
+Read the Bible text on screen while the chapter is narrated.
+
+VERSE OF THE DAY
+Turn on an optional daily reminder with a verse to start your day.
+
+MULTIPLE LANGUAGES
+Portuguese, English, Spanish, Chinese, and Japanese. The app adapts to the language of the Bible you choose.
+
+NO ACCOUNT REQUIRED
+The app works fully without an account. If you like, sign in with Google to sync your plan progress across your devices.
+
+Simple, lightweight, and focused on what matters: hearing God's Word in your everyday life — in the car, on a walk, at work, or before bed.
+
+
+=====================================================================
+Language: English (Australia) — en-AU
+=====================================================================
+
+App name:
+Narrated Bible: Offline Audio
+
+Short description:
+Listen to the Bible offline, with the screen locked and from your car controls.
+
+Full description:
+Narrated Bible is an app for listening to the Bible wherever you are — even without internet, with the screen locked, or while driving.
+
+Pick a book and the chapters you want to hear: the first one starts playing right away and the rest download in the background. Once downloaded, the audio stays on your phone so you can listen for hours without using data.
+
+LISTEN OFFLINE
+• Download individual chapters or the whole Bible (about 1.3 GB)
+• Audio is saved on your device — no Wi-Fi needed after downloading
+• The app warns you before downloading over mobile data and checks for free space
+
+MADE FOR UNINTERRUPTED LISTENING
+• Keeps playing with the screen locked
+• Chapters play one after another, without gaps
+• Control playback from the lock screen, headphones, or your car's Bluetooth buttons: play, pause, next, previous
+• Always-visible mini player with 10-second skip forward and back
+
+READING PLANS
+• First Steps in the Bible (7 days)
+• New Testament in 90 Days
+• Christmas in 7 Days
+• Easter in 7 Days
+• Walking Through the Valley of the Shadow of Death (7 days)
+• The Bible in a Year (365 days)
+Start a plan, play each day's reading as a playlist, mark days as complete, and pick up where you left off. Upcoming days are downloaded ahead so you can listen offline.
+
+FOLLOW ALONG WITH THE TEXT
+Read the Bible text on screen while the chapter is narrated.
+
+VERSE OF THE DAY
+Turn on an optional daily reminder with a verse to start your day.
+
+MULTIPLE LANGUAGES
+Portuguese, English, Spanish, Chinese, and Japanese. The app adapts to the language of the Bible you choose.
+
+NO ACCOUNT REQUIRED
+The app works fully without an account. If you like, sign in with Google to sync your plan progress across your devices.
+
+Simple, lightweight, and focused on what matters: hearing God's Word in your everyday life — in the car, on a walk, at work, or before bed.
+
+
+=====================================================================
+Language: English (Canada) — en-CA
+=====================================================================
+
+App name:
+Narrated Bible: Offline Audio
+
+Short description:
+Listen to the Bible offline, with the screen locked and from your car controls.
+
+Full description:
+Narrated Bible is an app for listening to the Bible wherever you are — even without internet, with the screen locked, or while driving.
+
+Pick a book and the chapters you want to hear: the first one starts playing right away and the rest download in the background. Once downloaded, the audio stays on your phone so you can listen for hours without using data.
+
+LISTEN OFFLINE
+• Download individual chapters or the whole Bible (about 1.3 GB)
+• Audio is saved on your device — no Wi-Fi needed after downloading
+• The app warns you before downloading over mobile data and checks for free space
+
+MADE FOR UNINTERRUPTED LISTENING
+• Keeps playing with the screen locked
+• Chapters play one after another, without gaps
+• Control playback from the lock screen, headphones, or your car's Bluetooth buttons: play, pause, next, previous
+• Always-visible mini player with 10-second skip forward and back
+
+READING PLANS
+• First Steps in the Bible (7 days)
+• New Testament in 90 Days
+• Christmas in 7 Days
+• Easter in 7 Days
+• Walking Through the Valley of the Shadow of Death (7 days)
+• The Bible in a Year (365 days)
+Start a plan, play each day's reading as a playlist, mark days as complete, and pick up where you left off. Upcoming days are downloaded ahead so you can listen offline.
+
+FOLLOW ALONG WITH THE TEXT
+Read the Bible text on screen while the chapter is narrated.
+
+VERSE OF THE DAY
+Turn on an optional daily reminder with a verse to start your day.
+
+MULTIPLE LANGUAGES
+Portuguese, English, Spanish, Chinese, and Japanese. The app adapts to the language of the Bible you choose.
+
+NO ACCOUNT REQUIRED
+The app works fully without an account. If you like, sign in with Google to sync your plan progress across your devices.
+
+Simple, lightweight, and focused on what matters: hearing God's Word in your everyday life — in the car, on a walk, at work, or before bed.
+
+
+=====================================================================
+Language: English (India) — en-IN
+=====================================================================
+
+App name:
+Narrated Bible: Offline Audio
+
+Short description:
+Listen to the Bible offline, with the screen locked and from your car controls.
+
+Full description:
+Narrated Bible is an app for listening to the Bible wherever you are — even without internet, with the screen locked, or while driving.
+
+Pick a book and the chapters you want to hear: the first one starts playing right away and the rest download in the background. Once downloaded, the audio stays on your phone so you can listen for hours without using data.
+
+LISTEN OFFLINE
+• Download individual chapters or the whole Bible (about 1.3 GB)
+• Audio is saved on your device — no Wi-Fi needed after downloading
+• The app warns you before downloading over mobile data and checks for free space
+
+MADE FOR UNINTERRUPTED LISTENING
+• Keeps playing with the screen locked
+• Chapters play one after another, without gaps
+• Control playback from the lock screen, headphones, or your car's Bluetooth buttons: play, pause, next, previous
+• Always-visible mini player with 10-second skip forward and back
+
+READING PLANS
+• First Steps in the Bible (7 days)
+• New Testament in 90 Days
+• Christmas in 7 Days
+• Easter in 7 Days
+• Walking Through the Valley of the Shadow of Death (7 days)
+• The Bible in a Year (365 days)
+Start a plan, play each day's reading as a playlist, mark days as complete, and pick up where you left off. Upcoming days are downloaded ahead so you can listen offline.
+
+FOLLOW ALONG WITH THE TEXT
+Read the Bible text on screen while the chapter is narrated.
+
+VERSE OF THE DAY
+Turn on an optional daily reminder with a verse to start your day.
+
+MULTIPLE LANGUAGES
+Portuguese, English, Spanish, Chinese, and Japanese. The app adapts to the language of the Bible you choose.
+
+NO ACCOUNT REQUIRED
+The app works fully without an account. If you like, sign in with Google to sync your plan progress across your devices.
+
+Simple, lightweight, and focused on what matters: hearing God's Word in your everyday life — in the car, on a walk, at work, or before bed.
+
+
+=====================================================================
+Language: English (Singapore) — en-SG
+=====================================================================
+
+App name:
+Narrated Bible: Offline Audio
+
+Short description:
+Listen to the Bible offline, with the screen locked and from your car controls.
+
+Full description:
+Narrated Bible is an app for listening to the Bible wherever you are — even without internet, with the screen locked, or while driving.
+
+Pick a book and the chapters you want to hear: the first one starts playing right away and the rest download in the background. Once downloaded, the audio stays on your phone so you can listen for hours without using data.
+
+LISTEN OFFLINE
+• Download individual chapters or the whole Bible (about 1.3 GB)
+• Audio is saved on your device — no Wi-Fi needed after downloading
+• The app warns you before downloading over mobile data and checks for free space
+
+MADE FOR UNINTERRUPTED LISTENING
+• Keeps playing with the screen locked
+• Chapters play one after another, without gaps
+• Control playback from the lock screen, headphones, or your car's Bluetooth buttons: play, pause, next, previous
+• Always-visible mini player with 10-second skip forward and back
+
+READING PLANS
+• First Steps in the Bible (7 days)
+• New Testament in 90 Days
+• Christmas in 7 Days
+• Easter in 7 Days
+• Walking Through the Valley of the Shadow of Death (7 days)
+• The Bible in a Year (365 days)
+Start a plan, play each day's reading as a playlist, mark days as complete, and pick up where you left off. Upcoming days are downloaded ahead so you can listen offline.
+
+FOLLOW ALONG WITH THE TEXT
+Read the Bible text on screen while the chapter is narrated.
+
+VERSE OF THE DAY
+Turn on an optional daily reminder with a verse to start your day.
+
+MULTIPLE LANGUAGES
+Portuguese, English, Spanish, Chinese, and Japanese. The app adapts to the language of the Bible you choose.
+
+NO ACCOUNT REQUIRED
+The app works fully without an account. If you like, sign in with Google to sync your plan progress across your devices.
+
+Simple, lightweight, and focused on what matters: hearing God's Word in your everyday life — in the car, on a walk, at work, or before bed.
+
+
+=====================================================================
+Language: English (South Africa) — en-ZA
+=====================================================================
+
+App name:
+Narrated Bible: Offline Audio
+
+Short description:
+Listen to the Bible offline, with the screen locked and from your car controls.
+
+Full description:
+Narrated Bible is an app for listening to the Bible wherever you are — even without internet, with the screen locked, or while driving.
+
+Pick a book and the chapters you want to hear: the first one starts playing right away and the rest download in the background. Once downloaded, the audio stays on your phone so you can listen for hours without using data.
+
+LISTEN OFFLINE
+• Download individual chapters or the whole Bible (about 1.3 GB)
+• Audio is saved on your device — no Wi-Fi needed after downloading
+• The app warns you before downloading over mobile data and checks for free space
+
+MADE FOR UNINTERRUPTED LISTENING
+• Keeps playing with the screen locked
+• Chapters play one after another, without gaps
+• Control playback from the lock screen, headphones, or your car's Bluetooth buttons: play, pause, next, previous
+• Always-visible mini player with 10-second skip forward and back
+
+READING PLANS
+• First Steps in the Bible (7 days)
+• New Testament in 90 Days
+• Christmas in 7 Days
+• Easter in 7 Days
+• Walking Through the Valley of the Shadow of Death (7 days)
+• The Bible in a Year (365 days)
+Start a plan, play each day's reading as a playlist, mark days as complete, and pick up where you left off. Upcoming days are downloaded ahead so you can listen offline.
+
+FOLLOW ALONG WITH THE TEXT
+Read the Bible text on screen while the chapter is narrated.
+
+VERSE OF THE DAY
+Turn on an optional daily reminder with a verse to start your day.
+
+MULTIPLE LANGUAGES
+Portuguese, English, Spanish, Chinese, and Japanese. The app adapts to the language of the Bible you choose.
+
+NO ACCOUNT REQUIRED
+The app works fully without an account. If you like, sign in with Google to sync your plan progress across your devices.
+
+Simple, lightweight, and focused on what matters: hearing God's Word in your everyday life — in the car, on a walk, at work, or before bed.
+
+
+=====================================================================
+Language: Spanish (Latin America) — es-419
+=====================================================================
+
+App name:
+Biblia Narrada: Audio Offline
+
+Short description:
+Escucha la Biblia sin internet, con la pantalla bloqueada y desde tu auto.
+
+Full description:
+Biblia Narrada es una app para escuchar la Biblia en audio donde estés — incluso sin internet, con la pantalla bloqueada o mientras manejas.
+
+Elige un libro y los capítulos que quieres escuchar: el primero empieza a sonar al instante y los siguientes se descargan en segundo plano. Una vez descargados, los audios quedan en tu teléfono y puedes escuchar durante horas sin gastar datos.
+
+ESCUCHA SIN CONEXIÓN
+• Descarga capítulos sueltos o la Biblia completa (unos 1,3 GB)
+• Los audios se guardan en tu dispositivo — no necesitas Wi-Fi después de descargar
+• La app te avisa antes de descargar con datos móviles y verifica que haya espacio libre
+
+HECHA PARA ESCUCHAR SIN INTERRUPCIONES
+• Sigue sonando con la pantalla bloqueada
+• Los capítulos se reproducen uno tras otro, sin pausas
+• Controla la reproducción desde la pantalla de bloqueo, los auriculares o los botones del auto por Bluetooth: reproducir, pausar, siguiente, anterior
+• Mini reproductor siempre visible, con avance y retroceso de 10 segundos
+
+PLANES DE LECTURA
+• Primeros Pasos en la Biblia (7 días)
+• Nuevo Testamento en 90 Días
+• Navidad en 7 Días
+• Pascua en 7 Días
+• Caminando por el Valle de Sombra de Muerte (7 días)
+• La Biblia en un año (365 días)
+Comienza un plan, escucha la lectura del día como una lista de reproducción, marca los días completados y continúa donde lo dejaste. Los próximos días se descargan con anticipación para que los escuches sin conexión.
+
+SIGUE EL TEXTO
+Lee el texto bíblico en pantalla mientras se narra el capítulo.
+
+VERSÍCULO DEL DÍA
+Activa un recordatorio diario opcional con un versículo para empezar el día.
+
+VARIOS IDIOMAS
+Portugués, inglés, español, chino y japonés. La app se adapta al idioma de la Biblia que elijas.
+
+SIN REGISTRO OBLIGATORIO
+La app funciona por completo sin cuenta. Si quieres, inicia sesión con Google para sincronizar el progreso de tus planes entre tus dispositivos.
+
+Simple, ligera y enfocada en lo que importa: escuchar la Palabra de Dios en tu día a día — en el auto, caminando, en el trabajo o antes de dormir.
+
+
+=====================================================================
+Language: Spanish (Spain) — es-ES
+=====================================================================
+
+App name:
+Biblia Narrada: Audio Offline
+
+Short description:
+Escucha la Biblia sin internet, con la pantalla bloqueada y desde tu coche.
+
+Full description:
+Biblia Narrada es una app para escuchar la Biblia en audio donde estés — incluso sin internet, con la pantalla bloqueada o mientras conduces.
+
+Elige un libro y los capítulos que quieres escuchar: el primero empieza a sonar al instante y los siguientes se descargan en segundo plano. Una vez descargados, los audios quedan en tu móvil y puedes escuchar durante horas sin gastar datos.
+
+ESCUCHA SIN CONEXIÓN
+• Descarga capítulos sueltos o la Biblia completa (unos 1,3 GB)
+• Los audios se guardan en tu dispositivo — no necesitas Wi-Fi después de descargar
+• La app te avisa antes de descargar con datos móviles y verifica que haya espacio libre
+
+HECHA PARA ESCUCHAR SIN INTERRUPCIONES
+• Sigue sonando con la pantalla bloqueada
+• Los capítulos se reproducen uno tras otro, sin pausas
+• Controla la reproducción desde la pantalla de bloqueo, los auriculares o los botones del coche por Bluetooth: reproducir, pausar, siguiente, anterior
+• Mini reproductor siempre visible, con avance y retroceso de 10 segundos
+
+PLANES DE LECTURA
+• Primeros Pasos en la Biblia (7 días)
+• Nuevo Testamento en 90 Días
+• Navidad en 7 Días
+• Pascua en 7 Días
+• Caminando por el Valle de Sombra de Muerte (7 días)
+• La Biblia en un año (365 días)
+Comienza un plan, escucha la lectura del día como una lista de reproducción, marca los días completados y continúa donde lo dejaste. Los próximos días se descargan con anticipación para que los escuches sin conexión.
+
+SIGUE EL TEXTO
+Lee el texto bíblico en pantalla mientras se narra el capítulo.
+
+VERSÍCULO DEL DÍA
+Activa un recordatorio diario opcional con un versículo para empezar el día.
+
+VARIOS IDIOMAS
+Portugués, inglés, español, chino y japonés. La app se adapta al idioma de la Biblia que elijas.
+
+SIN REGISTRO OBLIGATORIO
+La app funciona por completo sin cuenta. Si quieres, inicia sesión con Google para sincronizar el progreso de tus planes entre tus dispositivos.
+
+Simple, ligera y enfocada en lo que importa: escuchar la Palabra de Dios en tu día a día — en el coche, caminando, en el trabajo o antes de dormir.
+
+
+=====================================================================
+Language: Spanish (United States) — es-US
+=====================================================================
+
+App name:
+Biblia Narrada: Audio Offline
+
+Short description:
+Escucha la Biblia sin internet, con la pantalla bloqueada y desde tu auto.
+
+Full description:
+Biblia Narrada es una app para escuchar la Biblia en audio donde estés — incluso sin internet, con la pantalla bloqueada o mientras manejas.
+
+Elige un libro y los capítulos que quieres escuchar: el primero empieza a sonar al instante y los siguientes se descargan en segundo plano. Una vez descargados, los audios quedan en tu teléfono y puedes escuchar durante horas sin gastar datos.
+
+ESCUCHA SIN CONEXIÓN
+• Descarga capítulos sueltos o la Biblia completa (unos 1,3 GB)
+• Los audios se guardan en tu dispositivo — no necesitas Wi-Fi después de descargar
+• La app te avisa antes de descargar con datos móviles y verifica que haya espacio libre
+
+HECHA PARA ESCUCHAR SIN INTERRUPCIONES
+• Sigue sonando con la pantalla bloqueada
+• Los capítulos se reproducen uno tras otro, sin pausas
+• Controla la reproducción desde la pantalla de bloqueo, los auriculares o los botones del auto por Bluetooth: reproducir, pausar, siguiente, anterior
+• Mini reproductor siempre visible, con avance y retroceso de 10 segundos
+
+PLANES DE LECTURA
+• Primeros Pasos en la Biblia (7 días)
+• Nuevo Testamento en 90 Días
+• Navidad en 7 Días
+• Pascua en 7 Días
+• Caminando por el Valle de Sombra de Muerte (7 días)
+• La Biblia en un año (365 días)
+Comienza un plan, escucha la lectura del día como una lista de reproducción, marca los días completados y continúa donde lo dejaste. Los próximos días se descargan con anticipación para que los escuches sin conexión.
+
+SIGUE EL TEXTO
+Lee el texto bíblico en pantalla mientras se narra el capítulo.
+
+VERSÍCULO DEL DÍA
+Activa un recordatorio diario opcional con un versículo para empezar el día.
+
+VARIOS IDIOMAS
+Portugués, inglés, español, chino y japonés. La app se adapta al idioma de la Biblia que elijas.
+
+SIN REGISTRO OBLIGATORIO
+La app funciona por completo sin cuenta. Si quieres, inicia sesión con Google para sincronizar el progreso de tus planes entre tus dispositivos.
+
+Simple, ligera y enfocada en lo que importa: escuchar la Palabra de Dios en tu día a día — en el auto, caminando, en el trabajo o antes de dormir.
+
+
+=====================================================================
+Language: Chinese (Simplified) — zh-CN
+=====================================================================
+
+App name:
+有声圣经：离线收听
+
+Short description:
+离线收听圣经音频，锁屏也能播放，并支持车载按键控制。
+
+Full description:
+有声圣经是一款随时随地收听圣经音频的应用——即使没有网络、锁屏或正在开车也可以。
+
+选择书卷和想听的章节：第一章立即开始播放，其余章节在后台下载。下载完成后，音频保存在手机上，你可以连续收听数小时而不消耗流量。
+
+离线收听
+• 下载单独章节或整本圣经（约 1.3 GB）
+• 音频保存在设备上——下载后无需 Wi-Fi
+• 使用移动数据下载前会提醒你，并检查可用空间
+
+专为不间断收听设计
+• 锁屏后继续播放
+• 章节连续播放，无停顿
+• 可通过锁屏界面、耳机或车载蓝牙按键控制：播放、暂停、下一章、上一章
+• 迷你播放器始终可见，支持前进和后退 10 秒
+
+读经计划
+• 圣经入门（7 天）
+• 90 天读完新约
+• 7 天圣诞读经
+• 7 天复活节读经
+• 行过死荫的幽谷（7 天）
+• 一年读完圣经（365 天）
+开始一个计划，把每天的经文当作播放列表收听，标记已完成的天数，并从上次停下的地方继续。接下来几天的音频会提前下载，方便离线收听。
+
+同步阅读经文
+章节朗读时，可在屏幕上阅读圣经经文。
+
+每日经文
+可开启每日提醒，用一节经文开始新的一天。
+
+多种语言
+支持葡萄牙语、英语、西班牙语、中文和日语。应用界面会随所选圣经的语言而改变。
+
+无需注册
+无需账号即可使用全部功能。如果愿意，也可以使用 Google 登录，在多台设备间同步读经计划进度。
+
+简单、轻巧，专注于最重要的事：在日常生活中聆听神的话语——开车、散步、工作时或睡前。
+
+
+=====================================================================
+Language: Japanese — ja-JP
+=====================================================================
+
+App name:
+朗読聖書：オフライン音声
+
+Short description:
+聖書の朗読をオフラインで。画面ロック中も再生でき、車のボタンでも操作できます。
+
+Full description:
+朗読聖書は、どこにいても聖書の朗読を聴けるアプリです。インターネットがなくても、画面がロックされていても、運転中でも聴くことができます。
+
+聴きたい書と章を選ぶと、最初の章がすぐに再生され、残りはバックグラウンドでダウンロードされます。ダウンロードした音声は端末に保存されるので、データ通信を使わずに何時間でも聴き続けられます。
+
+オフラインで聴く
+• 章ごと、または聖書全体（約 1.3 GB）をダウンロード
+• 音声は端末に保存 — ダウンロード後は Wi-Fi 不要
+• モバイルデータでのダウンロード前にお知らせし、空き容量も確認します
+
+途切れずに聴くための設計
+• 画面ロック中も再生を継続
+• 章が途切れることなく続けて再生
+• ロック画面、ヘッドホン、車の Bluetooth ボタンから操作：再生、一時停止、次へ、前へ
+• 常に表示されるミニプレーヤーで 10 秒の早送り・巻き戻し
+
+聖書通読プラン
+• はじめての聖書（7 日間）
+• 90 日で新約聖書
+• 7 日間のクリスマス
+• 7 日間のイースター
+• 死の陰の谷を歩むとき（7 日間）
+• 1 年で聖書通読（365 日間）
+プランを始めると、その日の朗読をプレイリストとして聴き、完了した日に印をつけ、中断したところから再開できます。次の数日分は事前にダウンロードされるので、オフラインでも聴けます。
+
+本文を見ながら聴く
+朗読中の章の聖書本文を画面で読むことができます。
+
+今日のみことば
+毎日の通知をオンにすると、一日のはじまりにみことばが届きます（任意）。
+
+多言語対応
+ポルトガル語、英語、スペイン語、中国語、日本語に対応。選んだ聖書の言語にあわせてアプリの表示も切り替わります。
+
+登録不要
+アカウントなしですべての機能を使えます。必要に応じて Google でログインすると、複数の端末で通読プランの進み具合を同期できます。
+
+シンプルで軽く、大切なことに集中：車の中で、散歩中に、仕事中に、寝る前に — 毎日の生活の中で神のみことばを聴きましょう。

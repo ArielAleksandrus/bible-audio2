@@ -8,11 +8,11 @@
   </div>
 
   <div class="iab-card">
-    <button mat-icon-button class="iab-close" (click)="dismiss()" [attr.aria-label]="texts.dismiss">
-      <mat-icon>close</mat-icon>
+    <button type="button" class="iab-close" (click)="dismiss()" [attr.aria-label]="texts.dismiss">
+      <ion-icon name="close"></ion-icon>
     </button>
 
-    <mat-icon class="iab-icon">open_in_browser</mat-icon>
+    <ion-icon class="iab-icon" name="open-outline"></ion-icon>
 
     <div class="iab-text">
       <strong>{{ texts.title }}</strong>

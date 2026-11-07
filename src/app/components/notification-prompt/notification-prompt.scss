@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 12px 12px 16px;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 12px 16px;
   background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
   color: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -16,6 +16,7 @@
 
 .banner-icon {
   flex-shrink: 0;
+  font-size: 24px;
 }
 
 .banner-text {
@@ -42,7 +43,7 @@
 }
 
 .close-button {
-  color: white;
+  --color: white;
 }
 
 @media (max-width: 480px) {

@@ -33,7 +33,7 @@
     "verse": 7,
     "ref": "Psalms 19:7",
     "theme": "scripture",
-    "text": "The heavens declare the glory of God; the skies proclaim the work of his hands."
+    "text": "The law of the Lord is perfect, refreshing the soul. The statutes of the Lord are trustworthy, making wise the simple."
   },
   {
     "book": 18,
@@ -147,8 +147,8 @@
     "book": 59,
     "abbrev": "1PE",
     "chapter": 1,
-    "verse": 25,
-    "ref": "1 Peter 1:25",
+    "verse": 23,
+    "ref": "1 Peter 1:23",
     "theme": "scripture",
     "text": "For you have been born again, not of perishable seed, but of imperishable, through the living and enduring word of God."
   },
@@ -400,7 +400,7 @@
     "abbrev": "ROM",
     "chapter": 8,
     "verse": 38,
-    "ref": "Romans 8:38",
+    "ref": "Romans 8:38–39",
     "theme": "love",
     "text": "For I am convinced that neither death nor life, neither angels nor demons, neither the present nor the future, nor any powers, neither height nor depth, nor anything else in all creation, will be able to separate us from the love of God that is in Christ Jesus our Lord."
   },
@@ -448,5 +448,455 @@
     "ref": "1 John 4:19",
     "theme": "love",
     "text": "We love because he first loved us."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 89,
+    "ref": "Psalms 119:89",
+    "theme": "scripture",
+    "text": "Your word, Lord, is eternal; it stands firm in the heavens."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 18,
+    "ref": "Psalms 119:18",
+    "theme": "scripture",
+    "text": "Open my eyes that I may see wonderful things in your law."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 103,
+    "ref": "Psalms 119:103",
+    "theme": "scripture",
+    "text": "How sweet are your words to my taste, sweeter than honey to my mouth!"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 130,
+    "ref": "Psalms 119:130",
+    "theme": "scripture",
+    "text": "The unfolding of your words gives light; it gives understanding to the simple."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 119,
+    "verse": 165,
+    "ref": "Psalms 119:165",
+    "theme": "scripture",
+    "text": "Great peace have those who love your law, and nothing can make them stumble."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 18,
+    "verse": 30,
+    "ref": "Psalms 18:30",
+    "theme": "scripture",
+    "text": "As for God, his way is perfect: The Lord’s word is flawless; he shields all who take refuge in him."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 33,
+    "verse": 4,
+    "ref": "Psalms 33:4",
+    "theme": "scripture",
+    "text": "For the word of the Lord is right and true; he is faithful in all he does."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 12,
+    "verse": 6,
+    "ref": "Psalms 12:6",
+    "theme": "scripture",
+    "text": "And the words of the Lord are flawless, like silver purified in a crucible, like gold refined seven times."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 40,
+    "verse": 8,
+    "ref": "Isaiah 40:8",
+    "theme": "scripture",
+    "text": "The grass withers and the flowers fall, but the word of our God endures forever."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 24,
+    "verse": 35,
+    "ref": "Matthew 24:35",
+    "theme": "scripture",
+    "text": "Heaven and earth will pass away, but my words will never pass away."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 1,
+    "verse": 1,
+    "ref": "John 1:1",
+    "theme": "scripture",
+    "text": "In the beginning was the Word, and the Word was with God, and the Word was God."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 6,
+    "verse": 68,
+    "ref": "John 6:68",
+    "theme": "scripture",
+    "text": "Simon Peter answered him, “Lord, to whom shall we go? You have the words of eternal life.”"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 17,
+    "verse": 17,
+    "ref": "John 17:17",
+    "theme": "scripture",
+    "text": "Sanctify them by the truth; your word is truth."
+  },
+  {
+    "book": 50,
+    "abbrev": "COL",
+    "chapter": 3,
+    "verse": 16,
+    "ref": "Colossians 3:16",
+    "theme": "scripture",
+    "text": "Let the message of Christ dwell among you richly as you teach and admonish one another with all wisdom through psalms, hymns, and songs from the Spirit, singing to God with gratitude in your hearts."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 23,
+    "verse": 1,
+    "ref": "Psalms 23:1",
+    "theme": "connection",
+    "text": "The Lord is my shepherd, I lack nothing."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 27,
+    "verse": 1,
+    "ref": "Psalms 27:1",
+    "theme": "connection",
+    "text": "The Lord is my light and my salvation—whom shall I fear? The Lord is the stronghold of my life—of whom shall I be afraid?"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 34,
+    "verse": 8,
+    "ref": "Psalms 34:8",
+    "theme": "connection",
+    "text": "Taste and see that the Lord is good; blessed is the one who takes refuge in him."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 34,
+    "verse": 18,
+    "ref": "Psalms 34:18",
+    "theme": "connection",
+    "text": "The Lord is close to the brokenhearted and saves those who are crushed in spirit."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 42,
+    "verse": 1,
+    "ref": "Psalms 42:1",
+    "theme": "connection",
+    "text": "As the deer pants for streams of water, so my soul pants for you, my God."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 91,
+    "verse": 1,
+    "ref": "Psalms 91:1–2",
+    "theme": "connection",
+    "text": "Whoever dwells in the shelter of the Most High will rest in the shadow of the Almighty. I will say of the Lord, “He is my refuge and my fortress, my God, in whom I trust.”"
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 121,
+    "verse": 2,
+    "ref": "Psalms 121:2",
+    "theme": "connection",
+    "text": "My help comes from the Lord, the Maker of heaven and earth."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 145,
+    "verse": 18,
+    "ref": "Psalms 145:18",
+    "theme": "connection",
+    "text": "The Lord is near to all who call on him, to all who call on him in truth."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 37,
+    "verse": 4,
+    "ref": "Psalms 37:4",
+    "theme": "connection",
+    "text": "Take delight in the Lord, and he will give you the desires of your heart."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 73,
+    "verse": 26,
+    "ref": "Psalms 73:26",
+    "theme": "connection",
+    "text": "My flesh and my heart may fail, but God is the strength of my heart and my portion forever."
+  },
+  {
+    "book": 19,
+    "abbrev": "PRO",
+    "chapter": 16,
+    "verse": 3,
+    "ref": "Proverbs 16:3",
+    "theme": "connection",
+    "text": "Commit to the Lord whatever you do, and he will establish your plans."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 26,
+    "verse": 3,
+    "ref": "Isaiah 26:3",
+    "theme": "connection",
+    "text": "You will keep in perfect peace those whose minds are steadfast, because they trust in you."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 40,
+    "verse": 31,
+    "ref": "Isaiah 40:31",
+    "theme": "connection",
+    "text": "But those who hope in the Lord will renew their strength. They will soar on wings like eagles; they will run and not grow weary, they will walk and not be faint."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 33,
+    "verse": 3,
+    "ref": "Jeremiah 33:3",
+    "theme": "connection",
+    "text": "Call to me and I will answer you and tell you great and unsearchable things you do not know."
+  },
+  {
+    "book": 39,
+    "abbrev": "MAT",
+    "chapter": 22,
+    "verse": 37,
+    "ref": "Matthew 22:37",
+    "theme": "connection",
+    "text": "Jesus replied: “‘Love the Lord your God with all your heart and with all your soul and with all your mind.’”"
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 14,
+    "verse": 27,
+    "ref": "John 14:27",
+    "theme": "connection",
+    "text": "Peace I leave with you; my peace I give you. I do not give to you as the world gives. Do not let your hearts be troubled and do not be afraid."
+  },
+  {
+    "book": 59,
+    "abbrev": "1PE",
+    "chapter": 5,
+    "verse": 7,
+    "ref": "1 Peter 5:7",
+    "theme": "connection",
+    "text": "Cast all your anxiety on him because he cares for you."
+  },
+  {
+    "book": 4,
+    "abbrev": "DEU",
+    "chapter": 31,
+    "verse": 8,
+    "ref": "Deuteronomy 31:8",
+    "theme": "connection",
+    "text": "The Lord himself goes before you and will be with you; he will never leave you nor forsake you. Do not be afraid; do not be discouraged."
+  },
+  {
+    "book": 24,
+    "abbrev": "LAM",
+    "chapter": 3,
+    "verse": 22,
+    "ref": "Lamentations 3:22–23",
+    "theme": "love",
+    "text": "Because of the Lord’s great love we are not consumed, for his compassions never fail. They are new every morning; great is your faithfulness."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 103,
+    "verse": 13,
+    "ref": "Psalms 103:13",
+    "theme": "love",
+    "text": "As a father has compassion on his children, so the Lord has compassion on those who fear him."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 10,
+    "ref": "1 John 4:10",
+    "theme": "love",
+    "text": "This is love: not that we loved God, but that he loved us and sent his Son as an atoning sacrifice for our sins."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 4,
+    "verse": 16,
+    "ref": "1 John 4:16",
+    "theme": "love",
+    "text": "And so we know and rely on the love God has for us. God is love. Whoever lives in love lives in God, and God in them."
+  },
+  {
+    "book": 45,
+    "abbrev": "1CO",
+    "chapter": 13,
+    "verse": 4,
+    "ref": "1 Corinthians 13:4",
+    "theme": "love",
+    "text": "Love is patient, love is kind. It does not envy, it does not boast, it is not proud."
+  },
+  {
+    "book": 45,
+    "abbrev": "1CO",
+    "chapter": 13,
+    "verse": 13,
+    "ref": "1 Corinthians 13:13",
+    "theme": "love",
+    "text": "And now these three remain: faith, hope and love. But the greatest of these is love."
+  },
+  {
+    "book": 23,
+    "abbrev": "JER",
+    "chapter": 31,
+    "verse": 3,
+    "ref": "Jeremiah 31:3",
+    "theme": "love",
+    "text": "The Lord appeared to us in the past, saying: “I have loved you with an everlasting love; I have drawn you with unfailing kindness.”"
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 54,
+    "verse": 10,
+    "ref": "Isaiah 54:10",
+    "theme": "love",
+    "text": "Though the mountains be shaken and the hills be removed, yet my unfailing love for you will not be shaken nor my covenant of peace be removed, says the Lord, who has compassion on you."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 86,
+    "verse": 15,
+    "ref": "Psalms 86:15",
+    "theme": "love",
+    "text": "But you, Lord, are a compassionate and gracious God, slow to anger, abounding in love and faithfulness."
+  },
+  {
+    "book": 48,
+    "abbrev": "EPH",
+    "chapter": 2,
+    "verse": 8,
+    "ref": "Ephesians 2:8–9",
+    "theme": "love",
+    "text": "For it is by grace you have been saved, through faith—and this is not from yourselves, it is the gift of God—not by works, so that no one can boast."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 6,
+    "verse": 23,
+    "ref": "Romans 6:23",
+    "theme": "love",
+    "text": "For the wages of sin is death, but the gift of God is eternal life in Christ Jesus our Lord."
+  },
+  {
+    "book": 61,
+    "abbrev": "1JN",
+    "chapter": 1,
+    "verse": 9,
+    "ref": "1 John 1:9",
+    "theme": "love",
+    "text": "If we confess our sins, he is faithful and just and will forgive us our sins and purify us from all unrighteousness."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 13,
+    "verse": 34,
+    "ref": "John 13:34",
+    "theme": "love",
+    "text": "A new command I give you: Love one another. As I have loved you, so you must love one another."
+  },
+  {
+    "book": 22,
+    "abbrev": "ISA",
+    "chapter": 49,
+    "verse": 15,
+    "ref": "Isaiah 49:15",
+    "theme": "love",
+    "text": "Can a mother forget the baby at her breast and have no compassion on the child she has borne? Though she may forget, I will not forget you!"
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 8,
+    "verse": 28,
+    "ref": "Romans 8:28",
+    "theme": "love",
+    "text": "And we know that in all things God works for the good of those who love him, who have been called according to his purpose."
+  },
+  {
+    "book": 44,
+    "abbrev": "ROM",
+    "chapter": 15,
+    "verse": 13,
+    "ref": "Romans 15:13",
+    "theme": "love",
+    "text": "May the God of hope fill you with all joy and peace as you trust in him, so that you may overflow with hope by the power of the Holy Spirit."
+  },
+  {
+    "book": 18,
+    "abbrev": "PSA",
+    "chapter": 139,
+    "verse": 14,
+    "ref": "Psalms 139:14",
+    "theme": "love",
+    "text": "I praise you because I am fearfully and wonderfully made; your works are wonderful, I know that full well."
+  },
+  {
+    "book": 42,
+    "abbrev": "JHN",
+    "chapter": 10,
+    "verse": 10,
+    "ref": "John 10:10",
+    "theme": "love",
+    "text": "The thief comes only to steal and kill and destroy; I have come that they may have life, and have it to the full."
   }
 ]

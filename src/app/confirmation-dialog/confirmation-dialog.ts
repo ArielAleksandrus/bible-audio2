@@ -1,24 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import { IonButton, IonIcon, ModalController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 
+/**
+ * "Hold OK for 5 seconds" confirmation for destructive actions (delete plan,
+ * clear downloads). Dismisses with `true` only when the hold completes.
+ */
 @Component({
   selector: 'app-confirmation-dialog',
   templateUrl: './confirmation-dialog.html',
   styleUrl: './confirmation-dialog.scss',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    TranslateModule,
-    MatDialogModule
-  ]
+  imports: [IonButton, IonIcon]
 })
 export class ConfirmationDialog implements OnInit, OnDestroy {
   // Defaults (Portuguese, matching the app's default language) so the dialog
@@ -30,11 +22,11 @@ export class ConfirmationDialog implements OnInit, OnDestroy {
   private interval: any = null;
   private readonly duration = 5000; // 5 segundos
   private isHolding = false;
+  readonly circumference = 2 * Math.PI * 36;
 
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmationDialog>,
-    private translate: TranslateService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.setLanguageFromLocalStorage();
@@ -42,11 +34,11 @@ export class ConfirmationDialog implements OnInit, OnDestroy {
     // translation file fails to load) — only override once we actually have
     // a real value, and don't let an error clear the fallback text.
     this.translate.get('dialog.hold_confirm.title').subscribe({
-      next: res => { if (res) this.title = res; },
+      next: res => { if (res) { this.title = res; this.cdr.markForCheck(); } },
       error: err => console.warn('Failed to load dialog title translation:', err),
     });
     this.translate.get('dialog.hold_confirm.message').subscribe({
-      next: res => { if (res) this.message = res; },
+      next: res => { if (res) { this.message = res; this.cdr.markForCheck(); } },
       error: err => console.warn('Failed to load dialog message translation:', err),
     });
   }
@@ -71,7 +63,7 @@ export class ConfirmationDialog implements OnInit, OnDestroy {
   }
 
   onCancel(): void {
-    this.dialogRef.close(false);
+    void this.modalCtrl.dismiss(false);
   }
 
   // Mouse events
@@ -111,6 +103,8 @@ export class ConfirmationDialog implements OnInit, OnDestroy {
       elapsed += 50;
       this.progress = (elapsed / this.duration) * 100;
 
+      this.cdr.markForCheck();
+
       if (elapsed >= this.duration) {
         this.completeHold();
       }
@@ -125,7 +119,7 @@ export class ConfirmationDialog implements OnInit, OnDestroy {
 
     if (this.progress < 100) {
       this.progress = 0;
-      this.dialogRef.close(false);
+      void this.modalCtrl.dismiss(false);
     }
   }
 
@@ -133,7 +127,7 @@ export class ConfirmationDialog implements OnInit, OnDestroy {
     this.isHolding = false;
     this.clearHold();
     this.progress = 100;
-    this.dialogRef.close(true);
+    void this.modalCtrl.dismiss(true);
   }
 
   private clearHold(): void {

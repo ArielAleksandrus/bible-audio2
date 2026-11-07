@@ -1,4 +1,4 @@
-import { AudioService } from './audio.service';
+import { WebAudioEngine } from './web-audio-engine';
 import { AudioDownloaderService } from './audio-downloader.service';
 import { AnalyticsService } from './analytics.service';
 import { Track } from '../models/track';
@@ -70,11 +70,11 @@ function finish(el: FakeAudio) {
   el.dispatchEvent(new Event('ended'));
 }
 
-describe('AudioService auto-advance', () => {
+describe('WebAudioEngine auto-advance', () => {
   let instances: FakeAudio[];
   let mediaHandlers: Record<string, Function | null>;
-  let service: AudioService;
-  let downloader: { download: ReturnType<typeof vi.fn> };
+  let service: WebAudioEngine;
+  let downloader: { download: ReturnType<typeof vi.fn>; localUrl: ReturnType<typeof vi.fn> };
   let analytics: { chapterCompleted: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
@@ -107,9 +107,9 @@ describe('AudioService auto-advance', () => {
       },
     });
 
-    downloader = { download: vi.fn().mockResolvedValue(undefined) };
+    downloader = { download: vi.fn().mockResolvedValue(undefined), localUrl: vi.fn().mockResolvedValue(null) };
     analytics = { chapterCompleted: vi.fn() };
-    service = new AudioService(
+    service = new WebAudioEngine(
       downloader as unknown as AudioDownloaderService,
       analytics as unknown as AnalyticsService,
     );

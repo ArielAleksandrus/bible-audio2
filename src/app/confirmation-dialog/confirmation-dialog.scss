@@ -1,66 +1,71 @@
 .hold-confirm-dialog {
   position: relative;
   text-align: center;
-  padding: 20px;
 
   .close-button {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 4px;
+    right: 4px;
     z-index: 10;
-
-    mat-icon {
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-      color: rgba(0, 0, 0, 0.54);
-    }
-
-    &:hover mat-icon {
-      color: rgba(0, 0, 0, 0.87);
-    }
   }
 
   .title-with-close {
-    padding-right: 40px;
-    text-align: center;
-  }
-
-  .text-center {
-    text-align: center;
+    padding: 0 40px;
+    margin-top: 8px;
+    font-size: 1.25rem;
   }
 
   .button-container {
-    position: relative;
     display: inline-block;
-    margin: 40px 0;
+    margin: 28px 0 16px;
   }
 
   .hold-button {
-    width: 80px;
-    height: 80px;
     position: relative;
-    background-color: #f44336 !important;
-
-    mat-progress-spinner {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .button-label {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 18px;
-      font-weight: bold;
-      color: white;
-    }
+    width: 88px;
+    height: 88px;
+    border: none;
+    border-radius: 50%;
+    background: var(--ion-color-danger);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    transition: transform 0.1s;
 
     &.holding {
       transform: scale(0.95);
-      transition: transform 0.1s;
     }
+  }
+
+  .ring {
+    position: absolute;
+    inset: 4px;
+    width: 80px;
+    height: 80px;
+    transform: rotate(-90deg);
+
+    circle {
+      fill: none;
+      stroke-width: 8;
+    }
+    .track {
+      stroke: rgba(255, 255, 255, 0.25);
+    }
+    .bar {
+      stroke: #ffffff;
+      stroke-linecap: round;
+    }
+  }
+
+  .button-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
   }
 }

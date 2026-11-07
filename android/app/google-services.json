@@ -1,0 +1,114 @@
+{
+  "project_info": {
+    "project_number": "708812956918",
+    "project_id": "bible-audio-ab851",
+    "storage_bucket": "bible-audio-ab851.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708812956918:android:68ff8cc727ed9be41b78d7",
+        "android_client_info": {
+          "package_name": "live.nlabs.bible"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708812956918-mfdqrijcir357a6uuflvkm99uej7vl38.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "live.nlabs.bible",
+            "certificate_hash": "cbdb048746ff3c9362a3c9e7f68ce2d5c42a8ff8"
+          }
+        },
+        {
+          "client_id": "708812956918-ndmubfnp5k18b94t00p847p824d74rph.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "live.nlabs.bible",
+            "certificate_hash": "2bd24c52c87ff98b3e8313e47e3e5479ddf0756c"
+          }
+        },
+        {
+          "client_id": "708812956918-j5odi306i4tcc3ftgaa0and42k9orm4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCs6VRkvmmcKJIg8nHjLPAKbuh1RFYeR-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "708812956918-j5odi306i4tcc3ftgaa0and42k9orm4r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "708812956918-gog0gmuq7c9sr9aingrm21i6qo0m0bj7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "live.nlabs.bible"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708812956918:android:dee45f4d2c340e8c1b78d7",
+        "android_client_info": {
+          "package_name": "live.nlabs.biblia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708812956918-n6cue9ok3vutt7is041r8pm0m0gb7te6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "live.nlabs.biblia",
+            "certificate_hash": "6e73d39bbe26b07b575961748d05a7c9a3f0b9cf"
+          }
+        },
+        {
+          "client_id": "708812956918-ph14b8hlcj2qamh6ib3dfcm0r600e4ej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "live.nlabs.biblia",
+            "certificate_hash": "4d880c213c8593ead4799d4b4871dd180c894364"
+          }
+        },
+        {
+          "client_id": "708812956918-j5odi306i4tcc3ftgaa0and42k9orm4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCs6VRkvmmcKJIg8nHjLPAKbuh1RFYeR-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "708812956918-j5odi306i4tcc3ftgaa0and42k9orm4r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "708812956918-gog0gmuq7c9sr9aingrm21i6qo0m0bj7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "live.nlabs.bible"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

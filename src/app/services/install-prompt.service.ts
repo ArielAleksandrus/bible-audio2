@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { isAppInstalled, isInstagramInAppBrowser } from '../utils/browser.util';
+import { isNativeApp } from '../utils/platform.util';
 
 const DISMISSED_KEY = 'installPromptDismissed';
 const NO_PROMPT_TIMEOUT_MS = 4000;
@@ -31,7 +32,8 @@ export class InstallPromptService {
   private deferredPrompt: BeforeInstallPromptEvent | null = null;
 
   constructor() {
-    if (isAppInstalled() || localStorage.getItem(DISMISSED_KEY) === 'true') {
+    // The store apps are, by definition, already installed.
+    if (isNativeApp() || isAppInstalled() || localStorage.getItem(DISMISSED_KEY) === 'true') {
       this.resolved$.next(true);
       return;
     }
