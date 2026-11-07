@@ -15,7 +15,10 @@ workflows:
         - google_play
       vars:
         PACKAGE_NAME: live.nlabs.biblia
-    # No `triggering` block: builds start manually from the Codemagic UI.
+    # Start this manually in the Codemagic UI and select branch master.
+    # No `triggering` block on purpose: a push to master must not publish
+    # to the Play production track. The web deploy (Vercel) tracks master
+    # on its own; this workflow is only the Android release.
     scripts:
       - name: Install dependencies
         script: npm ci
