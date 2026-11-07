@@ -15,10 +15,18 @@ workflows:
         - google_play
       vars:
         PACKAGE_NAME: live.nlabs.biblia
-    # Start this manually in the Codemagic UI and select branch master.
-    # No `triggering` block on purpose: a push to master must not publish
-    # to the Play production track. The web deploy (Vercel) tracks master
-    # on its own; this workflow is only the Android release.
+    # A push to master builds the signed AAB and uploads it to the Play
+    # production track as a draft. Rolling that draft out to users stays a
+    # step in Play Console while submit_as_draft is true. Put [skip ci] in
+    # a commit message to skip a build. Vercel deploys the web app on its own.
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: master
+          include: true
+          source: true
+      cancel_previous_builds: true
     scripts:
       - name: Install dependencies
         script: npm ci
