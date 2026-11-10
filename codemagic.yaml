@@ -63,3 +63,64 @@ workflows:
         # ("Only releases with status draft may be created on draft app").
         # Switch to false after the first release goes out.
         submit_as_draft: true
+
+  # The App Store .ipa, uploaded to App Store Connect, where it shows up in
+  # TestFlight. Started from the "Start new build" button only (same as
+  # CarteiraPro's ios-loja). Registered in Codemagic, never in this repo:
+  # - Team settings > Integrations > Developer Portal: the App Store Connect API
+  #   key, named carteira_pro_asc (one key covers every app of the Apple team).
+  # - Code signing identities: the Apple Distribution certificate and the App
+  #   Store profile for live.nlabs.bible, created AFTER the App ID capabilities
+  #   (Sign in with Apple).
+  ios-loja:
+    name: iOS - App Store (TestFlight)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    integrations:
+      app_store_connect: carteira_pro_asc
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: live.nlabs.bible
+      node: 24
+      # Package.swift uses swift-tools-version 6.1 -> Xcode 16.3 or newer.
+      xcode: latest
+      vars:
+        # Apple ID of the app in App Store Connect (App Information > Apple ID).
+        APP_STORE_APPLE_ID: "6832831597"
+    cache:
+      cache_paths:
+        - $HOME/.npm
+    scripts:
+      - name: Web app and Capacitor
+        script: |
+          npm ci
+          npm run build
+          npx cap sync ios
+      - name: Distribution profile
+        script: xcode-project use-profiles
+      # Version from package.json; build number = latest in TestFlight for that
+      # version + 1 (Apple rejects a repeated one). Without APP_STORE_APPLE_ID,
+      # Codemagic's build number.
+      - name: Version and build number
+        script: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ -n "$APP_STORE_APPLE_ID" ]; then
+            LAST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" --pre-release-version "$VERSION" 2>/dev/null || echo 0)
+            BUILD=$((LAST + 1))
+          else
+            BUILD=$BUILD_NUMBER
+          fi
+          sed -i '' -e "s/MARKETING_VERSION = [^;]*;/MARKETING_VERSION = $VERSION;/" \
+                    -e "s/CURRENT_PROJECT_VERSION = [^;]*;/CURRENT_PROJECT_VERSION = $BUILD;/" ios/App/App.xcodeproj/project.pbxproj
+          echo "iOS $VERSION ($BUILD)"
+      - name: IPA
+        script: xcode-project build-ipa --project ios/App/App.xcodeproj --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    # The .ipa goes to App Store Connect and, once processed, to internal
+    # TestFlight testers. Review and release are always by hand there.
+    publishing:
+      app_store_connect:
+        auth: integration

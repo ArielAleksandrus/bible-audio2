@@ -124,10 +124,14 @@ splash screens are generated from `assets/` with
 - [ ] **iOS Google sign-in** — replace `REPLACE_WITH_REVERSED_CLIENT_ID` in
       `ios/App/App/Info.plist` with `REVERSED_CLIENT_ID` from
       `GoogleService-Info.plist`.
-- [ ] **Sign in with Apple** (TODO, needs the Apple developer account) — App
-      Store guideline 4.8 requires it when Google sign-in is offered. Enable
-      the capability, the Apple provider in Firebase, add `'apple.com'` to
-      `FirebaseAuthentication.providers` and a button in Settings.
+- [x] **Sign in with Apple** — App Store guideline 4.8 requires it when Google
+      sign-in is offered. iOS only: `App/App.entitlements`, `'apple.com'` in
+      `FirebaseAuthentication.providers`, a button in Settings. Still needs the
+      Apple provider enabled in Firebase Auth and the capability on the App ID.
+- [ ] **iOS release (Codemagic `ios-loja`)** — register the bundle id
+      `live.nlabs.bible` (with Sign in with Apple), create the app in App Store
+      Connect, reuse the `carteira_pro_asc` App Store Connect integration in Codemagic,
+      then start the workflow from the button; every build goes to TestFlight.
 - [ ] **Store icon** — `assets/icon-only.png` is cropped from the PWA icon
       (which has a black border and a generator watermark); replace it with a
       clean 1024×1024 master and regenerate.
