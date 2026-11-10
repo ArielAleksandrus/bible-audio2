@@ -11,6 +11,7 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { BibleService } from '../../services/bible.service';
 import { AuthService } from '../../services/auth.service';
+import { SyncService } from '../../services/sync.service';
 import { NotificationsService } from '../../services/notifications.service';
 import { AudioDownloaderService } from '../../services/audio-downloader.service';
 import { UiService } from '../../services/ui.service';
@@ -20,6 +21,7 @@ import type { User } from 'firebase/auth';
 import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialog';
 
 import { environment } from '../../../environments/environment';
+import { nativePlatform } from '../../utils/platform.util';
 
 @Component({
   selector: 'app-settings',
@@ -61,6 +63,9 @@ export class Settings implements ViewWillEnter {
   notifBusy = false;
   notifError: string | null = null;
   signingIn = false;
+  deletingAccount = false;
+  // Sign in with Apple is offered only in the iOS app (App Store guideline 4.8).
+  readonly isIos = nativePlatform() === 'ios';
 
   constructor(
     private translate: TranslateService,
@@ -71,6 +76,7 @@ export class Settings implements ViewWillEnter {
     private downloader: AudioDownloaderService,
     private cdr: ChangeDetectorRef,
     public authServ: AuthService,
+    private syncServ: SyncService,
     public notifServ: NotificationsService
   ) {
     this.notifSubscribed = this.notifServ.isSubscribed;
@@ -133,14 +139,36 @@ export class Settings implements ViewWillEnter {
     location.href = "/home";
   }
 
-  async signIn() {
+  async signIn(provider: 'google' | 'apple' = 'google') {
     this.signingIn = true;
     try {
-      await this.authServ.signInWithGoogle();
+      if (provider === 'apple') await this.authServ.signInWithApple();
+      else await this.authServ.signInWithGoogle();
     } catch (err) {
       console.warn('Settings::signIn', err);
     } finally {
       this.signingIn = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  // Hold-to-confirm, then the OS sign-in sheet again (AuthService.deleteAccount).
+  async deleteAccount() {
+    const modal = await this.modals.create({ component: ConfirmationDialog, cssClass: 'app-dialog' });
+    await modal.present();
+    const { data: confirmed } = await modal.onDidDismiss<boolean>();
+    if (confirmed !== true) return;
+
+    this.deletingAccount = true;
+    this.cdr.markForCheck();
+    try {
+      await this.authServ.deleteAccount(uid => this.syncServ.deleteRemoteData(uid));
+      await this.ui.alert(this.translate.instant('settings.account.deleted'));
+    } catch (err) {
+      console.warn('Settings::deleteAccount', err);
+      await this.ui.alert(this.translate.instant('settings.account.delete_failed'));
+    } finally {
+      this.deletingAccount = false;
       this.cdr.markForCheck();
     }
   }

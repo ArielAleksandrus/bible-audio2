@@ -82,6 +82,19 @@ export class SyncService {
     }
   }
 
+  // Account deletion: removes everything this app keeps under users/{uid}.
+  // Plans on the device stay (they never needed an account).
+  async deleteRemoteData(uid: string): Promise<void> {
+    const [db, { collection, getDocs, writeBatch }] = await Promise.all([this.getDb(), this.getFsModule()]);
+    const snaps = await Promise.all([
+      getDocs(collection(db, 'users', uid, 'plans')),
+      getDocs(collection(db, 'users', uid, 'planCompletions')),
+    ]);
+    const batch = writeBatch(db);
+    for (const snap of snaps) for (const d of snap.docs) batch.delete(d.ref);
+    await batch.commit();
+  }
+
   private async pullAndMerge(uid: string): Promise<void> {
     const [db, { collection, getDocs }] = await Promise.all([this.getDb(), this.getFsModule()]);
 

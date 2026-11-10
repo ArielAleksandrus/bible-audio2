@@ -41,7 +41,7 @@ const config: CapacitorConfig = {
       // Native Google sign-in only hands us an ID token; the Firebase JS SDK
       // signs in with it so Firestore sync keeps using the same code as web.
       skipNativeAuth: true,
-      providers: ['google.com'],
+      providers: ['google.com', 'apple.com'],
     },
     LocalNotifications: {
       smallIcon: 'ic_stat_notification',

@@ -2,7 +2,7 @@ import { addIcons } from 'ionicons';
 import {
   addCircleOutline, arrowForward, bookOutline, bookmarkOutline, checkmark, checkmarkCircle,
   checkmarkCircleOutline, close, cloudOutline, downloadOutline, helpCircleOutline, homeOutline,
-  informationCircleOutline, languageOutline, libraryOutline, listOutline, logInOutline, logOutOutline,
+  informationCircleOutline, languageOutline, libraryOutline, listOutline, logInOutline, logOutOutline, logoApple,
   notificationsOffOutline, notificationsOutline, openOutline, pause, phonePortraitOutline, play,
   playBack, playCircleOutline, playForward, playSkipBack, playSkipForward, refreshOutline,
   serverOutline, settingsOutline, shareOutline, timeOutline, trashOutline, warningOutline,
@@ -18,7 +18,7 @@ export function registerIcons(): void {
   addIcons({
     addCircleOutline, arrowForward, bookOutline, bookmarkOutline, checkmark, checkmarkCircle,
     checkmarkCircleOutline, close, cloudOutline, downloadOutline, helpCircleOutline, homeOutline,
-    informationCircleOutline, languageOutline, libraryOutline, listOutline, logInOutline, logOutOutline,
+    informationCircleOutline, languageOutline, libraryOutline, listOutline, logInOutline, logOutOutline, logoApple,
     notificationsOffOutline, notificationsOutline, openOutline, pause, phonePortraitOutline, play,
     playBack, playCircleOutline, playForward, playSkipBack, playSkipForward, refreshOutline,
     serverOutline, settingsOutline, shareOutline, timeOutline, trashOutline, warningOutline,

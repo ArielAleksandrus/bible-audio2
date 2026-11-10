@@ -97,8 +97,12 @@
       "title": "Conta e Sincronização",
       "description": "Entre com sua conta para manter o progresso dos seus planos de leitura sincronizado entre seus aparelhos. Totalmente opcional.",
       "sign_in": "Entrar com o Google",
+      "sign_in_apple": "Entrar com a Apple",
       "signed_in_as": "Conectado como",
-      "sign_out": "Sair"
+      "sign_out": "Sair",
+      "delete": "Excluir minha conta",
+      "deleted": "Sua conta e os planos sincronizados foram excluídos. Os planos continuam neste aparelho.",
+      "delete_failed": "Não foi possível excluir a conta. Tente de novo ou escreva para bibleproject.ncommerce@gmail.com."
     },
     "notifications": {
       "title": "Lembretes Diários",

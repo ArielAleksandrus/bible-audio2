@@ -97,8 +97,12 @@
       "title": "账户与同步",
       "description": "登录后，您的阅读计划进度将在您的设备之间保持同步。完全可选。",
       "sign_in": "使用 Google 登录",
+      "sign_in_apple": "通过 Apple 登录",
       "signed_in_as": "已登录：",
-      "sign_out": "退出登录"
+      "sign_out": "退出登录",
+      "delete": "删除我的账户",
+      "deleted": "您的账户和已同步的计划已删除。计划仍保留在此设备上。",
+      "delete_failed": "无法删除账户。请重试，或发送邮件至 bibleproject.ncommerce@gmail.com。"
     },
     "notifications": {
       "title": "每日提醒",

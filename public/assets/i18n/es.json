@@ -97,8 +97,12 @@
       "title": "Cuenta y sincronización",
       "description": "Inicia sesión para mantener el progreso de tus planes de lectura sincronizado entre tus dispositivos. Totalmente opcional.",
       "sign_in": "Iniciar sesión con Google",
+      "sign_in_apple": "Iniciar sesión con Apple",
       "signed_in_as": "Sesión iniciada como",
-      "sign_out": "Cerrar sesión"
+      "sign_out": "Cerrar sesión",
+      "delete": "Eliminar mi cuenta",
+      "deleted": "Tu cuenta y los planes sincronizados se eliminaron. Los planes siguen en este dispositivo.",
+      "delete_failed": "No se pudo eliminar la cuenta. Inténtalo de nuevo o escribe a bibleproject.ncommerce@gmail.com."
     },
     "notifications": {
       "title": "Recordatorios diarios",

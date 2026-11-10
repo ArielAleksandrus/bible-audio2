@@ -97,8 +97,12 @@
       "title": "Account & Sync",
       "description": "Sign in to keep your reading plan progress in sync across your devices. Fully optional.",
       "sign_in": "Sign in with Google",
+      "sign_in_apple": "Sign in with Apple",
       "signed_in_as": "Signed in as",
-      "sign_out": "Sign out"
+      "sign_out": "Sign out",
+      "delete": "Delete my account",
+      "deleted": "Your account and synced plans were deleted. The plans are still on this device.",
+      "delete_failed": "Couldn't delete the account. Try again or email bibleproject.ncommerce@gmail.com."
     },
     "notifications": {
       "title": "Daily Reminders",

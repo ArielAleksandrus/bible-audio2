@@ -97,8 +97,12 @@
       "title": "アカウントと同期",
       "description": "サインインすると、読書プランの進捗がデバイス間で同期されます。完全に任意です。",
       "sign_in": "Googleでサインイン",
+      "sign_in_apple": "Appleでサインイン",
       "signed_in_as": "サインイン中：",
-      "sign_out": "サインアウト"
+      "sign_out": "サインアウト",
+      "delete": "アカウントを削除",
+      "deleted": "アカウントと同期されたプランを削除しました。プランはこの端末に残っています。",
+      "delete_failed": "アカウントを削除できませんでした。もう一度お試しいただくか、bibleproject.ncommerce@gmail.com までご連絡ください。"
     },
     "notifications": {
       "title": "毎日のリマインダー",

@@ -30,12 +30,22 @@
               <ion-icon slot="start" name="log-out-outline"></ion-icon>
               {{ 'settings.account.sign_out' | translate }}
             </ion-button>
+            <ion-button fill="clear" color="danger" [disabled]="deletingAccount" (click)="deleteAccount()">
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              {{ 'settings.account.delete' | translate }}
+            </ion-button>
           } @else {
             <p class="language-note">
               <ion-icon class="note-icon" name="information-circle-outline"></ion-icon>
               {{ 'settings.account.description' | translate }}
             </p>
-            <ion-button [disabled]="signingIn" (click)="signIn()">
+            @if (isIos) {
+              <ion-button color="dark" [disabled]="signingIn" (click)="signIn('apple')">
+                <ion-icon slot="start" name="logo-apple"></ion-icon>
+                {{ 'settings.account.sign_in_apple' | translate }}
+              </ion-button>
+            }
+            <ion-button [disabled]="signingIn" (click)="signIn('google')">
               <ion-icon slot="start" name="log-in-outline"></ion-icon>
               {{ 'settings.account.sign_in' | translate }}
             </ion-button>

@@ -42,19 +42,82 @@ export class AuthService {
   async signInWithGoogle(): Promise<void> {
     if (!this.enabled) return;
     const auth = await this.getAuth();
+    const { signInWithCredential, signInWithPopup, GoogleAuthProvider } = await this.getAuthModule();
+    const result = isNativeApp()
+      ? await signInWithCredential(auth, (await this.nativeCredential('google.com')).credential)
+      : await signInWithPopup(auth, new GoogleAuthProvider());
+    this.user$.next(result.user);
+  }
+
+  // iOS only. App Store guideline 4.8 requires Sign in with Apple next to
+  // Google sign-in. Same flow as native Google: the OS sheet returns an ID
+  // token (+ the raw nonce it was issued for) and the JS SDK signs in with it.
+  async signInWithApple(): Promise<void> {
+    if (!this.enabled) return;
+    const auth = await this.getAuth();
+    const { signInWithCredential } = await this.getAuthModule();
+    const result = await signInWithCredential(auth, (await this.nativeCredential('apple.com')).credential);
+    this.user$.next(result.user);
+  }
+
+  // In-app account deletion (App Store guideline 5.1.1(v)). The user signs in
+  // again first: Firebase only deletes an account after a recent login, and
+  // for Apple that fresh login also yields the authorization code used to
+  // revoke the app's Apple tokens. `deleteData` runs after that login and
+  // before the account goes, while Firestore still accepts the user's token.
+  async deleteAccount(deleteData: (uid: string) => Promise<void>): Promise<void> {
+    if (!this.enabled) return;
+    const auth = await this.getAuth();
+    const user = auth.currentUser;
+    if (!user) return;
+    const { deleteUser, reauthenticateWithCredential, reauthenticateWithPopup, revokeAccessToken, GoogleAuthProvider } =
+      await this.getAuthModule();
+
+    const providerId = user.providerData[0]?.providerId === 'apple.com' ? 'apple.com' : 'google.com';
+    let appleAuthCode: string | undefined;
+    if (isNativeApp()) {
+      const native = await this.nativeCredential(providerId);
+      appleAuthCode = native.appleAuthCode;
+      await reauthenticateWithCredential(user, native.credential);
+    } else {
+      await reauthenticateWithPopup(user, new GoogleAuthProvider());
+    }
+
+    await deleteData(user.uid);
+
+    // Needs the Apple provider's OAuth code-flow settings (Services ID + key)
+    // in Firebase; without them it fails and the account is still deleted.
+    if (appleAuthCode) {
+      await revokeAccessToken(auth, appleAuthCode).catch(err =>
+        console.warn('AuthService: Apple token revocation failed', err));
+    }
+
+    await deleteUser(user);
+    this.user$.next(null);
     if (isNativeApp()) {
       const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
-      const { GoogleAuthProvider, signInWithCredential } = await this.getAuthModule();
+      await FirebaseAuthentication.signOut().catch(() => {});
+    }
+  }
+
+  // Native OS sign-in sheet (Google Sign-In / Credential Manager, or Sign in
+  // with Apple) → a Firebase credential for the JS SDK.
+  private async nativeCredential(providerId: 'google.com' | 'apple.com') {
+    const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
+    const { GoogleAuthProvider, OAuthProvider } = await this.getAuthModule();
+    if (providerId === 'google.com') {
       const native = await FirebaseAuthentication.signInWithGoogle();
       const idToken = native.credential?.idToken;
       if (!idToken) throw new Error('Google sign-in returned no ID token');
-      const result = await signInWithCredential(auth, GoogleAuthProvider.credential(idToken, native.credential?.accessToken));
-      this.user$.next(result.user);
-      return;
+      return { credential: GoogleAuthProvider.credential(idToken, native.credential?.accessToken) };
     }
-    const { GoogleAuthProvider, signInWithPopup } = await this.getAuthModule();
-    const result = await signInWithPopup(auth, new GoogleAuthProvider());
-    this.user$.next(result.user);
+    const native = await FirebaseAuthentication.signInWithApple();
+    const idToken = native.credential?.idToken;
+    if (!idToken) throw new Error('Apple sign-in returned no ID token');
+    return {
+      credential: new OAuthProvider('apple.com').credential({ idToken, rawNonce: native.credential?.nonce }),
+      appleAuthCode: native.credential?.authorizationCode,
+    };
   }
 
   async signOut(): Promise<void> {
