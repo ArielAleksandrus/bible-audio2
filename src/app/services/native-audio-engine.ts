@@ -20,7 +20,8 @@ const ARTIST = 'Bíblia Narrada';
 
 type PlaylistApi = Pick<typeof PlaylistPlugin,
   'setOptions' | 'initialize' | 'addListener' | 'setPlaylistItems' | 'playTrackByIndex' | 'replaceItem' |
-  'play' | 'pause' | 'skipForward' | 'skipBack' | 'seekTo' | 'clearAllItems'>;
+  'play' | 'pause' | 'skipForward' | 'skipBack' | 'seekTo' | 'clearAllItems' |
+  'selectTrackByIndex' | 'setPlaybackRate'>;
 
 /**
  * Native (Android/iOS) playback engine.
@@ -56,6 +57,14 @@ export class NativeAudioEngine implements AudioEngine {
   private generation = 0;
   private ready: Promise<void>;
   private downloadSub: Subscription;
+  /**
+   * Chosen speed. Android (ExoPlayer) keeps a speed across chapters and
+   * pauses once it's set. iOS doesn't: AVPlayer's speed IS its play state —
+   * play() puts it back to 1, and setting it on a paused player starts
+   * playback — so there it is only ever sent while playing, and sent again
+   * each time playback starts or moves to another chapter.
+   */
+  private rate = 1;
 
   constructor(
     private downloader: AudioDownloaderService,
@@ -114,7 +123,16 @@ export class NativeAudioEngine implements AudioEngine {
     }
   }
 
-  async playPlaylist(tracks: Track[], startIndex = 0): Promise<void> {
+  playPlaylist(tracks: Track[], startIndex = 0): Promise<void> {
+    return this.queuePlaylist(tracks, startIndex, true);
+  }
+
+  /** Queue the playlist with its first chapter selected but paused; play() starts it. */
+  loadPlaylist(tracks: Track[], startIndex = 0): Promise<void> {
+    return this.queuePlaylist(tracks, startIndex, false);
+  }
+
+  private async queuePlaylist(tracks: Track[], startIndex: number, autoplay: boolean): Promise<void> {
     if (tracks.length === 0) return;
     await this.ready;
     const gen = ++this.generation;
@@ -132,7 +150,12 @@ export class NativeAudioEngine implements AudioEngine {
       items,
       options: { startPaused: true, retainPosition: false },
     });
-    await this.Playlist.playTrackByIndex({ index: startIndex });
+    if (autoplay) {
+      await this.Playlist.playTrackByIndex({ index: startIndex });
+    } else {
+      await this.Playlist.selectTrackByIndex({ index: startIndex });
+      this.isPlaying$.next(false);
+    }
   }
 
   setPlaylist(tracks: Track[], startIndex = 0): void {
@@ -198,6 +221,27 @@ export class NativeAudioEngine implements AudioEngine {
     return this.hasPreviousFlag;
   }
 
+  setPlaybackRate(rate: number): void {
+    if (!isFinite(rate) || rate <= 0) return;
+    this.rate = rate;
+    if (this.platform === 'android' || this.isPlaying$.value) this.pushRate();
+  }
+
+  private pushRate(): void {
+    const rate = this.rate;
+    void this.ready
+      .then(() => this.Playlist.setPlaybackRate({ rate }))
+      .catch(err => console.warn('NativeAudioEngine: setPlaybackRate failed', err));
+  }
+
+  /**
+   * Playback just started or moved to another chapter. At normal speed
+   * there is nothing to restore (that is what both players fall back to).
+   */
+  private restoreRate(): void {
+    if (this.rate !== 1) this.pushRate();
+  }
+
   // === STATUS STREAM ===
 
   private onStatus(status: OnStatusCallbackData): void {
@@ -211,13 +255,19 @@ export class NativeAudioEngine implements AudioEngine {
         this.hasPreviousFlag = !!data.hasPrevious;
         this.currentTrack$.next(this.playlist[idx] ?? null);
         this.timeUpdate$.next({ currentTime: 0, duration: 0 });
+        if (this.isPlaying$.value) this.restoreRate();
         return;
       }
 
-      case RmxAudioStatusMessage.RMXSTATUS_PLAYING:
+      case RmxAudioStatusMessage.RMXSTATUS_PLAYING: {
+        // Only on the paused → playing edge: if the player reports "playing"
+        // again in answer to the speed change itself, that must not loop.
+        const started = !this.isPlaying$.value;
         this.isPlaying$.next(true);
         this.updateTime(status.value as OnStatusCallbackUpdateData);
+        if (started) this.restoreRate();
         return;
+      }
 
       case RmxAudioStatusMessage.RMXSTATUS_PAUSE:
         this.isPlaying$.next(false);
@@ -232,7 +282,10 @@ export class NativeAudioEngine implements AudioEngine {
         const data = status.value as OnStatusCallbackUpdateData;
         if (this.indexFromTrackId(status.trackId) !== this.index) return;
         this.updateTime(data);
-        if (data?.status === 'playing' && !this.isPlaying$.value) this.isPlaying$.next(true);
+        if (data?.status === 'playing' && !this.isPlaying$.value) {
+          this.isPlaying$.next(true);
+          this.restoreRate();
+        }
         return;
       }
 

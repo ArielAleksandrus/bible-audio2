@@ -30,6 +30,8 @@ The goal is simple: pick chapters or a reading plan, download the audio to the d
 
 UI strings follow the selected Bible language (`public/assets/i18n/`).
 
+The Bibles on offer are listed in one place, `src/app/data/bible-catalog.ts` — the CDN can't list its own files, so a version exists for the app only once it is written there. The first entry of a language is its default. A language with two or more entries gets a version switch (Home and Settings); a version with two or more `narrators` gets a narrator switch (Settings and the player) and keeps each narrator's audio in its own CDN folder and under its own download key. The comment in that file shows how to add one.
+
 ## Reading plans
 
 | Plan | Length |
@@ -181,9 +183,13 @@ The daily-reminder function (`api/send-daily-reminder.ts`) needs these Vercel en
 | `FIREBASE_SERVICE_ACCOUNT` | Firebase Admin JSON, as a string |
 | `ENABLE_DAILY_REMINDER_CRON` | Must be `true` on **exactly one** of the two projects — both register the same cron against the same Firestore data, so leaving it unset on the other prevents every subscriber getting the daily push twice |
 
+`api/plan-stats.ts` keeps the global per-plan counters (`planStats/{planId}`: `starts`, `completions`, `listens`) behind the "most listened" sort. It only needs `FIREBASE_SERVICE_ACCOUNT`, on **both** projects. It is public by design and accepts nothing but `{ planId, event }` for a known plan. The native apps call it at `environment.apiOrigin`.
+
+Sign in with Apple on the web needs the Apple provider configured in Firebase first: see [docs/apple-sign-in-web.md](docs/apple-sign-in-web.md).
+
 Both projects point at the same Firebase project, so `biblia-narrada.vercel.app` also needs to be added under Firebase Console → Authentication → Settings → Authorized domains for Google sign-in to work there.
 
-Firestore rules live in `firestore.rules` (paste them into Firebase Console → Firestore → Rules to deploy): each signed-in user can only read/write `users/{uid}/**`; devices can create/overwrite/delete their own `push_subscriptions/{deviceId}` but not read any; `verses/{lang}` is closed to clients.
+Firestore rules live in `firestore.rules` (paste them into Firebase Console → Firestore → Rules to deploy): each signed-in user can only read/write `users/{uid}/**`; devices can create/overwrite/delete their own `push_subscriptions/{deviceId}` but not read any; `verses/{lang}` and `planStats/{planId}` are closed to clients.
 
 `verses/{lang}` holds the daily-reminder verses the Web Push cron sends for each non-English language. Seed or refresh it with the service account (dry run first, then `--write`):
 

@@ -13,6 +13,8 @@ class FakeAudio extends EventTarget {
   currentSrc = '';
   volume = 1;
   muted = false;
+  playbackRate = 1;
+  defaultPlaybackRate = 1;
   private _src = '';
 
   get src() {
@@ -22,6 +24,8 @@ class FakeAudio extends EventTarget {
     this._src = value;
     this.currentSrc = value;
     this.ended = false;
+    // What a real element does when a new resource is loaded.
+    this.playbackRate = this.defaultPlaybackRate;
   }
 
   setAttribute(name: string, value: string) {
@@ -73,6 +77,7 @@ function finish(el: FakeAudio) {
 describe('WebAudioEngine auto-advance', () => {
   let instances: FakeAudio[];
   let mediaHandlers: Record<string, Function | null>;
+  let positionStates: { playbackRate?: number }[];
   let service: WebAudioEngine;
   let downloader: { download: ReturnType<typeof vi.fn>; localUrl: ReturnType<typeof vi.fn> };
   let analytics: { chapterCompleted: ReturnType<typeof vi.fn> };
@@ -80,6 +85,7 @@ describe('WebAudioEngine auto-advance', () => {
   beforeEach(() => {
     instances = [];
     mediaHandlers = {};
+    positionStates = [];
 
     vi.stubGlobal(
       'Audio',
@@ -103,7 +109,9 @@ describe('WebAudioEngine auto-advance', () => {
         setActionHandler: (action: string, handler: Function | null) => {
           mediaHandlers[action] = handler;
         },
-        setPositionState: () => {},
+        setPositionState: (state: { playbackRate?: number }) => {
+          positionStates.push(state);
+        },
       },
     });
 
@@ -387,6 +395,136 @@ describe('WebAudioEngine auto-advance', () => {
 
     expect(playingEl.paused).toBe(false);
     expect(service.isPlaying$.value).toBe(true);
+  });
+
+  describe('playback speed', () => {
+    it('applies the chosen speed to the playing chapter and tells the media session', async () => {
+      await startTwoChapterPlaylist();
+      service.setPlaybackRate(1.5);
+
+      expect(instances[0].playbackRate).toBe(1.5);
+      expect(positionStates.at(-1)?.playbackRate).toBe(1.5);
+    });
+
+    it('keeps the speed on the next chapter after an auto-advance on the same element', async () => {
+      service.setPlaybackRate(1.25);
+      await startTwoChapterPlaylist();
+
+      finish(instances[0]);
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(service.currentTrack$.value?.id).toBe('j2');
+      expect(instances[0].playbackRate).toBe(1.25);
+      expect(positionStates.at(-1)?.playbackRate).toBe(1.25);
+    });
+
+    it('primes and hands off the next chapter at the chosen speed', async () => {
+      vi.useFakeTimers();
+      service.setPlaybackRate(1.5);
+      const tracks = await startTwoChapterPlaylist();
+      await vi.advanceTimersByTimeAsync(3000);
+      const current = instances[0];
+      const nextEl = instances[1];
+      nextEl.src = 'blob:j2';
+      nextEl.readyState = 4;
+      (service as unknown as { preloaded: { track: Track; url: string; ready: boolean } }).preloaded = {
+        track: tracks[1],
+        url: 'blob:j2',
+        ready: true,
+      };
+
+      current.currentTime = current.duration - 2;
+      current.dispatchEvent(new Event('timeupdate'));
+      expect(nextEl.paused).toBe(false);
+      expect(nextEl.muted).toBe(true);
+      expect(nextEl.playbackRate).toBe(1.5);
+
+      current.currentTime = current.duration - 0.2;
+      current.dispatchEvent(new Event('timeupdate'));
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(service.currentTrack$.value?.id).toBe('j2');
+      expect(nextEl.muted).toBe(false);
+      expect(nextEl.playbackRate).toBe(1.5);
+    });
+
+    it('measures the priming lead in real time, so a faster speed primes earlier in the audio', async () => {
+      const tracks = await startTwoChapterPlaylist();
+      const current = instances[0];
+      const nextEl = instances[1];
+      nextEl.src = 'blob:j2';
+      (service as unknown as { preloaded: { track: Track; url: string; ready: boolean } }).preloaded = {
+        track: tracks[1],
+        url: 'blob:j2',
+        ready: true,
+      };
+
+      // 3.5s of audio left: more than the 2.5s lead at 1x…
+      current.currentTime = current.duration - 3.5;
+      current.dispatchEvent(new Event('timeupdate'));
+      expect(nextEl.paused).toBe(true);
+
+      // …but only 2.33s of real time at 1.5x.
+      service.setPlaybackRate(1.5);
+      current.dispatchEvent(new Event('timeupdate'));
+      expect(nextEl.paused).toBe(false);
+    });
+
+    it('restores the speed when the page becomes visible again (back from a locked screen)', async () => {
+      service.setPlaybackRate(1.5);
+      await startTwoChapterPlaylist();
+      instances[0].playbackRate = 1; // reset by the browser while backgrounded
+
+      document.dispatchEvent(new Event('visibilitychange'));
+
+      expect(instances[0].playbackRate).toBe(1.5);
+    });
+
+    it('restores the speed if the browser resets it when playback resumes', async () => {
+      service.setPlaybackRate(1.5);
+      await startTwoChapterPlaylist();
+      service.pause();
+      instances[0].playbackRate = 1;
+
+      service.play();
+
+      expect(instances[0].playbackRate).toBe(1.5);
+    });
+  });
+
+  describe('loadPlaylist (play on selection turned off)', () => {
+    it('shows the chapter in the player without playing it', async () => {
+      const tracks = [track('j1', 1), track('j2', 2)];
+      let played = false;
+      instances[0].play = () => {
+        played = true;
+        return Promise.resolve();
+      };
+
+      await service.loadPlaylist(tracks, 0);
+
+      expect(played).toBe(false);
+      expect(service.currentTrack$.value?.id).toBe('j1');
+      expect(service.isPlaying$.value).toBe(false);
+      expect(instances[0].src).toContain('j1.mp3');
+      expect(service.hasNext()).toBe(true);
+    });
+
+    it('starts on play() and then auto-advances like any playlist', async () => {
+      await service.loadPlaylist([track('j1', 1), track('j2', 2)], 0);
+
+      service.play();
+      await Promise.resolve();
+      expect(service.isPlaying$.value).toBe(true);
+
+      finish(instances[0]);
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(service.currentTrack$.value?.id).toBe('j2');
+      expect(instances[0].paused).toBe(false);
+    });
   });
 
   it('bypasses the service worker when falling back to a network URL', async () => {

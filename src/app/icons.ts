@@ -6,7 +6,7 @@ import {
   notificationsOffOutline, notificationsOutline, openOutline, pause, phonePortraitOutline, play,
   playBack, playCircleOutline, playForward, playSkipBack, playSkipForward, refreshOutline,
   serverOutline, settingsOutline, shareOutline, timeOutline, trashOutline, warningOutline,
-  chevronBack, chevronForward,
+  chevronBack, chevronForward, swapHorizontalOutline,
 } from 'ionicons/icons';
 
 /**
@@ -22,6 +22,6 @@ export function registerIcons(): void {
     notificationsOffOutline, notificationsOutline, openOutline, pause, phonePortraitOutline, play,
     playBack, playCircleOutline, playForward, playSkipBack, playSkipForward, refreshOutline,
     serverOutline, settingsOutline, shareOutline, timeOutline, trashOutline, warningOutline,
-    chevronBack, chevronForward,
+    chevronBack, chevronForward, swapHorizontalOutline,
   });
 }

@@ -1,4 +1,5 @@
-import { Component, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, ChangeDetectorRef, DestroyRef, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
@@ -15,6 +16,10 @@ import { AnalyticsService } from '../../services/analytics.service';
 import { SyncService } from '../../services/sync.service';
 import { InAppBrowserWarningService } from '../../services/in-app-browser-warning.service';
 import { UiService } from '../../services/ui.service';
+import { PlanSort, PreferencesService } from '../../services/preferences.service';
+import { PlanStats, PlanStatsService } from '../../services/plan-stats.service';
+
+import { combineLatest } from 'rxjs';
 
 import { Plan, DailyGoal } from '../../models/plan';
 import { Track } from '../../models/track';
@@ -28,6 +33,8 @@ import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialo
 const PRELOAD_DAYS = 7;
 /** Days per page in the current plan's day list (a week at a time). */
 const PAGE_SIZE = 7;
+/** Plans per page in the "started" and "available" lists. */
+const LIST_PAGE_SIZE = 5;
 
 @Component({
   selector: 'app-plans',
@@ -58,6 +65,73 @@ export class Plans {
   pageIndex = 0;
 
   @ViewChild(IonContent) private content?: IonContent;
+
+  // ---- "started" / "available" lists: sorting, 5 per page ----
+
+  readonly listPageSize = LIST_PAGE_SIZE;
+  readonly sortModes: PlanSort[] = ['days', 'alpha', 'listens'];
+  /** null = no preference: started plans by most recent use, available plans in catalog order. */
+  sortMode: PlanSort | null = null;
+  startedPage = 0;
+  availablePage = 0;
+  /** Global counters per plan; null until fetched, and if the fetch failed. */
+  stats: Record<string, PlanStats> | null = null;
+  /** Long descriptions the user tapped open (collapsed to 3 lines otherwise). */
+  private expanded = new Set<string>();
+
+  private prefs = inject(PreferencesService);
+  private planStats = inject(PlanStatsService);
+  private destroyRef = inject(DestroyRef);
+  /** A plan whose playback was asked for and hasn't begun yet (see countListenWhenPlaybackStarts). */
+  private pendingListen?: string;
+
+  get sortedStarted(): Plan[] { return this.sorted(this.startedPlans); }
+  get sortedAvailable(): Plan[] { return this.sorted(this.availablePlans); }
+
+  /** The list in the chosen order. Ties, and "most listened" without stats, keep the list's own order. */
+  private sorted(plans: Plan[]): Plan[] {
+    const mode = this.sortMode;
+    if (!mode) return plans;
+    const copy = [...plans]; // Array.prototype.sort is stable
+    if (mode === 'days') {
+      copy.sort((a, b) => b.days - a.days);
+    } else if (mode === 'alpha') {
+      const lang = this.translate.currentLang || undefined;
+      copy.sort((a, b) =>
+        this.planText(a, 'title').localeCompare(this.planText(b, 'title'), lang, { sensitivity: 'base' }));
+    } else if (this.stats) {
+      const listens = (p: Plan) => this.stats?.[p.id]?.listens ?? 0;
+      copy.sort((a, b) => listens(b) - listens(a));
+    }
+    return copy;
+  }
+
+  /** Tapping the active mode again clears it (back to the default order). */
+  setSort(mode: PlanSort) {
+    this.sortMode = this.sortMode === mode ? null : mode;
+    this.prefs.setPlanSort(this.sortMode);
+    this.startedPage = this.availablePage = 0;
+  }
+
+  pageCountOf(plans: Plan[]): number {
+    return Math.ceil(plans.length / LIST_PAGE_SIZE);
+  }
+
+  /** One page of a list; a page index past the end (the list shrank) shows the last page. */
+  pageOf(plans: Plan[], page: number): Plan[] {
+    const last = Math.max(0, this.pageCountOf(plans) - 1);
+    const start = Math.min(page, last) * LIST_PAGE_SIZE;
+    return plans.slice(start, start + LIST_PAGE_SIZE);
+  }
+
+  clampPage(plans: Plan[], page: number): number {
+    return Math.max(0, Math.min(page, this.pageCountOf(plans) - 1));
+  }
+
+  isExpanded(key: string): boolean { return this.expanded.has(key); }
+  toggleExpanded(key: string) {
+    if (!this.expanded.delete(key)) this.expanded.add(key);
+  }
 
   get pageCount(): number {
     return this.currentPlan ? Math.ceil(this.currentPlan.goals.length / this.pageSize) : 0;
@@ -91,6 +165,13 @@ export class Plans {
       void this.router.navigateByUrl('/home');
       return;
     }
+
+    this.sortMode = this.prefs.planSort;
+    // Another version of the language was chosen: plan audio follows it.
+    this.bibleServ.bibleChanged$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(bible => {
+      this.bibleData = bible;
+      this.cdr.markForCheck();
+    });
 
     let selected = localStorage.getItem("selectedBible") || "";
     this.bibleServ.loadBibleVersion(selected.split("-")[0], selected.split("-")[1]).then(res => {
@@ -144,6 +225,39 @@ export class Plans {
 
     // Refresh the lists if a cross-device merge lands while this page is open.
     this.syncServ.syncCompleted$.subscribe(() => this._loadPlans());
+
+    this.countListenWhenPlaybackStarts();
+
+    // Only "most listened" needs these. If they can't be fetched the page
+    // works the same and that order falls back to the catalog's.
+    void this.planStats.fetchAll().then(stats => {
+      this.stats = stats;
+      this.cdr.markForCheck();
+    });
+  }
+
+  /**
+   * A "listen" is counted when audio really starts after the user asked to
+   * hear a plan (start a plan, or the play button of a day) — once per
+   * request. Not on resume, not when a plan is only opened, and not for the
+   * chapters that follow by themselves: the request is forgotten as soon as
+   * it is counted.
+   *
+   * Both streams are watched because the player reports "playing" a moment
+   * before it reports which chapter: at that instant the current track can
+   * still be the previous playlist's. The request simply stays pending until
+   * one of this plan's own chapters is the one playing.
+   */
+  private countListenWhenPlaybackStarts() {
+    combineLatest([this.audioService.isPlaying$, this.audioService.currentTrack$])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([playing, current]) => {
+        if (!playing || !current || !this.pendingListen) return;
+        if (!this.tracks.some(t => t.id === current.id)) return;
+        const planId = this.pendingListen;
+        this.pendingListen = undefined;
+        this.planStats.countListen(planId);
+      });
   }
 
   setGoalCompleted(goal: DailyGoal, completed: boolean) {
@@ -158,7 +272,9 @@ export class Plans {
     if(!this.currentPlan || !this.bibleData)
       return;
 
-    const bookIdx = this.bibleData.books.findIndex(book => book.name === track.book);
+    // Tracks carry the book's index; the name is only a fallback for older
+    // ones (and not every Bible JSON has a "name" for its books).
+    const bookIdx = track.bookIdx ?? this.bibleData.books.findIndex(book => book.name === track.book);
     for(let i = 0; i < this.currentPlan.goals.length; i++) {
       let goal = this.currentPlan.goals[i];
       let portion = goal.portions.find(portion => portion.bookIdx === bookIdx && portion.chapter === track.chapter)
@@ -194,9 +310,11 @@ export class Plans {
       const planId = this.currentPlan.id;
       this.currentPlan.status = "completed";
       this.analytics.planCompleted(planId);
+      // Personal count (the "completed Nx" badge) and, separately, the global one.
       this.planServ.incrementCompletionCount(planId).then(count => {
         this.completionCounts[planId] = count;
       });
+      this.planStats.countComplete(planId);
       void this.ui.alert("Parabéns, você finalizou o plano de leitura!");
     }
   }
@@ -258,10 +376,15 @@ export class Plans {
           this.openPlan(plan, 1);
         });
         this.analytics.planStarted(plan.id);
+        this.planStats.countStart(plan.id);
       }
     });
     this.openPlan(plan);
-    this.playGoal(plan.goals[0]);
+    // Starting a plan plays its first day only if "play on selection" is on;
+    // otherwise the day is left ready in the player.
+    this.currentDay = plan.goals[0].day;
+    this.pendingListen = plan.id;
+    void this.play(false);
   }
 
   openPlan(plan: Plan, day?: number) {
@@ -288,7 +411,10 @@ export class Plans {
     this.setPlan(plan);
     void this.planServ.save(plan);
     this._goToStoppedAt(plan);
-    this.play().then(_ => {});
+    // Same as starting one: plays by itself only with "play on selection" on.
+    // A resume is not a new listen.
+    this.pendingListen = undefined;
+    void this.play(false);
   }
 
   /** Show the page of days that contains where the user stopped (or the day just opened). */
@@ -300,9 +426,11 @@ export class Plans {
 
 
   //////////////// PLAYING FUNCTIONS ////////////////////
+  /** The play button of a day: an explicit request, so it plays whatever the "play on selection" setting says. */
   playGoal(goal: DailyGoal) {
     this.currentDay = goal.day;
-    this.play().then(_ => {});
+    this.pendingListen = this.currentPlan?.id;
+    void this.play(true);
   }
 
   async prepareToPlay(): Promise<void> {
@@ -314,7 +442,12 @@ export class Plans {
     this.tracks = await this.buildTracks(this.currentPlan, this.currentDay, PRELOAD_DAYS);
   }
 
-  async play() {
+  /**
+   * @param explicit true for the user's own tap on a play button. false for
+   *   a selection (start/resume a plan), which only plays by itself when the
+   *   "play on selection" setting is on.
+   */
+  async play(explicit = true) {
     await this.prepareToPlay();
     const start = this.tracks[this.curTrackIdx] ?? this.tracks[0];
     if (!start) {
@@ -324,7 +457,8 @@ export class Plans {
     this.inAppBrowserWarning.armForNextPlay();
     await this.dlServ.download(start);
     // if we await here, next lines will only run once audio playback is completed.
-    this.audioService.playPlaylist(this.tracks, this.curTrackIdx).then(_ => {});
+    if (explicit) void this.audioService.playPlaylist(this.tracks, this.curTrackIdx);
+    else void this.audioService.openPlaylist(this.tracks, this.curTrackIdx);
 
     this.dlServ.downloadTracks(this.tracks).then(_ => {});
 

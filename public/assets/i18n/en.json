@@ -65,7 +65,17 @@
       "start": "Start Plan"
     },
     "days": "days",
-    "times_completed": "Completed {{count}}x"
+    "times_completed": "Completed {{count}}x",
+    "sort": {
+      "label": "Sort by",
+      "days": "Most days",
+      "alpha": "A–Z",
+      "listens": "Most listened"
+    },
+    "pager": {
+      "previous": "Previous page",
+      "next": "Next page"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -112,6 +122,11 @@
       "permission_error": "Couldn't enable notifications — check your browser's notification permission for this site.",
       "ios_install_required": "On iPhone, notifications only work after you add this app to your Home Screen (Share button → Add to Home Screen), then open it from there.",
       "unsupported": "Notifications aren't supported in this browser."
+    },
+    "playback": {
+      "title": "Playback",
+      "autoplay": "Play when a plan or chapter is selected",
+      "autoplay_note": "When off, the chapter or plan you choose is left ready in the player and only starts when you press play."
     }
   },
   "dialog": {
@@ -153,6 +168,23 @@
     "confirm_message": "I'll show you an example, is that okay?",
     "yes": "Yes",
     "no": "No"
+  },
+  "player": {
+    "speed": "Playback speed",
+    "speed_fast_note": "not recommended. enjoy and meditate on the word of God without hurry.",
+    "narrator": "Narrator"
+  },
+  "search": {
+    "placeholder": "Search the Bible",
+    "results": "Search results",
+    "none": "No verses found.",
+    "count": "{{total}} verses found",
+    "showing": "Showing {{shown}} of {{total}} verses. Type more to narrow it down."
+  },
+  "version": {
+    "title": "Bible version",
+    "note": "Switching downloads the text of the new version and keeps the ones you already have. Audio you choose next uses the selected version.",
+    "switch_failed": "Could not download this version. Check your connection and try again."
   },
   "plan_content": {
     "iniciante-7-dias": {

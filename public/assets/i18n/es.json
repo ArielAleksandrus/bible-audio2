@@ -65,7 +65,17 @@
       "start": "Comenzar Plan"
     },
     "days": "días",
-    "times_completed": "Completado {{count}}x"
+    "times_completed": "Completado {{count}}x",
+    "sort": {
+      "label": "Ordenar por",
+      "days": "Más días",
+      "alpha": "A–Z",
+      "listens": "Más escuchados"
+    },
+    "pager": {
+      "previous": "Página anterior",
+      "next": "Página siguiente"
+    }
   },
   "settings": {
     "title": "Configuraciones",
@@ -112,6 +122,11 @@
       "permission_error": "No se pudieron activar las notificaciones — revisa el permiso de notificaciones del navegador para este sitio.",
       "ios_install_required": "En iPhone, las notificaciones solo funcionan si agregas esta app a tu pantalla de inicio (botón Compartir → Agregar a pantalla de inicio) y la abres desde ahí.",
       "unsupported": "Las notificaciones no son compatibles con este navegador."
+    },
+    "playback": {
+      "title": "Reproducción",
+      "autoplay": "Reproducir al seleccionar un plan o capítulo",
+      "autoplay_note": "Desactivado, el capítulo o plan elegido queda listo en el reproductor y solo empieza cuando pulsas reproducir."
     }
   },
   "dialog": {
@@ -153,6 +168,23 @@
     "confirm_message": "Te voy a mostrar un ejemplo, ¿de acuerdo?",
     "yes": "Sí",
     "no": "No"
+  },
+  "player": {
+    "speed": "Velocidad de reproducción",
+    "speed_fast_note": "no recomendado. disfruta y medita en la palabra de Dios sin prisa.",
+    "narrator": "Narrador"
+  },
+  "search": {
+    "placeholder": "Buscar en la Biblia",
+    "results": "Resultados de la búsqueda",
+    "none": "No se encontró ningún versículo.",
+    "count": "{{total}} versículos encontrados",
+    "showing": "Mostrando {{shown}} de {{total}} versículos. Escribe más para afinar la búsqueda."
+  },
+  "version": {
+    "title": "Versión de la Biblia",
+    "note": "Cambiar de versión descarga el texto de la nueva y conserva las que ya tienes. Los próximos audios usan la versión elegida.",
+    "switch_failed": "No se pudo descargar esta versión. Revisa tu conexión e inténtalo de nuevo."
   },
   "plan_content": {
     "iniciante-7-dias": {

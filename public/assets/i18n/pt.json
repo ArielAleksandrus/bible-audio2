@@ -65,7 +65,17 @@
       "start": "Começar Plano"
     },
     "days": "dias",
-    "times_completed": "Concluído {{count}}x"
+    "times_completed": "Concluído {{count}}x",
+    "sort": {
+      "label": "Ordenar por",
+      "days": "Mais dias",
+      "alpha": "A–Z",
+      "listens": "Mais ouvidos"
+    },
+    "pager": {
+      "previous": "Página anterior",
+      "next": "Próxima página"
+    }
   },
   "settings": {
     "title": "Configurações",
@@ -112,6 +122,11 @@
       "permission_error": "Não foi possível ativar as notificações — verifique a permissão de notificações do navegador para este site.",
       "ios_install_required": "No iPhone, as notificações só funcionam depois de adicionar este app à Tela de Início (botão Compartilhar → Adicionar à Tela de Início) e abri-lo por lá.",
       "unsupported": "Notificações não são suportadas neste navegador."
+    },
+    "playback": {
+      "title": "Reprodução",
+      "autoplay": "Tocar ao selecionar plano ou capítulo",
+      "autoplay_note": "Desligado, o capítulo ou plano escolhido fica pronto no player e só começa quando você apertar o play."
     }
   },
   "dialog": {
@@ -153,6 +168,23 @@
     "confirm_message": "Vou te mostrar um exemplo, tudo bem?",
     "yes": "Sim",
     "no": "Não"
+  },
+  "player": {
+    "speed": "Velocidade de reprodução",
+    "speed_fast_note": "não recomendado. aprecie e medite na palavra de Deus sem pressa.",
+    "narrator": "Narrador"
+  },
+  "search": {
+    "placeholder": "Buscar na Bíblia",
+    "results": "Resultados da busca",
+    "none": "Nenhum versículo encontrado.",
+    "count": "{{total}} versículos encontrados",
+    "showing": "Mostrando {{shown}} de {{total}} versículos. Digite mais para refinar."
+  },
+  "version": {
+    "title": "Versão da Bíblia",
+    "note": "Trocar de versão baixa o texto da nova versão e mantém as que você já tem. Os próximos áudios usam a versão escolhida.",
+    "switch_failed": "Não foi possível baixar esta versão. Verifique sua conexão e tente de novo."
   },
   "plan_content": {
     "iniciante-7-dias": {

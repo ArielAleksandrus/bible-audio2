@@ -41,6 +41,9 @@
   --ion-font-family: Roboto, 'Helvetica Neue', sans-serif;
 
   // Chapter/book colouring in the picker (downloaded / partially downloaded).
-  --app-downloaded: lightgreen;
-  --app-partial: lightyellow;
+  // A marker colour plus a soft tint for the cell behind it.
+  --app-downloaded: #2e7d32;
+  --app-downloaded-bg: #e4f2e5;
+  --app-partial: #b26a00;
+  --app-partial-bg: #fbf0d9;
 }

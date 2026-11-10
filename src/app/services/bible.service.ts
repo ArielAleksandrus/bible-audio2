@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Track } from '../models/track';
 import { Bible, BibleBook } from 'bible-picker';
 import { Plan, DailyGoal, ReadingPortion } from "../models/plan";
 import { AudioDownloaderService, BulkDownloadStrings, DownloadProgress } from './audio-downloader.service';
 import { WakeLockService } from './wake-lock.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
+import { catalogEntry, baseLang, isDefaultVersion, narratorChoices } from '../data/bible-catalog';
+import { PreferencesService } from './preferences.service';
+import { bookDisplayName } from '../utils/bible-text.util';
 import { saveBibleVersion, getBibleVersion, getAllSavedBibles, deleteBibleVersion, AvailableSpace } from '../storage/my-db';
 import { isNativeApp, nativePlatform } from '../utils/platform.util';
 
@@ -23,6 +26,41 @@ export const BIBLE_ABBREV_ISO = [
   "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN",
   "JUD", "REV"
 ];
+/**
+ * CDN path of one chapter's audio. A narrator folder is added only when one
+ * is given — callers pass it only for versions with two or more narrators,
+ * so every version that has a single voice keeps the path it always had.
+ */
+export function audioUrl(lang: string, version: string, bookIdx: number, chapter: number, narratorId?: string): string {
+  const iso = BIBLE_ABBREV_ISO[bookIdx].toUpperCase();
+  const narrator = narratorId ? `${narratorId}/` : '';
+  return `${BIBLE_CDN_URL}/audios/${baseLang(lang)}/${version.toUpperCase()}/${narrator}${iso}/${iso} ${chapter}.mp3`;
+}
+
+/** Download/storage key of one chapter's audio. The narrator is part of it, so two voices never share a file. */
+export function trackId(version: string, abbrev: string, chapter: number, narratorId?: string): string {
+  return narratorId ? `${version}-${narratorId}-${abbrev}-${chapter}` : `${version}-${abbrev}-${chapter}`;
+}
+
+/**
+ * The same chapters, read by another narrator (undefined = the version has
+ * no choice). Tracks that don't say where they came from are returned as is.
+ */
+export function retargetTracks(tracks: Track[], narratorId: string | undefined): Track[] {
+  return tracks.map(t => {
+    if (!t.lang || !t.version || t.bookIdx == null || !t.abbrev) return t;
+    const firstNarrator = narratorChoices(catalogEntry(t.lang, t.version))[0]?.id;
+    return {
+      ...t,
+      id: trackId(t.version, t.abbrev, t.chapter, narratorId),
+      url: audioUrl(t.lang, t.version, t.bookIdx, t.chapter, narratorId),
+      fileName: narratorId && narratorId === firstNarrator ? trackId(t.version, t.abbrev, t.chapter) : '',
+      narrator: narratorId,
+      status: 'pending' as const,
+    };
+  });
+}
+
 export type BookDownloadStatus = {
   abbrev: string,
   total: number,
@@ -42,6 +80,11 @@ export class BibleService {
   private textProgressSubject = new BehaviorSubject<{ loaded: number; total: number } | null>(null);
   textDownloadProgress$: Observable<{ loaded: number; total: number } | null> = this.textProgressSubject.asObservable();
 
+  /** Emits the Bible now in use after switchVersion() changes it. */
+  readonly bibleChanged$ = new Subject<Bible>();
+
+  private prefs = inject(PreferencesService);
+
   constructor(
     private ads: AudioDownloaderService,
     private wakeLock: WakeLockService
@@ -52,11 +95,66 @@ export class BibleService {
     });
   }
 
-  buildURL(lang: string, version: string, bookIdx: number, chapter: number) {
-    lang = lang.split("-")[0]; // to make 'pt-br' be 'pt' only
-    const abbrevISO = BIBLE_ABBREV_ISO[bookIdx];
+  buildURL(lang: string, version: string, bookIdx: number, chapter: number, narratorId?: string) {
+    return audioUrl(lang, version, bookIdx, chapter, narratorId);
+  }
 
-    return `${BIBLE_CDN_URL}/audios/${lang}/${version.toUpperCase()}/${abbrevISO.toUpperCase()}/${abbrevISO.toUpperCase()} ${chapter}.mp3`;
+  /** The narrator in use for this Bible: undefined unless its version offers a choice. */
+  narratorOf(bible: Bible): string | undefined {
+    return this.prefs.narratorFor(catalogEntry(bible.language, bible.version));
+  }
+
+  /** Storage key of a chapter of this Bible, for the narrator currently selected. */
+  trackIdFor(bible: Bible, bookAbbrev: string, chapter: number): string {
+    return trackId(bible.version, bookAbbrev, chapter, this.narratorOf(bible));
+  }
+
+  private buildTrack(bible: Bible, bookIdx: number, chapter: number, narratorId: string | undefined): Track {
+    const book = bible.books[bookIdx];
+    const title = `${bookDisplayName(book)} ${chapter}`;
+    const firstNarrator = narratorChoices(catalogEntry(bible.language, bible.version))[0]?.id;
+
+    // Storage keys this chapter may already be saved under from before:
+    // - "Gênesis 1.mp3": the key used before ids existed. It names no
+    //   version, so it is only trusted for a language's default version
+    //   (the only one that existed then).
+    // - the id without a narrator: what the first narrator's chapters were
+    //   saved as while he was the version's only voice.
+    let legacyKey = '';
+    if (!narratorId) {
+      if (book.name && isDefaultVersion(bible.language, bible.version)) legacyKey = `${book.name} ${chapter}.mp3`;
+    } else if (narratorId === firstNarrator) {
+      legacyKey = trackId(bible.version, book.abbrev, chapter);
+    }
+
+    return {
+      id: trackId(bible.version, book.abbrev, chapter, narratorId),
+      book: bookDisplayName(book),
+      chapter,
+      title,
+      fileName: legacyKey,
+      url: audioUrl(bible.language, bible.version, bookIdx, chapter, narratorId),
+      status: 'pending',
+      lang: baseLang(bible.language),
+      version: bible.version,
+      bookIdx,
+      abbrev: book.abbrev,
+      narrator: narratorId,
+    };
+  }
+
+  /**
+   * Switch to another version of a language without touching the ones
+   * already saved: fetches its text if this device doesn't have it yet,
+   * makes it the selected Bible and tells every page (bibleChanged$).
+   * Audio built from now on uses the new version.
+   */
+  async switchVersion(lang: string, version: string): Promise<Bible | undefined> {
+    const bible = await this.downloadAndSaveBible(baseLang(lang), version);
+    if (!bible) return undefined;
+    localStorage.setItem('selectedBible', `${baseLang(lang)}-${version}`);
+    this.bibleChanged$.next(bible);
+    return bible;
   }
 
   async downloadAndSaveBible(language: string, versionName: string): Promise<Bible|undefined> {
@@ -172,22 +270,14 @@ export class BibleService {
       }
     }
 
+    const narratorId = this.narratorOf(bible);
     for (const book of bibleBooks) {
       const bookIdx = bible.books.indexOf(book);
       for (let chapter = 1; chapter <= book.chapters.length; chapter++) {
         if(chapters && chapters.indexOf(chapter) == -1) continue;
 
 
-        const title = `${book.name} ${chapter}`;
-        let track: Track = {
-          id: `${bible.version}-${book.abbrev}-${chapter}`,
-          book: book.name,
-          chapter,
-          title,
-          fileName: `${title}.mp3`,
-          url: this.buildURL(bible.language, bible.version, bookIdx, chapter),
-          status: 'pending'
-        };
+        const track = this.buildTrack(bible, bookIdx, chapter, narratorId);
 
         let downloaded = await this.ads.isDownloaded(track)
         if(downloaded) track.status = "done";
@@ -208,20 +298,9 @@ export class BibleService {
       return [];
     }
 
+    const narratorId = this.narratorOf(bible);
     for(let portion of goal.portions) {
-      const book = bible.books[portion.bookIdx];
-      const chapter = portion.chapter;
-
-      const title = `${book.name} ${chapter}`;
-      let track: Track = {
-        id: `${bible.version}-${book.abbrev}-${chapter}`,
-        book: book.name,
-        chapter,
-        title,
-        fileName: `${title}.mp3`,
-        url: this.buildURL(bible.language, bible.version, portion.bookIdx, chapter),
-        status: 'pending'
-      };
+      const track = this.buildTrack(bible, portion.bookIdx, portion.chapter, narratorId);
       let downloaded = await this.ads.isDownloaded(track);
       if(downloaded) track.status = "done";
       tracks.push(track);

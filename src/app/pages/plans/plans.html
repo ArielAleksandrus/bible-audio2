@@ -35,7 +35,12 @@
               </div>
             }
             @if (currentPlan.description) {
-              <div class="plan-description">{{ planText(currentPlan, 'description') }}</div>
+              <div class="plan-description clamp" role="button" tabindex="0"
+                   [class.expanded]="isExpanded('current')"
+                   [attr.aria-expanded]="isExpanded('current')"
+                   (click)="toggleExpanded('current')"
+                   (keydown.enter)="toggleExpanded('current')"
+                   (keydown.space)="toggleExpanded('current'); $event.preventDefault()">{{ planText(currentPlan, 'description') }}</div>
             }
             <div class="progress-text">
               <strong>
@@ -105,6 +110,19 @@
       }
 
       <!-- ============================================= -->
+      <!-- SORT (both lists below) -->
+      <!-- ============================================= -->
+      <div class="sort-bar" role="group" [attr.aria-label]="'plans.sort.label' | translate">
+        <span class="sort-label">{{ 'plans.sort.label' | translate }}</span>
+        @for (mode of sortModes; track mode) {
+          <button type="button" class="sort-chip" [class.active]="sortMode === mode"
+                  [attr.aria-pressed]="sortMode === mode" (click)="setSort(mode)">
+            {{ 'plans.sort.' + mode | translate }}
+          </button>
+        }
+      </div>
+
+      <!-- ============================================= -->
       <!-- STARTED PLANS -->
       <!-- ============================================= -->
       @if (startedPlans.length > 0) {
@@ -112,7 +130,7 @@
           <h3 class="section-title">
             <ion-icon name="time-outline"></ion-icon> {{ 'plans.started.title' | translate }}
           </h3>
-          @for (plan of startedPlans; track plan.id) {
+          @for (plan of pageOf(sortedStarted, startedPage); track plan.id) {
             <ion-card class="plan-item">
               <ion-card-header>
                 <ion-card-title>{{ planText(plan, 'title') }}</ion-card-title>
@@ -127,7 +145,12 @@
                   </span>
                 }
                 @if (plan.description) {
-                  <div class="plan-desc">{{ planText(plan, 'description') }}</div>
+                  <div class="plan-desc clamp" role="button" tabindex="0"
+                       [class.expanded]="isExpanded(plan.id)"
+                       [attr.aria-expanded]="isExpanded(plan.id)"
+                       (click)="toggleExpanded(plan.id)"
+                       (keydown.enter)="toggleExpanded(plan.id)"
+                       (keydown.space)="toggleExpanded(plan.id); $event.preventDefault()">{{ planText(plan, 'description') }}</div>
                 }
                 <div class="plan-days">
                   {{ daysCompleted(plan) }} {{ 'plans.current.of' | translate }} {{ plan.days }} {{ 'plans.current.days_completed' | translate }}
@@ -146,6 +169,20 @@
               </ion-card-content>
             </ion-card>
           }
+
+          @if (pageCountOf(startedPlans) > 1) {
+            <div class="pager">
+              <ion-button fill="clear" [disabled]="clampPage(startedPlans, startedPage) === 0"
+                          (click)="startedPage = clampPage(startedPlans, startedPage) - 1" [attr.aria-label]="'plans.pager.previous' | translate">
+                <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+              </ion-button>
+              <span class="pager-label">{{ clampPage(startedPlans, startedPage) + 1 }} / {{ pageCountOf(startedPlans) }}</span>
+              <ion-button fill="clear" [disabled]="clampPage(startedPlans, startedPage) >= pageCountOf(startedPlans) - 1"
+                          (click)="startedPage = clampPage(startedPlans, startedPage) + 1" [attr.aria-label]="'plans.pager.next' | translate">
+                <ion-icon slot="icon-only" name="chevron-forward"></ion-icon>
+              </ion-button>
+            </div>
+          }
         </div>
       }
 
@@ -156,7 +193,7 @@
         <h3 class="section-title">
           <ion-icon name="library-outline"></ion-icon> {{ 'plans.available.title' | translate }}
         </h3>
-        @for (plan of availablePlans; track plan.id) {
+        @for (plan of pageOf(sortedAvailable, availablePage); track plan.id) {
           <ion-card class="plan-item">
             <ion-card-header>
               <ion-card-title>{{ planText(plan, 'title') }}</ion-card-title>
@@ -171,7 +208,12 @@
                 </span>
               }
               @if (plan.description) {
-                <div class="plan-desc">{{ planText(plan, 'description') }}</div>
+                <div class="plan-desc clamp" role="button" tabindex="0"
+                     [class.expanded]="isExpanded(plan.id)"
+                     [attr.aria-expanded]="isExpanded(plan.id)"
+                     (click)="toggleExpanded(plan.id)"
+                     (keydown.enter)="toggleExpanded(plan.id)"
+                     (keydown.space)="toggleExpanded(plan.id); $event.preventDefault()">{{ planText(plan, 'description') }}</div>
               }
               <div class="plan-days">{{ plan.days }} {{ 'plans.days' | translate }}</div>
               <div class="plan-buttons">
@@ -181,6 +223,20 @@
               </div>
             </ion-card-content>
           </ion-card>
+        }
+
+        @if (pageCountOf(availablePlans) > 1) {
+          <div class="pager">
+            <ion-button fill="clear" [disabled]="clampPage(availablePlans, availablePage) === 0"
+                        (click)="availablePage = clampPage(availablePlans, availablePage) - 1" [attr.aria-label]="'plans.pager.previous' | translate">
+              <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+            </ion-button>
+            <span class="pager-label">{{ clampPage(availablePlans, availablePage) + 1 }} / {{ pageCountOf(availablePlans) }}</span>
+            <ion-button fill="clear" [disabled]="clampPage(availablePlans, availablePage) >= pageCountOf(availablePlans) - 1"
+                        (click)="availablePage = clampPage(availablePlans, availablePage) + 1" [attr.aria-label]="'plans.pager.next' | translate">
+              <ion-icon slot="icon-only" name="chevron-forward"></ion-icon>
+            </ion-button>
+          </div>
         }
       </div>
     </div>

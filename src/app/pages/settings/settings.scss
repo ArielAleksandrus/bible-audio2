@@ -137,3 +137,42 @@ ion-card-title {
   font-size: 1.1rem;
   margin-top: 1px;
 }
+
+.setting-toggle {
+  width: 100%;
+  min-height: 44px;
+  font-size: 1.05rem;
+  color: #222;
+
+  // The label is long in every language: let it wrap instead of ending in "…".
+  &::part(label) {
+    white-space: normal;
+  }
+}
+
+.setting-select {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 16px;
+  font-size: 1.05rem;
+  color: #222;
+
+  select {
+    flex: 1;
+    min-width: 160px;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid rgba(var(--ion-color-primary-rgb), 0.35);
+    border-radius: 10px;
+    background: #fff;
+    color: inherit;
+    font: inherit;
+  }
+
+  ion-spinner {
+    width: 20px;
+    height: 20px;
+  }
+}

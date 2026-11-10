@@ -42,5 +42,29 @@
       </ion-range>
       <span class="time">{{ formatTime(duration) }}</span>
     </div>
+
+    <div class="options">
+      <div class="speed-options" role="group" [attr.aria-label]="'player.speed' | translate">
+        @for (rate of rates; track rate) {
+          <button type="button" class="chip" [class.active]="rate === playbackRate"
+                  [attr.aria-pressed]="rate === playbackRate" (click)="setRate(rate)">
+            {{ rateLabel(rate) }}
+          </button>
+        }
+      </div>
+      @if (playbackRate === 1.5) {
+        <span class="speed-note" role="note">{{ 'player.speed_fast_note' | translate }}</span>
+      }
+      @if (narrators.length > 1) {
+        <label class="narrator">
+          <span>{{ 'player.narrator' | translate }}</span>
+          <select [value]="currentTrack.narrator" (change)="changeNarrator($any($event.target).value)">
+            @for (narrator of narrators; track narrator.id) {
+              <option [value]="narrator.id" [selected]="narrator.id === currentTrack.narrator">{{ narrator.label }}</option>
+            }
+          </select>
+        </label>
+      }
+    </div>
   </div>
 }

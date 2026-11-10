@@ -32,6 +32,16 @@
         <ion-icon class="hero-icon" name="book-outline"></ion-icon>
         <p>{{ 'hero.subtitle' | translate }}</p>
 
+        @if (versions.length > 1 && currentVersion) {
+          <button type="button" class="version-chip" [disabled]="switchingVersion" (click)="chooseVersion()">
+            <ion-icon name="swap-horizontal-outline" aria-hidden="true"></ion-icon>
+            <span>{{ currentVersion.label }}</span>
+            @if (switchingVersion) {
+              <ion-spinner name="crescent"></ion-spinner>
+            }
+          </button>
+        }
+
         <!-- ÁREA DE DOWNLOAD -->
         <div class="download-area">
           <!-- BOTÃO: aparece se houver espaço E NÃO estiver baixando -->
@@ -86,6 +96,47 @@
         }
       </header>
 
+      <!-- BUSCA POR TEXTO -->
+      <section class="search-section">
+        <ion-searchbar
+          class="bible-search"
+          [value]="searchQuery"
+          [debounce]="250"
+          [placeholder]="'search.placeholder' | translate"
+          [attr.aria-label]="'search.placeholder' | translate"
+          inputmode="search"
+          enterkeyhint="search"
+          (ionInput)="onSearch($any($event.detail.value))"
+          (ionClear)="clearSearch()">
+        </ion-searchbar>
+
+        @if (searchQuery.trim().length >= minQueryLength) {
+          <div class="search-results" role="region" [attr.aria-label]="'search.results' | translate" aria-live="polite">
+            @if (searchHits.length === 0) {
+              <p class="search-status">{{ 'search.none' | translate }}</p>
+            } @else {
+              <p class="search-status">
+                @if (searchTotal > searchHits.length) {
+                  {{ 'search.showing' | translate:{ shown: searchHits.length, total: searchTotal } }}
+                } @else {
+                  {{ 'search.count' | translate:{ total: searchTotal } }}
+                }
+              </p>
+              <ul class="search-list">
+                @for (hit of searchHits; track $index) {
+                  <li>
+                    <button type="button" class="search-hit" (click)="openSearchHit(hit)">
+                      <span class="hit-ref">{{ bookName(hit.bookIdx) }} {{ hit.chapter }}:{{ hit.verse }}</span>
+                      <span class="hit-text">{{ hit.before }}<mark>{{ hit.match }}</mark>{{ hit.after }}</span>
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </section>
+
       <!-- BIBLE PICKER -->
       <section class="picker-section">
         <div class="picker-wrapper">
@@ -103,11 +154,11 @@
       <section class="legend-section">
         <div class="legend-items">
           <div class="legend-item">
-            <span class="square-color partial-dl"></span>
+            <span class="mark partial-dl" aria-hidden="true"></span>
             <span class="label">{{ 'legend.partial' | translate }}</span>
           </div>
           <div class="legend-item">
-            <span class="square-color full-dl"></span>
+            <span class="mark full-dl" aria-hidden="true"></span>
             <span class="label">{{ 'legend.full' | translate }}</span>
           </div>
         </div>
@@ -120,6 +171,7 @@
       slot="fixed"
       [book]="textBook"
       [chapters]="textChapters"
+      [highlightVerse]="textVerse"
       (close)="showTextViewer = false">
     </app-bible-text-viewer>
   }

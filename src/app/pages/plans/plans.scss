@@ -176,3 +176,67 @@ ion-item.completed-row {
   flex-wrap: wrap;
   margin-top: 12px;
 }
+
+/* ============================================= */
+/* Descrição longa: 3 linhas, toque para expandir */
+/* ============================================= */
+.clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  cursor: pointer;
+
+  &.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #f2a900;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* ============================================= */
+/* Ordenação */
+/* ============================================= */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 16px 0;
+}
+
+.sort-label {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.sort-chip {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.35);
+  border-radius: 20px;
+  background: #fff;
+  color: var(--ion-color-primary);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  &.active {
+    background: var(--ion-color-primary);
+    border-color: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+  }
+
+  &:focus-visible {
+    outline: 3px solid #f2a900;
+    outline-offset: 2px;
+  }
+}

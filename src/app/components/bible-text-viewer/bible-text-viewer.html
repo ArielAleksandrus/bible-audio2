@@ -22,7 +22,7 @@
           @if (entry.heading) {
             <h4 class="section-heading">{{ entry.text }}</h4>
           } @else {
-            <span class="verse"><sup class="verse-number">{{ entry.verseNumber }}</sup>{{ entry.text }}</span>
+            <span class="verse" [class.highlight]="highlightVerse === entry.verseNumber && chapter.number === chapters[0]"><sup class="verse-number">{{ entry.verseNumber }}</sup>{{ entry.text }}</span>
           }
         }
       </article>

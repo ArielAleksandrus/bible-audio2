@@ -32,6 +32,8 @@ const plugin = (() => {
       skipBack: vi.fn().mockResolvedValue(undefined),
       seekTo: vi.fn().mockResolvedValue(undefined),
       clearAllItems: vi.fn().mockResolvedValue(undefined),
+      selectTrackByIndex: vi.fn().mockResolvedValue(undefined),
+      setPlaybackRate: vi.fn().mockResolvedValue(undefined),
     },
   };
 })();
@@ -202,6 +204,89 @@ describe('NativeAudioEngine', () => {
     downloaded.next(tracks[0]);
     await new Promise(r => setTimeout(r, 0));
     expect(plugin.Playlist.replaceItem).not.toHaveBeenCalled();
+  });
+
+  describe('playback speed', () => {
+    const playing = (items: { trackId: string }[], i = 0) =>
+      plugin.emit({ msgType: RmxAudioStatusMessage.RMXSTATUS_PLAYING, trackId: items[i].trackId, value: { currentPosition: 0, duration: 200 } });
+    const paused = (items: { trackId: string }[], i = 0) =>
+      plugin.emit({ msgType: RmxAudioStatusMessage.RMXSTATUS_PAUSE, trackId: items[i].trackId, value: { currentPosition: 5, duration: 200 } });
+    const changedTo = (items: { trackId: string }[], i: number) =>
+      plugin.emit({
+        msgType: RmxAudioStatusMessage.RMXSTATUS_TRACK_CHANGED,
+        trackId: items[i].trackId,
+        value: { currentItem: items[i], hasNext: true, hasPrevious: true },
+      });
+    const rates = () => plugin.Playlist.setPlaybackRate.mock.calls.map(c => c[0].rate);
+
+    it('sends a new speed to the native player while playing', async () => {
+      const { items } = await start();
+      playing(items);
+      engine.setPlaybackRate(1.25);
+      await vi.waitFor(() => expect(rates()).toEqual([1.25]));
+    });
+
+    it('re-applies the speed when the next chapter starts by itself', async () => {
+      const { items } = await start();
+      playing(items);
+      engine.setPlaybackRate(1.5);
+      await vi.waitFor(() => expect(rates()).toEqual([1.5]));
+
+      changedTo(items, 1);
+      await vi.waitFor(() => expect(rates()).toEqual([1.5, 1.5]));
+    });
+
+    it('re-applies the speed when playback resumes (iOS play() goes back to 1x)', async () => {
+      engine = create('ios');
+      const { items } = await start();
+      playing(items);
+      engine.setPlaybackRate(1.5);
+      await vi.waitFor(() => expect(rates()).toEqual([1.5]));
+
+      paused(items);
+      playing(items);
+      await vi.waitFor(() => expect(rates()).toEqual([1.5, 1.5]));
+    });
+
+    it('does not answer a repeated "playing" status with another speed change', async () => {
+      const { items } = await start();
+      engine.setPlaybackRate(1.5);
+      playing(items);
+      playing(items);
+      playing(items);
+      await new Promise(r => setTimeout(r, 0));
+      // one from setPlaybackRate (Android takes it while paused), one from the start of playback
+      expect(rates()).toEqual([1.5, 1.5]);
+    });
+
+    it('on iOS, holds a speed chosen while paused until playback starts (setting it would start the player)', async () => {
+      engine = create('ios');
+      const { items } = await start();
+      engine.setPlaybackRate(1.5);
+      await new Promise(r => setTimeout(r, 0));
+      expect(rates()).toEqual([]);
+
+      playing(items);
+      await vi.waitFor(() => expect(rates()).toEqual([1.5]));
+    });
+
+    it('leaves the native player alone at normal speed', async () => {
+      const { items } = await start();
+      playing(items);
+      changedTo(items, 1);
+      await new Promise(r => setTimeout(r, 0));
+      expect(rates()).toEqual([]);
+    });
+  });
+
+  it('loadPlaylist queues the chapters and selects the first without playing', async () => {
+    await engine.loadPlaylist([track('j1', 1), track('j2', 2)], 0);
+
+    expect(plugin.Playlist.setPlaylistItems).toHaveBeenCalled();
+    expect(plugin.Playlist.selectTrackByIndex).toHaveBeenCalledWith({ index: 0 });
+    expect(plugin.Playlist.playTrackByIndex).not.toHaveBeenCalled();
+    expect(engine.currentTrack$.value?.id).toBe('j1');
+    expect(engine.isPlaying$.value).toBe(false);
   });
 
   it('maps player controls onto the plugin', async () => {

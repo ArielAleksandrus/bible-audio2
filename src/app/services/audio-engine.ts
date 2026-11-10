@@ -18,6 +18,11 @@ export interface AudioEngine {
 
   playTrack(track: Track, playlist?: Track[], startIndex?: number): Promise<void>;
   playPlaylist(tracks: Track[], startIndex?: number): Promise<void>;
+  /**
+   * Queue a playlist and show its first chapter in the player without
+   * starting it; the user's own tap on play (play()) starts it.
+   */
+  loadPlaylist(tracks: Track[], startIndex?: number): Promise<void>;
   setPlaylist(tracks: Track[], startIndex?: number): void;
 
   play(): void;
@@ -30,4 +35,7 @@ export interface AudioEngine {
   previous(): void;
   hasNext(): boolean;
   hasPrevious(): boolean;
+
+  /** 1 = normal speed. Stays in force across chapters until changed again. */
+  setPlaybackRate(rate: number): void;
 }

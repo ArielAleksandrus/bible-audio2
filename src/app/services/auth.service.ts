@@ -49,15 +49,31 @@ export class AuthService {
     this.user$.next(result.user);
   }
 
-  // iOS only. App Store guideline 4.8 requires Sign in with Apple next to
-  // Google sign-in. Same flow as native Google: the OS sheet returns an ID
-  // token (+ the raw nonce it was issued for) and the JS SDK signs in with it.
+  // App Store guideline 4.8 requires Sign in with Apple next to Google
+  // sign-in on iOS. There it is the same flow as native Google: the OS sheet
+  // returns an ID token (+ the raw nonce it was issued for) and the JS SDK
+  // signs in with it.
+  //
+  // On the web it is Firebase's own Apple OAuth flow — in a popup, not a
+  // redirect, for the reason given above signInWithGoogle(). That flow only
+  // works once the Apple provider is set up in the Firebase console
+  // (Services ID, key, return URL): see docs/apple-sign-in-web.md.
   async signInWithApple(): Promise<void> {
     if (!this.enabled) return;
     const auth = await this.getAuth();
-    const { signInWithCredential } = await this.getAuthModule();
-    const result = await signInWithCredential(auth, (await this.nativeCredential('apple.com')).credential);
+    const { signInWithCredential, signInWithPopup } = await this.getAuthModule();
+    const result = isNativeApp()
+      ? await signInWithCredential(auth, (await this.nativeCredential('apple.com')).credential)
+      : await signInWithPopup(auth, await this.appleWebProvider());
     this.user$.next(result.user);
+  }
+
+  private async appleWebProvider() {
+    const { OAuthProvider } = await this.getAuthModule();
+    const provider = new OAuthProvider('apple.com');
+    provider.addScope('email');
+    provider.addScope('name');
+    return provider;
   }
 
   // In-app account deletion (App Store guideline 5.1.1(v)). The user signs in
@@ -80,7 +96,12 @@ export class AuthService {
       appleAuthCode = native.appleAuthCode;
       await reauthenticateWithCredential(user, native.credential);
     } else {
-      await reauthenticateWithPopup(user, new GoogleAuthProvider());
+      // Re-authenticate with the provider the account was created with: a
+      // Google popup can't confirm an Apple account.
+      await reauthenticateWithPopup(
+        user,
+        providerId === 'apple.com' ? await this.appleWebProvider() : new GoogleAuthProvider(),
+      );
     }
 
     await deleteData(user.uid);

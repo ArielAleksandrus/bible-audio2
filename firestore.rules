@@ -16,6 +16,15 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Global, anonymous usage counters per reading plan
+    // (planStats/{planId} = { starts, completions, listens }). Read and
+    // incremented only by the /api/plan-stats function, through the Admin
+    // SDK, which bypasses these rules — so clients get no access at all and
+    // nobody can set a counter to whatever they like.
+    match /planStats/{planId} {
+      allow read, write: if false;
+    }
+
     // Web Push subscriptions, one doc per device, keyed by a random UUID
     // generated on the device (NotificationsService.deviceId). Only the
     // cron (Admin SDK) reads them, so clients can't read or list any —

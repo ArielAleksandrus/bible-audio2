@@ -25,13 +25,6 @@ ion-icon.hero-icon {
   opacity: 0.9;
 }
 
-.hero-header h1 {
-  font-size: 2.6rem;
-  font-weight: 400;
-  margin: 0 0 16px 0;
-  color: #222;
-}
-
 .hero-header p {
   font-size: 1.2rem;
   color: #555;
@@ -150,62 +143,65 @@ ion-icon.hero-icon {
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   overflow: hidden;
-  padding: 20px;
+
+  // The picker is its own card: let it fill this one edge to edge.
+  bible-picker {
+    --bp-max-width: none;
+  }
 }
 
 /* ============================================= */
 /* LEGENDA */
 /* ============================================= */
+// Same markers the picker draws on a book/chapter (see MARK_FULL / MARK_PARTIAL
+// in home.ts): a hollow dot for "partly downloaded", a solid one for "all".
 .legend-section {
-  background: rgba(0, 0, 0, 0.85);
-  color: white;
-  padding: 20px 30px;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-  text-align: center;
   width: 100%;
-  max-width: 600px;
-  margin-bottom: 40px;
-}
-
-.legend-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 16px;
-  font-size: 1.1rem;
-  font-weight: 500;
+  max-width: 900px;
+  margin-bottom: 32px;
 }
 
 .legend-items {
   display: flex;
   justify-content: center;
-  gap: 30px;
+  gap: 8px 24px;
   flex-wrap: wrap;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 1rem;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #445;
 }
 
-.square-color {
+.mark {
+  position: relative;
   display: inline-block;
-  width: 2em;
-  height: 2em;
-  border-radius: 8px;
+  width: 28px;
+  height: 22px;
+  border-radius: 6px;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
 
   &.partial-dl {
-    background-color: var(--app-partial);
+    background: var(--app-partial-bg);
+    &::after { box-shadow: inset 0 0 0 2px var(--app-partial); }
   }
 
   &.full-dl {
-    background-color: var(--app-downloaded);
+    background: var(--app-downloaded-bg);
+    &::after { background: var(--app-downloaded); }
   }
 }
 
@@ -214,13 +210,109 @@ ion-icon.hero-icon {
 }
 
 /* ============================================= */
+/* TROCA DE VERSÃO */
+/* ============================================= */
+.version-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.35);
+  border-radius: 22px;
+  background: #fff;
+  color: var(--ion-color-primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  ion-icon { font-size: 1.2rem; }
+  ion-spinner { width: 18px; height: 18px; }
+}
+
+/* ============================================= */
+/* BUSCA */
+/* ============================================= */
+.search-section {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 16px;
+}
+
+.bible-search {
+  padding: 0;
+  --background: #fff;
+  --border-radius: 14px;
+  --box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.search-results {
+  margin-top: 8px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.search-status {
+  margin: 0;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  color: #667;
+}
+
+.search-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 50vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.search-hit {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: none;
+  border-top: 1px solid #eef0f2;
+  background: none;
+  text-align: left;
+  font: inherit;
+  color: #2b2b2b;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 3px solid #f2a900;
+    outline-offset: -3px;
+  }
+
+  .hit-ref {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+  }
+
+  .hit-text {
+    display: block;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  mark {
+    background: #fff3c4;
+    color: inherit;
+    border-radius: 3px;
+    padding: 0 1px;
+  }
+}
+
+/* ============================================= */
 /* RESPONSIVO */
 /* ============================================= */
 @media (max-width: 768px) {
-  .hero-header h1 {
-    font-size: 1.5rem;
-  }
-
   .hero-header p {
     font-size: 0.8rem;
   }
@@ -229,16 +321,4 @@ ion-icon.hero-icon {
     font-size: 3rem;
   }
 
-  .picker-wrapper {
-    padding: 12px;
-  }
-
-  .legend-items {
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .legend-item {
-    justify-content: center;
-  }
 }

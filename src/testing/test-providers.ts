@@ -27,7 +27,9 @@ const overlay = () => ({
 export function appTestProviders(): (Provider | EnvironmentProviders)[] {
   return [
     provideIonicAngular({}),
-    provideRouter([]),
+    // Pages send the user to /home when no Bible is selected yet (always the
+    // case under test); a catch-all keeps that from being an unmatched route.
+    provideRouter([{ path: '**', children: [] }]),
     provideHttpClient(),
     provideHttpClientTesting(),
     provideTranslateService(),

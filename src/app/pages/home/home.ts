@@ -1,10 +1,10 @@
-import { Component, ChangeDetectorRef, DestroyRef, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { Component, ChangeDetectorRef, DestroyRef, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
-  IonButton, IonContent, IonHeader, IonIcon, IonProgressBar, IonSpinner, IonTitle, IonToolbar,
-  ModalController, ViewWillEnter,
+  ActionSheetController, IonButton, IonContent, IonHeader, IonIcon, IonProgressBar, IonSearchbar, IonSpinner,
+  IonTitle, IonToolbar, ModalController, ViewWillEnter,
 } from '@ionic/angular';
 
 import { AudioService } from '../../services/audio.service';
@@ -24,6 +24,18 @@ import { InstallSuggestedDialog } from '../../install-suggested-dialog/install-s
 import { isAppInstalled, isInstagramInAppBrowser, isMobileDevice } from '../../utils/browser.util';
 import { isNativeApp } from '../../utils/platform.util';
 import { UiService } from '../../services/ui.service';
+import { PreferencesService } from '../../services/preferences.service';
+import { BibleCatalogEntry, catalogEntry, versionsForLanguage } from '../../data/bible-catalog';
+import { SearchHit, SearchIndex, buildSearchIndex, searchBible, MIN_QUERY_LENGTH } from '../../utils/bible-search.util';
+import { bookDisplayName } from '../../utils/bible-text.util';
+
+/** Search results shown at once; the count of all matches is shown beside them. */
+const SEARCH_LIMIT = 30;
+
+// What the picker draws on a book/chapter (bible-picker's customCSS): a
+// solid dot on a tinted cell for "downloaded", a hollow dot for "partly".
+const MARK_FULL = '--bp-mark: var(--app-downloaded); --bp-mark-ring: var(--app-downloaded); background-color: var(--app-downloaded-bg);';
+const MARK_PARTIAL = '--bp-mark-ring: var(--app-partial); background-color: var(--app-partial-bg);';
 
 
 @Component({
@@ -32,7 +44,7 @@ import { UiService } from '../../services/ui.service';
   styleUrls: ['./home.scss'],
   imports: [
     AsyncPipe, DecimalPipe, TranslatePipe,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon, IonProgressBar, IonSpinner,
+    IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon, IonProgressBar, IonSearchbar, IonSpinner,
     BiblePicker,
     BibleTextViewer,
   ],
@@ -58,6 +70,25 @@ export class Home implements OnInit, ViewWillEnter {
   showTextViewer = false;
   textBook?: BibleBook;
   textChapters: number[] = [];
+  textVerse?: number;
+
+  @ViewChild(BiblePicker) private picker?: BiblePicker;
+
+  // Text search (runs on the Bible JSON already on the device).
+  searchQuery = '';
+  searchHits: SearchHit[] = [];
+  searchTotal = 0;
+  readonly searchLimit = SEARCH_LIMIT;
+  readonly minQueryLength = MIN_QUERY_LENGTH;
+  private searchIndex?: SearchIndex;
+
+  /** Versions offered for the current language; the switch shows only when there are two or more. */
+  versions: BibleCatalogEntry[] = [];
+  currentVersion?: BibleCatalogEntry;
+  switchingVersion = false;
+
+  private prefs = inject(PreferencesService);
+  private actionSheets = inject(ActionSheetController);
 
   constructor(
     private audioService: AudioService,
@@ -78,8 +109,17 @@ export class Home implements OnInit, ViewWillEnter {
     // failed or cancelled. On Android it runs in a service and can end
     // while the app was closed, so the fullDownload() promise can't be the
     // only trigger.
+    const destroyRef = inject(DestroyRef);
+
+    // Another version of the language was chosen (here or in Settings).
+    this.bibleServ.bibleChanged$.pipe(takeUntilDestroyed(destroyRef)).subscribe(bible => this.useBible(bible));
+    // Downloads are kept per narrator, so the colouring follows the voice in use.
+    this.prefs.narratorChanged$.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => {
+      if (this.bibleData) this.checkDownloaded();
+    });
+
     let lastFullStatus: string | undefined;
-    this.progress$.pipe(takeUntilDestroyed(inject(DestroyRef))).subscribe(p => {
+    this.progress$.pipe(takeUntilDestroyed(destroyRef)).subscribe(p => {
       if (p.context !== 'full-bible') return;
       const was = lastFullStatus;
       lastFullStatus = p.status;
@@ -119,19 +159,91 @@ export class Home implements OnInit, ViewWillEnter {
     this.translate.use(selected.split("-")[0]);
     this.bibleServ.loadBibleVersion(selected.split("-")[0], selected.split("-")[1]).then(res => {
       if(res) {
-        this.bibleData = res;
         this.appState.markBibleLoaded();
-        const savedLang = this.bibleData.language?.split("-")[0]; // e.g. 'pt-br' -> 'pt'
-        if(savedLang) {
-          this.translate.use(savedLang);
-        }
-        this.checkDownloaded();
-
-        this.cdr.detectChanges();
+        this.useBible(res);
       } else {
         this.openLanguageSelector();
       }
     });
+  }
+
+  /** Show a Bible (first load, or after a version switch): picker, colouring, search and version switch all follow it. */
+  private useBible(bible: Bible) {
+    this.bibleData = bible;
+    const savedLang = bible.language?.split("-")[0]; // e.g. 'pt-br' -> 'pt'
+    if(savedLang) {
+      this.translate.use(savedLang);
+    }
+    this.versions = versionsForLanguage(bible.language || '');
+    this.currentVersion = catalogEntry(bible.language || '', bible.version);
+    this.searchIndex = undefined;
+    this.clearSearch();
+    this.showTextViewer = false;
+    this.checkDownloaded();
+    this.cdr.detectChanges();
+  }
+
+  /** Home shortcut for the version switch (the same switch is in Settings). */
+  async chooseVersion() {
+    const sheet = await this.actionSheets.create({
+      header: this.translate.instant('version.title'),
+      buttons: [
+        ...this.versions.map(v => ({
+          text: v.label,
+          cssClass: v === this.currentVersion ? 'action-sheet-selected' : '',
+          handler: () => { void this.switchVersion(v); },
+        })),
+        { text: this.translate.instant('common.cancel'), role: 'cancel' },
+      ],
+    });
+    await sheet.present();
+  }
+
+  private async switchVersion(entry: BibleCatalogEntry) {
+    if (entry === this.currentVersion || this.switchingVersion) return;
+    this.switchingVersion = true;
+    this.cdr.detectChanges();
+    try {
+      const bible = await this.bibleServ.switchVersion(entry.lang, entry.version);
+      if (!bible) await this.ui.alert(this.translate.instant('version.switch_failed'));
+    } finally {
+      this.switchingVersion = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  // ---- text search ----
+
+  onSearch(query: string | null | undefined) {
+    this.searchQuery = query || '';
+    if (!this.bibleData || this.searchQuery.trim().length < MIN_QUERY_LENGTH) {
+      this.searchHits = [];
+      this.searchTotal = 0;
+      return;
+    }
+    // Built on the first search, not at startup: most sessions never search.
+    this.searchIndex ??= buildSearchIndex(this.bibleData.books);
+    const { hits, total } = searchBible(this.searchIndex, this.searchQuery, SEARCH_LIMIT);
+    this.searchHits = hits;
+    this.searchTotal = total;
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    this.searchHits = [];
+    this.searchTotal = 0;
+  }
+
+  bookName(bookIdx: number): string {
+    return bookDisplayName(this.bibleData?.books[bookIdx]);
+  }
+
+  /** Open the text at the verse found, with its chapter selected in the picker. */
+  async openSearchHit(hit: SearchHit) {
+    const book = this.bibleData?.books[hit.bookIdx];
+    if (!book) return;
+    this.picker?.showChapter(hit.bookIdx, hit.chapter);
+    await this.openChapters(book, [hit.chapter], hit.verse);
   }
 
   async fullDownload(): Promise<Track[]> {
@@ -244,9 +356,9 @@ export class Home implements OnInit, ViewWillEnter {
       const stat = booksStatus[i];
       if(stat.total > 0) { // something was downloaded
         if(stat.pendingCount == 0) // book was fully downloaded
-          this.customCSS["b"][i] = "background-color: lightgreen;";
+          this.customCSS["b"][i] = MARK_FULL;
         else //book was partially downloaded
-          this.customCSS["b"][i] = "background-color: lightyellow;";
+          this.customCSS["b"][i] = MARK_PARTIAL;
       } else { // nothing was downloaded
         // do nothing
       }
@@ -267,8 +379,8 @@ export class Home implements OnInit, ViewWillEnter {
       return;
 
     for(let i = 1; i <= stats.total + stats.pendingCount; i++) {
-      if(stats.pending.indexOf(`${this.bibleData.version}-${bookAbbrev}-${i}`) == -1) // chapter was downloaded
-        this.customCSS["c"][i - 1] = "background-color: lightgreen";
+      if(stats.pending.indexOf(this.bibleServ.trackIdFor(this.bibleData, bookAbbrev, i)) == -1) // chapter was downloaded
+        this.customCSS["c"][i - 1] = MARK_FULL;
     }
     this.painting = false;
     this.cdr.detectChanges();
@@ -285,16 +397,31 @@ export class Home implements OnInit, ViewWillEnter {
       console.error("home.ts::bpSelected -> No bible data found");
       return;
     }
-    this.tracks = await this.bibleServ.genTracks(this.bibleData, sel.books[0].abbrev, sel.chapters);
+    await this.openChapters(sel.books[0], sel.chapters);
+  }
+
+  /**
+   * What choosing chapters does, from the picker or from a search result:
+   * download the first one, queue them all, open the text. Whether audio
+   * starts by itself is the user's "play on selection" setting — turned off,
+   * the player is left ready and the user presses play.
+   */
+  private async openChapters(book: BibleBook, chapters: number[], verse?: number) {
+    if(!this.bibleData) return;
+
+    this.textBook = book;
+    this.textChapters = chapters;
+    this.textVerse = verse;
+    this.showTextViewer = true;
+    this.cdr.detectChanges();
+
+    this.tracks = await this.bibleServ.genTracks(this.bibleData, book.abbrev, chapters);
+    if(this.tracks.length === 0) return;
     this.inAppBrowserWarning.armForNextPlay();
     await this.dlServ.download(this.tracks[0]);
     // Playlist must be set before the first chapter ends, not after every chapter is downloaded.
-    void this.audioService.playPlaylist(this.tracks, 0);
+    void this.audioService.openPlaylist(this.tracks, 0);
     void this.dlServ.downloadTracks(this.tracks);
-
-    this.textBook = sel.books[0];
-    this.textChapters = sel.chapters;
-    this.showTextViewer = true;
   }
 
   async playTrackFromHere(track: Track, index: number) {

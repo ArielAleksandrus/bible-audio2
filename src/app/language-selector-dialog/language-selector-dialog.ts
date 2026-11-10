@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { languageOptions } from '../data/bible-catalog';
 import { IonItem, IonLabel, IonList, IonSpinner, ModalController } from '@ionic/angular';
 
 /** First-run (and "reset language") picker. Dismisses with e.g. `'pt-ara'`. */
@@ -13,13 +14,8 @@ export class LanguageSelectorDialog {
 
   loading = false;
 
-  readonly options = [
-    { lang: 'pt', version: 'ara', flag: '🇧🇷', label: 'Português - ARA' },
-    { lang: 'en', version: 'niv', flag: '🇺🇸', label: 'English - NIV' },
-    { lang: 'es', version: 'nvi', flag: '🇪🇸', label: 'Español - NVI' },
-    { lang: 'zh', version: 'cnvs', flag: '🇨🇳', label: 'Chinese - CNVS (简体)' },
-    { lang: 'ja', version: 'jcb', flag: '🇯🇵', label: '日本語 - JCB' },
-  ];
+  /** Each language's default version. Other versions of a language are a switch away, in Home and Settings. */
+  readonly options = languageOptions();
 
   select(language: string, version: string) {
     this.loading = true;

@@ -18,6 +18,19 @@ import { AudioEngine } from './audio-engine';
 const PRIME_REMAINING_S = 2.5;
 
 /**
+ * Hand off to the primed chapter this long before the current one's real end
+ * (see maybeAdvanceIfStuckAtEnd).
+ *
+ * Both this and PRIME_REMAINING_S are real seconds, not seconds of audio: at
+ * 1.5x the same stretch of audio goes by in two thirds of the time, and it is
+ * the real time — for the timer to fire, for the next chapter to buffer, for
+ * a `timeupdate` to land inside the window — that these margins exist for.
+ * They are multiplied by the playback rate wherever they are compared with
+ * media time.
+ */
+const HANDOFF_BEFORE_END_S = 0.35;
+
+/**
  * Browser/PWA playback engine.
  *
  * Everything in here — two <audio> elements, priming the next chapter muted
@@ -65,6 +78,15 @@ export class WebAudioEngine implements AudioEngine {
   private primeTimer: ReturnType<typeof setTimeout> | null = null;
   /** Ignore OS/media-session pause until this time (ms since epoch). */
   private holdUntil = 0;
+  /**
+   * Chosen speed. The elements don't keep it by themselves — a new `src`
+   * resets `playbackRate` to `defaultPlaybackRate`, and some mobile browsers
+   * reset it on play() or after the screen was locked — so it is written to
+   * both properties of both elements and re-applied at every start.
+   */
+  private rate = 1;
+  /** loadPlaylist() queued a chapter that has not been started yet. */
+  private awaitingFirstPlay = false;
 
   // === ESTADO PÚBLICO (para o player consumir) ===
   currentTrack$ = new BehaviorSubject<Track | null>(null);
@@ -93,7 +115,13 @@ export class WebAudioEngine implements AudioEngine {
     }
 
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && !this.activeAudio.paused) {
+      if (document.visibilityState !== 'visible') return;
+      // Back from a locked screen / another app: the browser may have reset
+      // the speed while we were away.
+      this.applyRate(this.activeAudio);
+      this.applyRate(this.inactiveAudio);
+      this.updatePositionState();
+      if (!this.activeAudio.paused) {
         this.isPlaying$.next(true);  // in case browser muted/reset state
       }
     });
@@ -113,6 +141,7 @@ export class WebAudioEngine implements AudioEngine {
       });
 
       el.addEventListener('loadedmetadata', () => {
+        this.applyRate(el);
         if (el === this.activeAudio) this.schedulePrimeTimer(el);
       });
       el.addEventListener('durationchange', () => {
@@ -120,6 +149,7 @@ export class WebAudioEngine implements AudioEngine {
       });
 
       el.addEventListener('play', () => {
+        this.applyRate(el);
         if (el === this.activeAudio) {
           this.isPlaying$.next(true);
           if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
@@ -181,6 +211,7 @@ export class WebAudioEngine implements AudioEngine {
     this.autoAdvance = false;
     this.userPaused = false;
     this.advancing = false;
+    this.awaitingFirstPlay = false;
     this.clearPrimeTimer();
     this.clearTransition(false);
     this.stopPrimedNext();
@@ -213,18 +244,67 @@ export class WebAudioEngine implements AudioEngine {
     }
   }
 
+  /**
+   * Same teardown and setup as playTrack(), minus the play(): the chapter is
+   * in the player, paused at 0:00, and starts on the user's tap (play()).
+   * Used when "play on selection" is turned off.
+   */
+  async loadPlaylist(tracks: Track[], startIndex = 0) {
+    const track = tracks[startIndex];
+    if (!track) return;
+    this.autoAdvance = false;
+    this.userPaused = true;
+    this.advancing = false;
+    this.clearPrimeTimer();
+    this.clearTransition(false);
+    this.stopPrimedNext();
+    this.invalidatePreload();
+    this.clearElement(this.inactiveAudio);
+    this.activeAudio.pause();
+
+    this.playlist = tracks;
+    this.index = startIndex;
+
+    const url = await this.resolvePlayUrl(track);
+    this.setAudioSource(this.activeAudio, url);
+    this.awaitingFirstPlay = true;
+
+    this.currentTrack$.next(track);
+    this.isPlaying$.next(false);
+    this.timeUpdate$.next({ currentTime: 0, duration: 0 });
+    this.updateMediaSession(track);
+    this.setupMediaSession();
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+  }
+
   // === CONTROLES ===
   play() {
     this.userPaused = false;
     this.autoAdvance = true;
-    this.activeAudio.play().catch(err => console.warn('Play failed:', err));
-    if ('setPositionState' in navigator.mediaSession) {
-      navigator.mediaSession.setPositionState({
-        duration: this.activeAudio.duration || 0,
-        playbackRate: 1.0,
-        position: this.activeAudio.currentTime
-      });
-    }
+    const firstPlay = this.awaitingFirstPlay;
+    this.awaitingFirstPlay = false;
+    this.applyRate(this.activeAudio);
+    this.activeAudio.play()
+      .then(() => {
+        if (!firstPlay) return;
+        // What playTrack() does once its chapter is running.
+        this.schedulePrimeTimer(this.activeAudio);
+        void this.preloadNextIfPossible();
+      })
+      .catch(err => console.warn('Play failed:', err));
+    this.updatePositionState();
+  }
+
+  setPlaybackRate(rate: number) {
+    if (!isFinite(rate) || rate <= 0) return;
+    this.rate = rate;
+    this.applyRate(this.activeAudio);
+    // Also the element priming / preloading the next chapter, so the
+    // hand-off doesn't start it at the old speed.
+    this.applyRate(this.inactiveAudio);
+    this.updatePositionState();
+    // The time left in real seconds just changed.
+    this.schedulePrimeTimer(this.activeAudio);
   }
 
   pause() {
@@ -252,6 +332,7 @@ export class WebAudioEngine implements AudioEngine {
     this.autoAdvance = false;
     this.userPaused = true;
     this.advancing = false;
+    this.awaitingFirstPlay = false;
     this.clearPrimeTimer();
     this.stopPrimedNext();
     this.clearTransition(false);
@@ -267,13 +348,7 @@ export class WebAudioEngine implements AudioEngine {
       currentTime: Math.floor(this.activeAudio.currentTime),
       duration: Math.floor(this.activeAudio.duration) || 0,
     });
-    if ('setPositionState' in navigator.mediaSession) {
-      navigator.mediaSession.setPositionState({
-        duration: this.activeAudio.duration || 0,
-        playbackRate: 1.0,
-        position: this.activeAudio.currentTime
-      });
-    }
+    this.updatePositionState();
   }
 
   skip(seconds: number) {
@@ -283,13 +358,7 @@ export class WebAudioEngine implements AudioEngine {
       currentTime: Math.floor(this.activeAudio.currentTime),
       duration: Math.floor(this.activeAudio.duration) || 0,
     });
-    if ('setPositionState' in navigator.mediaSession) {
-      navigator.mediaSession.setPositionState({
-        duration: this.activeAudio.duration || 0,
-        playbackRate: 1.0,
-        position: this.activeAudio.currentTime
-      });
-    }
+    this.updatePositionState();
   }
 
   // === PLAYLIST ===
@@ -387,6 +456,12 @@ export class WebAudioEngine implements AudioEngine {
     el.setAttribute('webkit-playsinline', 'true');
     el.setAttribute('x-webkit-airplay', 'deny');
     el.disableRemotePlayback = true;
+    this.applyRate(el);
+  }
+
+  private applyRate(el: HTMLAudioElement) {
+    if (el.defaultPlaybackRate !== this.rate) el.defaultPlaybackRate = this.rate;
+    if (el.playbackRate !== this.rate) el.playbackRate = this.rate;
   }
 
   /** OS pause right after a chapter change is not a user pause. */
@@ -419,7 +494,7 @@ export class WebAudioEngine implements AudioEngine {
     try {
       navigator.mediaSession.setPositionState({
         duration,
-        playbackRate: el.playbackRate || 1,
+        playbackRate: this.rate,
         position: Math.min(Math.max(0, el.currentTime), duration),
       });
     } catch {
@@ -491,6 +566,7 @@ export class WebAudioEngine implements AudioEngine {
     }
     el.src = url;
     el.preload = 'auto';
+    this.applyRate(el);
     if (url.startsWith('blob:')) {
       this.blobUrlByEl.set(el, url);
     } else {
@@ -565,7 +641,7 @@ export class WebAudioEngine implements AudioEngine {
     if (el.paused || el.ended) return;
     const remaining = el.duration - el.currentTime;
     if (!isFinite(remaining) || remaining <= 0) return;
-    const delayMs = Math.max(0, (remaining - PRIME_REMAINING_S) * 1000);
+    const delayMs = Math.max(0, (remaining / this.rate - PRIME_REMAINING_S) * 1000);
     this.primeTimer = setTimeout(() => {
       this.primeTimer = null;
       if (el !== this.activeAudio) return;
@@ -587,7 +663,7 @@ export class WebAudioEngine implements AudioEngine {
     if (!this.autoAdvance || this.transitioning || this.advancing) return;
     const { currentTime, duration } = el;
     if (!duration || !isFinite(duration)) return;
-    if (currentTime < duration - 0.35) return;
+    if (currentTime < duration - HANDOFF_BEFORE_END_S * this.rate) return;
     this.handleTrackEnded(el);
   }
 
@@ -606,7 +682,7 @@ export class WebAudioEngine implements AudioEngine {
     if (this.playlist.length <= this.index + 1) return;
 
     const remaining = el.duration - el.currentTime;
-    if (!isFinite(remaining) || remaining > PRIME_REMAINING_S || remaining < 0) return;
+    if (!isFinite(remaining) || remaining > PRIME_REMAINING_S * this.rate || remaining < 0) return;
 
     const nextTrack = this.playlist[this.index + 1];
     const blobUrl = this.preloaded?.track === nextTrack && this.preloaded.url.startsWith('blob:')
@@ -625,6 +701,7 @@ export class WebAudioEngine implements AudioEngine {
     this.nextPrimed = true;
     this.inactiveAudio.muted = true;
     this.inactiveAudio.volume = 0;
+    this.applyRate(this.inactiveAudio);
     this.inactiveAudio.play().catch(err => {
       console.warn('Prime next failed:', err?.name, err?.message);
     });
@@ -694,6 +771,7 @@ export class WebAudioEngine implements AudioEngine {
     // Undo the muting from maybePrimeNext now that this is the real handoff.
     this.inactiveAudio.muted = false;
     this.inactiveAudio.volume = 1;
+    this.applyRate(this.inactiveAudio);
     if (this.inactiveAudio.paused) {
       this.inactiveAudio.play().catch(err => {
         console.warn('Primed take-over play() failed:', err?.name, err?.message);

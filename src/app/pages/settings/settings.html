@@ -39,7 +39,7 @@
               <ion-icon class="note-icon" name="information-circle-outline"></ion-icon>
               {{ 'settings.account.description' | translate }}
             </p>
-            @if (isIos) {
+            @if (showAppleSignIn) {
               <ion-button color="dark" [disabled]="signingIn" (click)="signIn('apple')">
                 <ion-icon slot="start" name="logo-apple"></ion-icon>
                 {{ 'settings.account.sign_in_apple' | translate }}
@@ -95,6 +95,54 @@
         </ion-card-content>
       </ion-card>
     }
+
+    <!-- PLAYBACK CARD -->
+    <ion-card class="session-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon color="primary" name="play-circle-outline"></ion-icon>
+          {{ 'settings.playback.title' | translate }}
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-toggle class="setting-toggle" [checked]="autoplay" (ionChange)="setAutoplay($event.detail.checked)">
+          {{ 'settings.playback.autoplay' | translate }}
+        </ion-toggle>
+        <p class="language-note">
+          <ion-icon class="note-icon" name="information-circle-outline"></ion-icon>
+          {{ 'settings.playback.autoplay_note' | translate }}
+        </p>
+
+        @if (versions.length > 1) {
+          <label class="setting-select">
+            <span>{{ 'version.title' | translate }}</span>
+            <select [disabled]="switchingVersion" (change)="changeVersion($any($event.target).value)">
+              @for (v of versions; track v.version) {
+                <option [value]="v.version" [selected]="v === currentVersion">{{ v.label }}</option>
+              }
+            </select>
+            @if (switchingVersion) {
+              <ion-spinner name="crescent"></ion-spinner>
+            }
+          </label>
+          <p class="language-note">
+            <ion-icon class="note-icon" name="information-circle-outline"></ion-icon>
+            {{ 'version.note' | translate }}
+          </p>
+        }
+
+        @if (narrators.length > 1) {
+          <label class="setting-select">
+            <span>{{ 'player.narrator' | translate }}</span>
+            <select (change)="changeNarrator($any($event.target).value)">
+              @for (n of narrators; track n.id) {
+                <option [value]="n.id" [selected]="n.id === currentNarrator">{{ n.label }}</option>
+              }
+            </select>
+          </label>
+        }
+      </ion-card-content>
+    </ion-card>
 
     <!-- LANGUAGE CARD -->
     <ion-card class="session-card">

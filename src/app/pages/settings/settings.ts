@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import {
   IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonIcon,
-  IonProgressBar, IonSpinner, IonTitle, IonToolbar, ModalController, ViewWillEnter,
+  IonProgressBar, IonSpinner, IonTitle, IonToggle, IonToolbar, ModalController, ViewWillEnter,
 } from '@ionic/angular';
 import { dbPromise, AvailableSpace } from '../../storage/my-db';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -22,13 +22,17 @@ import { ConfirmationDialog } from '../../confirmation-dialog/confirmation-dialo
 
 import { environment } from '../../../environments/environment';
 import { nativePlatform } from '../../utils/platform.util';
+import { PreferencesService } from '../../services/preferences.service';
+import {
+  BibleCatalogEntry, BibleNarrator, catalogEntry, narratorChoices, versionsForLanguage,
+} from '../../data/bible-catalog';
 
 @Component({
   selector: 'app-settings',
   imports: [
     DecimalPipe, TranslatePipe,
     IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-    IonButton, IonIcon, IonProgressBar, IonSpinner,
+    IonButton, IonIcon, IonProgressBar, IonSpinner, IonToggle,
   ],
   templateUrl: './settings.html',
   styleUrl: './settings.scss'
@@ -64,8 +68,18 @@ export class Settings implements ViewWillEnter {
   notifError: string | null = null;
   signingIn = false;
   deletingAccount = false;
-  // Sign in with Apple is offered only in the iOS app (App Store guideline 4.8).
-  readonly isIos = nativePlatform() === 'ios';
+  // Sign in with Apple: on the web and in the iOS app (App Store guideline
+  // 4.8). The Android app offers Google only.
+  readonly showAppleSignIn = nativePlatform() !== 'android';
+
+  private prefs = inject(PreferencesService);
+  autoplay = this.prefs.autoplay;
+  /** Versions of the current language / voices of the current version. Each control shows only with two or more. */
+  versions: BibleCatalogEntry[] = [];
+  currentVersion?: BibleCatalogEntry;
+  narrators: BibleNarrator[] = [];
+  currentNarrator?: string;
+  switchingVersion = false;
 
   constructor(
     private translate: TranslateService,
@@ -101,6 +115,17 @@ export class Settings implements ViewWillEnter {
       this.cdr.markForCheck();
     });
 
+    // The version can also be switched from Home, and the narrator from the player.
+    this.bibleServ.bibleChanged$.pipe(takeUntilDestroyed()).subscribe(bible => this.useBible(bible));
+    this.prefs.narratorChanged$.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.currentNarrator = this.prefs.narratorFor(this.currentVersion);
+      this.cdr.markForCheck();
+    });
+    this.prefs.autoplay$.pipe(takeUntilDestroyed()).subscribe(on => {
+      this.autoplay = on;
+      this.cdr.markForCheck();
+    });
+
     let bibleJson = localStorage.getItem("selectedBible");
     if(!bibleJson) {
       void this.router.navigateByUrl('/home');
@@ -109,19 +134,55 @@ export class Settings implements ViewWillEnter {
     let selected = localStorage.getItem("selectedBible") || "";
     this.bibleServ.loadBibleVersion(selected.split("-")[0], selected.split("-")[1]).then(res => {
       if(res) {
-        this.bibleData = res;
-        const savedLang = this.bibleData.language?.split("-")[0]; // e.g. 'pt-br' -> 'pt'
-        if(savedLang) {
-          this.translate.use(savedLang);
-        }
-        //@ts-ignore
-        this.currentLanguageName = this.languageMap[savedLang || "pt"] || "Português";
-        this.cdr.markForCheck();
+        this.useBible(res);
       } else {
         void this.router.navigateByUrl('/home');
       }
     });
 
+  }
+
+  private useBible(bible: Bible) {
+    this.bibleData = bible;
+    const savedLang = bible.language?.split("-")[0]; // e.g. 'pt-br' -> 'pt'
+    if(savedLang) {
+      this.translate.use(savedLang);
+    }
+    //@ts-ignore
+    this.currentLanguageName = this.languageMap[savedLang || "pt"] || "Português";
+    this.versions = versionsForLanguage(bible.language || '');
+    this.currentVersion = catalogEntry(bible.language || '', bible.version);
+    this.narrators = narratorChoices(this.currentVersion);
+    this.currentNarrator = this.prefs.narratorFor(this.currentVersion);
+    this.cdr.markForCheck();
+  }
+
+  setAutoplay(on: boolean) {
+    this.autoplay = on;
+    this.prefs.setAutoplay(on);
+  }
+
+  // Downloads (if this device doesn't have it yet) and selects another
+  // version of the same language. Versions already saved are kept, and no
+  // language reset is involved. Audio chosen from now on uses the new one.
+  async changeVersion(version: string) {
+    const entry = this.versions.find(v => v.version === version);
+    if (!entry || entry === this.currentVersion || this.switchingVersion) return;
+    this.switchingVersion = true;
+    this.cdr.markForCheck();
+    try {
+      const bible = await this.bibleServ.switchVersion(entry.lang, entry.version);
+      if (!bible) await this.ui.alert(this.translate.instant('version.switch_failed'));
+    } finally {
+      this.switchingVersion = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  changeNarrator(narratorId: string) {
+    if (!this.currentVersion) return;
+    this.prefs.setNarrator(this.currentVersion, narratorId);
+    this.currentNarrator = this.prefs.narratorFor(this.currentVersion);
   }
 
   // Tabs keep this page alive, so recompute storage every time it's shown
