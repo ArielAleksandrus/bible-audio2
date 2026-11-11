@@ -45,3 +45,8 @@ Thumbs.db
 # Signing keys
 *.jks
 *.keystore
+
+# Local environment
+.env
+.env.*
+!.env.example
