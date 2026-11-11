@@ -17,7 +17,7 @@ export const environment = {
 	// Where /api/* lives, for the Android/iOS apps only: their WebView is served
 	// from the device (https://localhost, capacitor://localhost), not from the
 	// site. The web app calls /api on its own origin and ignores this.
-	apiOrigin: 'https://biblia-narrada.vercel.app',
+	apiOrigin: 'https://bible-audio2.vercel.app',
 	// VAPID public key for Web Push subscriptions (safe to expose client-side —
 	// the matching private key lives server-side only, as a Vercel env var).
 	vapidPublicKey: 'BIqmtyyf9OrlogdzourrlmHSQXQKSocKMAK86CWnlUx9J32priS9REg_SqxFcWzWE3yfXJPsVbf9Qu-V7qBDIYI'

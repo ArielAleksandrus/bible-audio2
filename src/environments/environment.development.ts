@@ -13,6 +13,6 @@ export const environment = {
 		appId: '1:708812956918:web:db1f52d32fff77971b78d7'
 	},
 	// Where /api/* lives, for the Android/iOS apps only (see environment.ts).
-	apiOrigin: 'https://biblia-narrada.vercel.app',
+	apiOrigin: 'https://bible-audio2.vercel.app',
 	vapidPublicKey: 'BIqmtyyf9OrlogdzourrlmHSQXQKSocKMAK86CWnlUx9J32priS9REg_SqxFcWzWE3yfXJPsVbf9Qu-V7qBDIYI'
 };
