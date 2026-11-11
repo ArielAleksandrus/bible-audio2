@@ -1,10 +1,11 @@
 {
   "name": "bible-audio2",
-  "version": "1.1.4",
+  "version": "2.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:web": "ng build && node scripts/ota-bundle.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -42,6 +43,7 @@
     "@capacitor/network": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.2",
     "@capacitor/status-bar": "^8.0.4",
+    "@capgo/capacitor-updater": "8.52.1",
     "@dwbn/capacitor-plugin-playlist": "^8.4.3",
     "@ionic/angular": "^9.0.10",
     "@ngx-translate/core": "^17.0.0",
@@ -64,6 +66,7 @@
     "@types/node": "^25.0.8",
     "@types/web-push": "^3.6.4",
     "@vercel/node": "^10.0.0",
+    "adm-zip": "0.6.1",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

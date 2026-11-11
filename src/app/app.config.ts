@@ -37,8 +37,9 @@ export const appConfig: ApplicationConfig = {
     provideIonicAngular({}),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideRouter(routes),
-    // The native apps ship the web bundle inside the binary (updates come
-    // from the stores), so the PWA service worker is web-only.
+    // The native apps get new versions over the air (OtaService), and a
+    // service worker cache would keep serving the previous bundle's files,
+    // so the PWA service worker is web-only.
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode() && !isNativeApp(),
       registrationStrategy: 'registerWhenStable:30000'

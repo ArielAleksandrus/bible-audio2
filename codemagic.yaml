@@ -15,17 +15,20 @@ workflows:
         - google_play
       vars:
         PACKAGE_NAME: live.nlabs.biblia
-    # A push to master builds the signed AAB and uploads it to the Play
-    # production track as a draft. Rolling that draft out to users stays a
-    # step in Play Console while submit_as_draft is true. Put [skip ci] in
-    # a commit message to skip a build. Vercel deploys the web app on its own.
+    # On its own only for a major version (the one that needs a new store
+    # build): the tag vX.0.0 on that version's commit. Minor and patch versions
+    # reach the installed apps over the air (OtaService) and build nothing; a
+    # native build outside a major is started from the "Start new build" button.
+    # The signed AAB goes to the Play production track as a draft; rolling that
+    # draft out to users stays a step in Play Console while submit_as_draft is
+    # true. Vercel deploys the web app, and the over-the-air bundle with it, on
+    # every push to master.
     triggering:
       events:
-        - push
-      branch_patterns:
-        - pattern: master
+        - tag
+      tag_patterns:
+        - pattern: 'v*.0.0'
           include: true
-          source: true
       cancel_previous_builds: true
     scripts:
       - name: Install dependencies

@@ -1,4 +1,4 @@
-App Store Connect — textos da página (versão 1.1.4)
+App Store Connect — textos da página (versão 2.0.0)
 Limites da Apple: nome 30, subtítulo 30, texto promocional 170, palavras-chave 100 (sem espaço depois da vírgula), descrição 4000.
 Adaptado de docs/play-store-listing.txt: sem citar Android/Google Play, "iPhone" no lugar de celular, login com Apple e exclusão de conta.
 

@@ -139,6 +139,10 @@
     "message": "Hay una nueva versión disponible.",
     "reload": "Recargar"
   },
+  "store_update": {
+    "message": "La versión {{version}} está en {{store}}. Trae novedades que no llegan solas: actualiza para seguir recibiendo las versiones nuevas.",
+    "action": "Actualizar"
+  },
   "install_prompt": {
     "title": "Instalar BibleAudio",
     "description": "Agrégala a tu dispositivo para acceso rápido y escucha sin conexión.",

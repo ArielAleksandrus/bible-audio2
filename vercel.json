@@ -1,4 +1,5 @@
 {
+  "buildCommand": "npm run build:web",
   "crons": [
     {
       "path": "/api/send-daily-reminder",
@@ -12,6 +13,19 @@
         {
           "key": "Content-Type",
           "value": "application/manifest+json"
+        }
+      ]
+    },
+    {
+      "source": "/ota/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
         }
       ]
     }

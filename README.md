@@ -107,6 +107,23 @@ Run `npm run build && npx cap sync` again after every web change. Icons and
 splash screens are generated from `assets/` with
 `npx capacitor-assets generate --iconBackgroundColor '#eaded0' --splashBackgroundColor '#0f3d3e'`.
 
+### Versions and updates
+
+The version in `package.json` is the app's version everywhere (web, Android `versionName`, iOS `MARKETING_VERSION`).
+
+- **Major** (`X.0.0`) — only when the apps need a new native build for the stores: a new or upgraded Capacitor plugin, a new permission, a change in `android/` or `ios/` that the web code relies on. Raise `NATIVE_LEVEL` in `src/app/services/ota.service.ts` together with it when the web code now depends on that native change. Pushing the tag `vX.0.0` starts the Android build in Codemagic; the iOS build (`ios-loja`) is started from the button.
+- **Minor** (new feature) and **patch** (fix) — reach the installed apps **over the air**, with no store build.
+
+How over the air works (`@capgo/capacitor-updater` in manual mode, nothing goes through Capgo's cloud):
+
+1. Vercel runs `npm run build:web` (`vercel.json`): `ng build`, then `scripts/ota-bundle.mjs` zips the build into `ota/<version>.zip` and writes `ota/manifest.json` (version, native level, sha256), both deployed with the site.
+2. On launch and on every return to the foreground, the store app reads `environment.otaUrl`. A newer version of the **same native level** is downloaded in the background and takes effect the next time the app leaves the screen — never in the middle of a chapter.
+3. A bundle that fails to open is rolled back by the plugin and not downloaded again; the fix goes out as the next version.
+
+So a web-only release is: bump the version in `package.json`, merge to `master`. Without the bump the apps keep what they have.
+
+After a new **major** is live in a store, write its version in `ota-store.json` (`{ "android": "3.0.0", "ios": null }`) and deploy: apps still on the older shell then get a dismissible notice that leads to the store, since they no longer receive anything over the air.
+
 ### Before the first store upload
 
 - [x] **App id** — Android uses `live.nlabs.biblia` (`capacitor.config.ts`,
@@ -172,7 +189,7 @@ App version is read from `package.json` (`environment.appVersion`) and shown on 
 
 ## Deploy
 
-The same repo is deployed as **two separate Vercel projects** — `bible-audio2` (original URL, already had users before the rename) and `biblia-narrada` (new branded domain) — rather than two domains on one project, since a second `.vercel.app` alias on a single project requires a paid plan. Both build independently on every push to `master`. The production build registers `ngsw-worker.js`.
+The same repo is deployed as **two separate Vercel projects** — `bible-audio2` (original URL, already had users before the rename) and `biblia-narrada` (new branded domain) — rather than two domains on one project, since a second `.vercel.app` alias on a single project requires a paid plan. Both build independently on every push to `master`. The production build registers `ngsw-worker.js`. The store apps read their over-the-air updates from `bible-audio2.vercel.app/ota/` (see [Versions and updates](#versions-and-updates)).
 
 The daily-reminder function (`api/send-daily-reminder.ts`) needs these Vercel environment variables (not committed), set separately on **each** project:
 

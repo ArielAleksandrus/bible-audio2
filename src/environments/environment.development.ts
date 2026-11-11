@@ -14,5 +14,7 @@ export const environment = {
 	},
 	// Where /api/* lives, for the Android/iOS apps only (see environment.ts).
 	apiOrigin: 'https://bible-audio2.vercel.app',
+	// Empty: no over-the-air updates in development (see environment.ts).
+	otaUrl: '',
 	vapidPublicKey: 'BIqmtyyf9OrlogdzourrlmHSQXQKSocKMAK86CWnlUx9J32priS9REg_SqxFcWzWE3yfXJPsVbf9Qu-V7qBDIYI'
 };

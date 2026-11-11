@@ -12,6 +12,7 @@ import { AppStateService } from './services/app-state.service';
 import { UpdateService } from './services/update.service';
 import { UiService } from './services/ui.service';
 import { NativeShellService } from './services/native-shell.service';
+import { OtaService } from './services/ota.service';
 import { SafariWarningDialog } from './safari-warning-dialog/safari-warning-dialog';
 import { isIosDevice, isInstagramInAppBrowser } from './utils/browser.util';
 import { isNativeApp } from './utils/platform.util';
@@ -50,6 +51,8 @@ export class App {
     inject(AnalyticsService);
     inject(SyncService);
     inject(NativeShellService);
+    // Store apps: confirms this bundle opened and looks for a newer one over the air.
+    inject(OtaService).listen();
 
     this.updateServ.updateReady$.subscribe(async ready => {
       if (!ready) return;

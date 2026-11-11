@@ -18,6 +18,9 @@ export const environment = {
 	// from the device (https://localhost, capacitor://localhost), not from the
 	// site. The web app calls /api on its own origin and ignores this.
 	apiOrigin: 'https://bible-audio2.vercel.app',
+	// The manifest the store apps read to update over the air (OtaService);
+	// scripts/ota-bundle.mjs writes it and it deploys with the web app.
+	otaUrl: 'https://bible-audio2.vercel.app/ota/manifest.json',
 	// VAPID public key for Web Push subscriptions (safe to expose client-side —
 	// the matching private key lives server-side only, as a Vercel env var).
 	vapidPublicKey: 'BIqmtyyf9OrlogdzourrlmHSQXQKSocKMAK86CWnlUx9J32priS9REg_SqxFcWzWE3yfXJPsVbf9Qu-V7qBDIYI'

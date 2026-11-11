@@ -43,6 +43,16 @@ const config: CapacitorConfig = {
       skipNativeAuth: true,
       providers: ['google.com', 'apple.com'],
     },
+    // New versions over the air, in manual mode and without Capgo's cloud:
+    // the app reads the manifest deployed with the web app and downloads the
+    // bundle itself (src/app/services/ota.service.ts); nothing is sent to
+    // Capgo (empty statsUrl). A bundle that failed to open is kept, marked as
+    // failed, so it is not downloaded again.
+    CapacitorUpdater: {
+      autoUpdate: false,
+      statsUrl: '',
+      autoDeleteFailed: false,
+    },
     LocalNotifications: {
       smallIcon: 'ic_stat_notification',
       iconColor: '#0f3d3e',

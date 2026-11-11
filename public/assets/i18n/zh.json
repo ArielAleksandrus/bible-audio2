@@ -139,6 +139,10 @@
     "message": "有新版本可用。",
     "reload": "重新加载"
   },
+  "store_update": {
+    "message": "{{store}} 已提供 {{version}} 版本。该版本包含无法自动送达的更新，请更新以继续接收新版本。",
+    "action": "更新"
+  },
   "install_prompt": {
     "title": "安装 BibleAudio",
     "description": "添加到您的设备，快速访问并离线收听。",
