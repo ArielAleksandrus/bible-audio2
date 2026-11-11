@@ -32,6 +32,52 @@ UI strings follow the selected Bible language (`public/assets/i18n/`).
 
 The Bibles on offer are listed in one place, `src/app/data/bible-catalog.ts` — the CDN can't list its own files, so a version exists for the app only once it is written there. The first entry of a language is its default. A language with two or more entries gets a version switch (Home and Settings); a version with two or more `narrators` gets a narrator switch (Settings and the player) and keeps each narrator's audio in its own CDN folder and under its own download key. The comment in that file shows how to add one.
 
+### Versions and narrators: where the files go
+
+Everything is on the CDN (Cloudflare R2, `BIBLE_CDN_URL` in `src/app/services/bible.service.ts`). `{lang}` is lowercase (`pt`), `{VERSION}` uppercase in audio paths (`OTB`) and lowercase in the JSON name, `{ISO}` is the book's three-letter code (`GEN`, `EXO`, `PSA`…), and the file name has a space: `GEN 1.mp3`.
+
+| What | Path on the CDN |
+|---|---|
+| Text | `jsons/{lang}-{version}.json` |
+| Audio, version with **no or one** narrator | `audios/{lang}/{VERSION}/{ISO}/{ISO} {chapter}.mp3` |
+| Audio, version with **two or more** narrators | `audios/{lang}/{VERSION}/{narratorId}/{ISO}/{ISO} {chapter}.mp3` |
+
+A narrator belongs to a **version**, not to a language. So there are two different things one can add:
+
+**A new version of a language** (e.g. the owner's own narration of the OTB text, next to ARA). Upload `jsons/pt-otb.json` and `audios/pt/OTB/GEN/GEN 1.mp3`…, then add the entry to `BIBLE_CATALOG` *after* `pt/ara`, so ARA stays the Portuguese default:
+
+```ts
+{ lang: 'pt', version: 'otb', flag: '🇧🇷', label: 'Português - OTB',
+  narrators: [{ id: 'ariel', label: 'Ariel' }] },
+```
+
+With a single narrator there is **no** narrator folder. The language now has two versions, so the version switch shows up.
+
+**A second voice for a version that already has one.** Every voice gets its own folder — including the first one, whose files must be moved (or copied) into it:
+
+```
+audios/pt/OTB/ariel/GEN/GEN 1.mp3
+audios/pt/OTB/ana/GEN/GEN 1.mp3
+```
+
+```ts
+narrators: [{ id: 'ariel', label: 'Ariel' }, { id: 'ana', label: 'Ana' }],
+```
+
+Rules:
+
+- `id` is the folder name and part of the download key: lowercase ASCII, no spaces, never renamed once people have downloaded it.
+- Keep the original narrator **first**. Chapters downloaded before the second voice existed were stored without a narrator in their key, and the app reuses them only for the first narrator. The first narrator is also the default voice.
+- On the device each voice is a separate set of files. The key is `{version}-{abbrev}-{chapter}` with no choice of narrator and `{version}-{narratorId}-{abbrev}-{chapter}` with one (`trackId` in `bible.service.ts`), so two voices never share a file and both can stay downloaded.
+
+What the user sees with two or more narrators:
+
+- A narrator switch in Settings and in the player (the saved choice is per version, `PreferencesService.narratorFor`).
+- The picker's "downloaded" marks and the **Download the entire Bible** button follow the voice in use: the button shows while that voice is incomplete on the device, so it comes back after switching to a voice that is not downloaded.
+- Tapping that button always asks **which narrator** first (`Home.fullDownload` → `askNarrator`); nothing downloads without a choice. Voices already complete on the device are marked, and picking one only switches to it. The pick becomes the voice in use. To download another voice later, tap the button again (switch narrator first if it is hidden).
+
+Adding a version or a narrator is a catalog change only, so it ships over the air (see [Versions and updates](#versions-and-updates)).
+
 ## Reading plans
 
 | Plan | Length |

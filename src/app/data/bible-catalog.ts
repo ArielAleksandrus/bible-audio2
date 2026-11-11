@@ -12,6 +12,11 @@
  *   audio  audios/{lang}/{VERSION}/{ISO}/{ISO} {chapter}.mp3            (0 or 1 narrator)
  *          audios/{lang}/{VERSION}/{narratorId}/{ISO}/{ISO} {chapter}.mp3  (2 or more)
  *
+ * A narrator belongs to a version. Each voice is a separate set of files on
+ * the CDN and on the device, and the full-Bible download asks which one when
+ * there are two or more. README, "Versions and narrators: where the files
+ * go", has the whole picture.
+ *
  * Order matters twice:
  * - the first entry of a language is that language's default (what the
  *   language picker offers on first run);

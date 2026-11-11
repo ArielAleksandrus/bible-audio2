@@ -241,6 +241,28 @@ export class BibleService {
     await Promise.all(saved.map(b => deleteBibleVersion(b.id)));
   }
 
+  /**
+   * Of the narrators this Bible lets the user choose between, the ids of the
+   * ones whose every chapter is already on the device. Empty when the version
+   * offers no choice.
+   */
+  async narratorsDownloaded(bible: Bible): Promise<string[]> {
+    const done: string[] = [];
+    for (const narrator of narratorChoices(catalogEntry(bible.language, bible.version))) {
+      if (await this.hasEveryChapter(bible, narrator.id)) done.push(narrator.id);
+    }
+    return done;
+  }
+
+  private async hasEveryChapter(bible: Bible, narratorId: string): Promise<boolean> {
+    for (let bookIdx = 0; bookIdx < bible.books.length; bookIdx++) {
+      for (let chapter = 1; chapter <= bible.books[bookIdx].chapters.length; chapter++) {
+        if (!(await this.ads.isDownloaded(this.buildTrack(bible, bookIdx, chapter, narratorId)))) return false;
+      }
+    }
+    return true;
+  }
+
   async booksDownloadStatus(bible: Bible): Promise<BookDownloadStatus[]> {
     let res: BookDownloadStatus[] = [];
 

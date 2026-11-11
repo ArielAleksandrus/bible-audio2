@@ -7,6 +7,8 @@ import { AudioDownloaderService } from '../../services/audio-downloader.service'
 import { BibleService } from '../../services/bible.service';
 import { PreferencesService } from '../../services/preferences.service';
 import { Bible } from 'bible-picker';
+import { ActionSheetController } from '@ionic/angular';
+import { BibleCatalogEntry } from '../../data/bible-catalog';
 
 describe('Home', () => {
   const bible = {
@@ -110,5 +112,65 @@ describe('Home', () => {
 
     expect(localStorage.getItem('selectedBible')).toBe('pt-otb');
     expect(home.bibleData).toBe(other);
+  });
+
+  describe('full download of a version with two narrators', () => {
+    const twoVoices: BibleCatalogEntry = {
+      lang: 'pt', version: 'ara', flag: '', label: 'ARA',
+      narrators: [{ id: 'ariel', label: 'Ariel' }, { id: 'ana', label: 'Ana' }],
+    };
+
+    /** Home on a two-narrator version, with the sheet answered by tapping the button at `pick` (or dismissed). */
+    function setupChoice(pick: number | 'dismiss', downloaded: string[] = []) {
+      const { home } = setup();
+      home.currentVersion = twoVoices;
+      const service = TestBed.inject(BibleService);
+      const prefs = TestBed.inject(PreferencesService);
+      vi.spyOn(service, 'booksDownloadStatus').mockResolvedValue([]);
+      vi.spyOn(service, 'narratorsDownloaded').mockResolvedValue(downloaded);
+      const downloadEntireBible = vi.spyOn(service, 'downloadEntireBible').mockResolvedValue([]);
+      const setNarrator = vi.spyOn(prefs, 'setNarrator');
+      const create = vi.spyOn(TestBed.inject(ActionSheetController), 'create').mockImplementation(async (opts: any) => ({
+        present: async () => undefined,
+        onDidDismiss: async () => {
+          if (pick !== 'dismiss') opts.buttons[pick].handler();
+          return { role: pick === 'dismiss' ? 'backdrop' : undefined };
+        },
+      }) as any);
+      return { home, downloadEntireBible, setNarrator, create };
+    }
+
+    it('asks which narrator, makes it the voice in use and downloads it', async () => {
+      const { home, downloadEntireBible, setNarrator, create } = setupChoice(1);
+      await home.fullDownload();
+      const buttons = (create.mock.calls[0][0] as any).buttons;
+      expect(buttons.map((b: any) => b.text).slice(0, 2)).toEqual(['Ariel', 'Ana']);
+      expect(buttons[2].role).toBe('cancel');
+      expect(setNarrator).toHaveBeenCalledWith(twoVoices, 'ana');
+      expect(downloadEntireBible).toHaveBeenCalled();
+    });
+
+    it('downloads nothing and keeps the voice when no narrator is picked', async () => {
+      const { home, downloadEntireBible, setNarrator } = setupChoice('dismiss');
+      expect(await home.fullDownload()).toEqual([]);
+      expect(setNarrator).not.toHaveBeenCalled();
+      expect(downloadEntireBible).not.toHaveBeenCalled();
+    });
+
+    it('marks a narrator already on the device and only switches to it when picked', async () => {
+      const { home, downloadEntireBible, setNarrator, create } = setupChoice(0, ['ariel']);
+      await home.fullDownload();
+      expect((create.mock.calls[0][0] as any).buttons[0].text).not.toBe('Ariel');
+      expect(setNarrator).toHaveBeenCalledWith(twoVoices, 'ariel');
+      expect(downloadEntireBible).not.toHaveBeenCalled();
+    });
+
+    it('does not ask when the version has a single voice', async () => {
+      const { home, downloadEntireBible, create } = setupChoice(0);
+      home.currentVersion = { ...twoVoices, narrators: [twoVoices.narrators![0]] };
+      await home.fullDownload();
+      expect(create).not.toHaveBeenCalled();
+      expect(downloadEntireBible).toHaveBeenCalled();
+    });
   });
 });
