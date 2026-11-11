@@ -26,6 +26,7 @@ import { isAppInstalled, isInstagramInAppBrowser, isMobileDevice } from '../../u
 import { isNativeApp } from '../../utils/platform.util';
 import { UiService } from '../../services/ui.service';
 import { PreferencesService } from '../../services/preferences.service';
+import { CatalogService } from '../../services/catalog.service';
 import { BibleCatalogEntry, BibleNarrator, catalogEntry, narratorChoices, versionsForLanguage } from '../../data/bible-catalog';
 import { SearchHit, SearchIndex, buildSearchIndex, searchBible, MIN_QUERY_LENGTH } from '../../utils/bible-search.util';
 import { bookDisplayName } from '../../utils/bible-text.util';
@@ -114,6 +115,15 @@ export class Home implements OnInit, ViewWillEnter {
 
     // Another version of the language was chosen (here or in Settings).
     this.bibleServ.bibleChanged$.pipe(takeUntilDestroyed(destroyRef)).subscribe(bible => this.useBible(bible));
+    // The list of versions and narrators was updated from the CDN.
+    inject(CatalogService).changed$.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => {
+      const bible = this.bibleData;
+      if (!bible) return;
+      this.versions = versionsForLanguage(bible.language || '');
+      this.currentVersion = catalogEntry(bible.language || '', bible.version);
+      this.checkDownloaded();
+      this.cdr.detectChanges();
+    });
     // Downloads are kept per narrator, so the colouring follows the voice in use.
     this.prefs.narratorChanged$.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => {
       if (this.bibleData) this.checkDownloaded();
@@ -268,7 +278,8 @@ export class Home implements OnInit, ViewWillEnter {
     const choices = narratorChoices(entry);
     if (entry && choices.length && this.bibleData) {
       const downloaded = await this.bibleServ.narratorsDownloaded(this.bibleData);
-      const chosen = await this.askNarrator(entry, choices, downloaded);
+      const localSamples = await this.bibleServ.localSamples(this.bibleData);
+      const chosen = await this.askNarrator(entry, choices, downloaded, localSamples);
       if (!chosen) return [];
       this.prefs.setNarrator(entry, chosen);
       if (downloaded.includes(chosen)) return [];
@@ -316,10 +327,12 @@ export class Home implements OnInit, ViewWillEnter {
    * The narrator picked for a full download, or undefined when the dialog is
    * closed without picking one. Each voice can be sampled there first.
    */
-  private async askNarrator(entry: BibleCatalogEntry, choices: BibleNarrator[], downloaded: string[]): Promise<string | undefined> {
+  private async askNarrator(
+    entry: BibleCatalogEntry, choices: BibleNarrator[], downloaded: string[], localSamples: Record<string, string>,
+  ): Promise<string | undefined> {
     const modal = await this.modals.create({
       component: NarratorChoiceDialog,
-      componentProps: { lang: entry.lang, version: entry.version, choices, downloaded },
+      componentProps: { lang: entry.lang, version: entry.version, choices, downloaded, localSamples },
       cssClass: 'app-dialog',
     });
     await modal.present();

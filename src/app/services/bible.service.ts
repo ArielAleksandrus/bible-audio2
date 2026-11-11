@@ -37,6 +37,15 @@ export function audioUrl(lang: string, version: string, bookIdx: number, chapter
   return `${BIBLE_CDN_URL}/audios/${baseLang(lang)}/${version.toUpperCase()}/${narrator}${iso}/${iso} ${chapter}.mp3`;
 }
 
+/**
+ * CDN path of a narrator's sample: an optional short clip, chosen by whoever
+ * uploads the voice, for "hear it before choosing". When it does not exist
+ * the app plays the opening of Genesis 1 instead (NarratorChoiceDialog).
+ */
+export function sampleUrl(lang: string, version: string, narratorId: string): string {
+  return `${BIBLE_CDN_URL}/audios/${baseLang(lang)}/${version.toUpperCase()}/${narratorId}/sample.mp3`;
+}
+
 /** Download/storage key of one chapter's audio. The narrator is part of it, so two voices never share a file. */
 export function trackId(version: string, abbrev: string, chapter: number, narratorId?: string): string {
   return narratorId ? `${version}-${narratorId}-${abbrev}-${chapter}` : `${version}-${abbrev}-${chapter}`;
@@ -252,6 +261,20 @@ export class BibleService {
       if (await this.hasEveryChapter(bible, narrator.id)) done.push(narrator.id);
     }
     return done;
+  }
+
+  /**
+   * Genesis 1 in each narrator's voice, for the ones that have it on the
+   * device: what a sample falls back to with no connection.
+   */
+  async localSamples(bible: Bible): Promise<Record<string, string>> {
+    const found: Record<string, string> = {};
+    if (!bible.books.length) return found;
+    for (const narrator of narratorChoices(catalogEntry(bible.language, bible.version))) {
+      const url = await this.ads.localUrl(this.buildTrack(bible, 0, 1, narrator.id));
+      if (url) found[narrator.id] = url;
+    }
+    return found;
   }
 
   private async hasEveryChapter(bible: Bible, narratorId: string): Promise<boolean> {

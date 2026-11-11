@@ -1,10 +1,16 @@
-import { BIBLE_CATALOG, catalogEntry, languageOptions, narratorChoices, versionsForLanguage } from './bible-catalog';
+import {
+  BUNDLED_CATALOG, catalogEntry, currentCatalog, languageOptions, narratorChoices, parseCatalog, resetCatalog,
+  setCatalog, versionsForLanguage, withSelectedKept,
+} from './bible-catalog';
 import { audioUrl, retargetTracks, trackId } from '../services/bible.service';
 import { Track } from '../models/track';
 
 describe('bible catalog', () => {
+  beforeEach(() => resetCatalog());
+  afterEach(() => resetCatalog());
+
   it('offers exactly the five versions the app has always had, in the same order', () => {
-    expect(BIBLE_CATALOG.map(e => `${e.lang}-${e.version}`)).toEqual(['pt-ara', 'en-niv', 'es-nvi', 'zh-cnvs', 'ja-jcb']);
+    expect(BUNDLED_CATALOG.map(e => `${e.lang}-${e.version}`)).toEqual(['pt-ara', 'en-niv', 'es-nvi', 'zh-cnvs', 'ja-jcb']);
     expect(languageOptions().map(e => e.label)).toEqual([
       'Português - ARA', 'English - NIV', 'Español - NVI', 'Chinese - CNVS (简体)', '日本語 - JCB',
     ]);
@@ -23,6 +29,63 @@ describe('bible catalog', () => {
     expect(narratorChoices({ ...base, narrators: [{ id: 'ariel', label: 'Ariel' }] })).toEqual([]);
     expect(narratorChoices({ ...base, narrators: [{ id: 'ariel', label: 'Ariel' }, { id: 'ana', label: 'Ana' }] }).map(n => n.id))
       .toEqual(['ariel', 'ana']);
+  });
+});
+
+describe('catalog.json from the CDN', () => {
+  beforeEach(() => resetCatalog());
+  afterEach(() => resetCatalog());
+
+  const otb = { lang: 'pt', version: 'otb', flag: '🇧🇷', label: 'Português - OTB', narrators: [{ id: 'ariel', label: 'Ariel' }, { id: 'ana', label: 'Ana' }] };
+
+  it('reads the bundled list back unchanged, so the first catalog.json can be a copy of it', () => {
+    expect(parseCatalog(JSON.parse(JSON.stringify({ bibles: BUNDLED_CATALOG })))).toEqual(BUNDLED_CATALOG);
+  });
+
+  it('offers a new version and its narrators once the list is in use, and keeps it on the device', () => {
+    setCatalog(parseCatalog({ bibles: [...BUNDLED_CATALOG, otb] })!);
+    expect(versionsForLanguage('pt-br').map(e => e.version)).toEqual(['ara', 'otb']);
+    expect(narratorChoices(catalogEntry('pt', 'otb')).map(n => n.id)).toEqual(['ariel', 'ana']);
+    expect(languageOptions().map(e => e.version)).toEqual(['ara', 'niv', 'nvi', 'cnvs', 'jcb']);
+    expect(parseCatalog(JSON.parse(localStorage.getItem('bibleCatalog')!))).toEqual(currentCatalog());
+  });
+
+  it('starts from the list saved on the device the next time the app opens', async () => {
+    setCatalog(parseCatalog({ bibles: [...BUNDLED_CATALOG, otb] })!);
+    vi.resetModules();
+    const reopened = await import('./bible-catalog');
+    expect(reopened.versionsForLanguage('pt').map(e => e.version)).toEqual(['ara', 'otb']);
+  });
+
+  it('leaves out a language the interface has no texts for', () => {
+    const fr = { lang: 'fr', version: 'lsg', flag: '🇫🇷', label: 'Français - LSG' };
+    expect(parseCatalog({ bibles: [...BUNDLED_CATALOG, fr] })).toEqual(BUNDLED_CATALOG);
+    expect(parseCatalog({ bibles: [fr] })).toBeNull();
+  });
+
+  it('rejects the whole list when anything in it is malformed or repeated', () => {
+    const bad = (extra: unknown) => parseCatalog({ bibles: [...BUNDLED_CATALOG, extra] });
+    expect(parseCatalog(null)).toBeNull();
+    expect(parseCatalog({})).toBeNull();
+    expect(parseCatalog({ bibles: [] })).toBeNull();
+    expect(bad('pt-otb')).toBeNull();
+    expect(bad({ ...otb, lang: 'PT' })).toBeNull();
+    expect(bad({ ...otb, version: 'O T B' })).toBeNull();
+    expect(bad({ ...otb, label: '' })).toBeNull();
+    expect(bad({ ...otb, narrators: 'ariel' })).toBeNull();
+    expect(bad({ ...otb, narrators: [{ id: 'Ana Maria', label: 'Ana' }] })).toBeNull();
+    expect(bad({ ...otb, narrators: [{ id: 'ana' }] })).toBeNull();
+    expect(bad({ ...otb, narrators: [{ id: 'ana', label: 'Ana' }, { id: 'ana', label: 'Ana 2' }] })).toBeNull();
+    expect(bad(BUNDLED_CATALOG[0])).toBeNull();
+  });
+
+  it('keeps the version this device has selected when the new list dropped it', () => {
+    const previous = [...BUNDLED_CATALOG, otb];
+    const remote = [...BUNDLED_CATALOG];
+    expect(withSelectedKept(remote, previous, 'pt-otb').map(e => e.version)).toEqual(['ara', 'niv', 'nvi', 'cnvs', 'jcb', 'otb']);
+    expect(withSelectedKept(remote, previous, 'pt-ara')).toBe(remote);
+    expect(withSelectedKept(remote, previous, null)).toBe(remote);
+    expect(withSelectedKept(remote, previous, 'pt-xyz')).toBe(remote);
   });
 });
 

@@ -30,7 +30,29 @@ The goal is simple: pick chapters or a reading plan, download the audio to the d
 
 UI strings follow the selected Bible language (`public/assets/i18n/`).
 
-The Bibles on offer are listed in one place, `src/app/data/bible-catalog.ts` — the CDN can't list its own files, so a version exists for the app only once it is written there. The first entry of a language is its default. A language with two or more entries gets a version switch (Home and Settings); a version with two or more `narrators` gets a narrator switch (Settings and the player) and keeps each narrator's audio in its own CDN folder and under its own download key. The comment in that file shows how to add one.
+The Bibles on offer come from a list, not from looking at the CDN (it can't list its own files). The list exists twice: `BUNDLED_CATALOG` in `src/app/data/bible-catalog.ts` ships inside the app, and `catalog.json` at the root of the CDN is the copy that is edited from then on — see [The list on the CDN](#the-list-on-the-cdn-catalogjson). The first entry of a language is its default. A language with two or more entries gets a version switch (Home and Settings); a version with two or more `narrators` gets a narrator switch (Settings and the player) and keeps each narrator's audio in its own CDN folder and under its own download key.
+
+### The list on the CDN (`catalog.json`)
+
+```json
+{
+  "bibles": [
+    { "lang": "pt", "version": "ara", "flag": "🇧🇷", "label": "Português - ARA" },
+    { "lang": "pt", "version": "otb", "flag": "🇧🇷", "label": "Português - OTB",
+      "narrators": [{ "id": "ariel", "label": "Ariel" }, { "id": "ana", "label": "Ana" }] }
+  ]
+}
+```
+
+It lives at `{BIBLE_CDN_URL}/catalog.json`. **Adding a version or a narrator needs no app update of any kind, not even over the air**: upload the files, add the entry to this file, upload it. `CatalogService` reads it every time the app opens or comes back with a connection (at most every 5 minutes), and a list that differs from the one in use replaces it, is saved on the device (`localStorage.bibleCatalog`) and repaints the open pages. A device that has never been online uses the bundled list.
+
+What protects the apps from a bad edit:
+
+- The whole file is ignored, and the app keeps the list it has, when anything in it is malformed or repeated: `lang` must be 2–3 lowercase letters, `version` lowercase letters/digits, `label` non-empty, a narrator `id` lowercase letters, digits, `-` or `_`, with a non-empty `label`. Validate the JSON before uploading.
+- The version a device has selected stays available on that device even if the file drops it. A narrator that is removed is simply no longer offered: whoever used it goes back to the version's first voice.
+- **A new language is not only data.** The interface texts (`public/assets/i18n/{lang}.json`) ship inside the app, so an entry in a language missing from `UI_LANGUAGES` is skipped until an app update (over the air) adds its texts and the language to that constant.
+
+Keep `BUNDLED_CATALOG` reasonably close to the file (update it when the app is being released anyway): it is what a first run without a connection sees. A local copy of the file is kept at `BibleProjects/assets/catalog.json`.
 
 ### Versions and narrators: where the files go
 
@@ -41,27 +63,29 @@ Everything is on the CDN (Cloudflare R2, `BIBLE_CDN_URL` in `src/app/services/bi
 | Text | `jsons/{lang}-{version}.json` |
 | Audio, version with **no or one** narrator | `audios/{lang}/{VERSION}/{ISO}/{ISO} {chapter}.mp3` |
 | Audio, version with **two or more** narrators | `audios/{lang}/{VERSION}/{narratorId}/{ISO}/{ISO} {chapter}.mp3` |
+| Narrator's sample (optional) | `audios/{lang}/{VERSION}/{narratorId}/sample.mp3` |
+| The list of versions and narrators | `catalog.json` |
 
 A narrator belongs to a **version**, not to a language. So there are two different things one can add:
 
-**A new version of a language** (e.g. the owner's own narration of the OTB text, next to ARA). Upload `jsons/pt-otb.json` and `audios/pt/OTB/GEN/GEN 1.mp3`…, then add the entry to `BIBLE_CATALOG` *after* `pt/ara`, so ARA stays the Portuguese default:
+**A new version of a language** (e.g. the owner's own narration of the OTB text, next to ARA). Upload `jsons/pt-otb.json` and `audios/pt/OTB/GEN/GEN 1.mp3`…, then add the entry to `catalog.json` *after* `pt/ara`, so ARA stays the Portuguese default:
 
-```ts
-{ lang: 'pt', version: 'otb', flag: '🇧🇷', label: 'Português - OTB',
-  narrators: [{ id: 'ariel', label: 'Ariel' }] },
+```json
+{ "lang": "pt", "version": "otb", "flag": "🇧🇷", "label": "Português - OTB",
+  "narrators": [{ "id": "ariel", "label": "Ariel" }] }
 ```
 
 With a single narrator there is **no** narrator folder. The language now has two versions, so the version switch shows up.
 
-**A second voice for a version that already has one.** Every voice gets its own folder — including the first one, whose files must be moved (or copied) into it:
+**A second voice for a version that already has one.** Every voice gets its own folder — including the first one, whose files must be **copied** into it. Copy rather than move, and upload everything before editing `catalog.json`: a device that has not read the new list yet still asks for the old paths.
 
 ```
 audios/pt/OTB/ariel/GEN/GEN 1.mp3
 audios/pt/OTB/ana/GEN/GEN 1.mp3
 ```
 
-```ts
-narrators: [{ id: 'ariel', label: 'Ariel' }, { id: 'ana', label: 'Ana' }],
+```json
+"narrators": [{ "id": "ariel", "label": "Ariel" }, { "id": "ana", "label": "Ana" }]
 ```
 
 Rules:
@@ -74,9 +98,9 @@ What the user sees with two or more narrators:
 
 - A narrator switch in Settings and in the player (the saved choice is per version, `PreferencesService.narratorFor`).
 - The picker's "downloaded" marks and the **Download the entire Bible** button follow the voice in use: the button shows while that voice is incomplete on the device, so it comes back after switching to a voice that is not downloaded.
-- Tapping that button always asks **which narrator** first (`Home.fullDownload` → `NarratorChoiceDialog`); nothing downloads without a choice. Each voice has a play button that streams the first 15 seconds of Genesis 1 in that voice straight from the CDN (`audios/{lang}/{VERSION}/{narratorId}/GEN/GEN 1.mp3`), so there are no separate sample files to record or upload — but Genesis 1 must exist for every narrator listed. Voices already complete on the device are marked, and picking one only switches to it. The pick becomes the voice in use. To download another voice later, tap the button again (switch narrator first if it is hidden).
+- Tapping that button always asks **which narrator** first (`Home.fullDownload` → `NarratorChoiceDialog`); nothing downloads without a choice. Each voice has a play button that plays at most 15 seconds of it, from the first of these that works: the narrator's own `sample.mp3` (optional — a clip you choose, e.g. to skip an opening jingle), Genesis 1 in that voice from the device when it is downloaded (so it works offline), and Genesis 1 streamed from the CDN. So no sample file is required, but Genesis 1 must exist for every narrator listed. Voices already complete on the device are marked, and picking one only switches to it. The pick becomes the voice in use. To download another voice later, tap the button again (switch narrator first if it is hidden).
 
-Adding a version or a narrator is a catalog change only, so it ships over the air (see [Versions and updates](#versions-and-updates)).
+Adding a version or a narrator is an edit of `catalog.json` on the CDN: no app release, no over-the-air bundle.
 
 ## Reading plans
 

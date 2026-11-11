@@ -129,6 +129,7 @@ describe('Home', () => {
       const prefs = TestBed.inject(PreferencesService);
       vi.spyOn(service, 'booksDownloadStatus').mockResolvedValue([]);
       vi.spyOn(service, 'narratorsDownloaded').mockResolvedValue(downloaded);
+      vi.spyOn(service, 'localSamples').mockResolvedValue({});
       const downloadEntireBible = vi.spyOn(service, 'downloadEntireBible').mockResolvedValue([]);
       const setNarrator = vi.spyOn(prefs, 'setNarrator');
       const create = vi.spyOn(TestBed.inject(ModalController), 'create').mockResolvedValue({
@@ -143,7 +144,7 @@ describe('Home', () => {
       await home.fullDownload();
       const opts = create.mock.calls[0][0] as any;
       expect(opts.component).toBe(NarratorChoiceDialog);
-      expect(opts.componentProps).toEqual({ lang: 'pt', version: 'ara', choices: twoVoices.narrators, downloaded: [] });
+      expect(opts.componentProps).toEqual({ lang: 'pt', version: 'ara', choices: twoVoices.narrators, downloaded: [], localSamples: {} });
       expect(setNarrator).toHaveBeenCalledWith(twoVoices, 'ana');
       expect(downloadEntireBible).toHaveBeenCalled();
     });

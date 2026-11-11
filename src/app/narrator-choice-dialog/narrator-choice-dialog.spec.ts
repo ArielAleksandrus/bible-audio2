@@ -48,13 +48,34 @@ describe('NarratorChoiceDialog', () => {
     }).compileComponents();
   });
 
-  it('plays Genesis 1 in the narrator’s own folder and pauses the app’s player', () => {
+  const CDN = 'https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/audios/pt/OTB';
+
+  it('plays the narrator’s own sample and pauses the app’s player', () => {
     const { dialog, made } = setup();
     dialog.toggleSample('ana');
-    expect(made[0].url).toBe('https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/audios/pt/OTB/ana/GEN/GEN 1.mp3');
+    expect(made[0].url).toBe(`${CDN}/ana/sample.mp3`);
     expect(made[0].play).toHaveBeenCalled();
     expect(player.pause).toHaveBeenCalled();
     expect(dialog.playing()).toBe('ana');
+  });
+
+  it('without a sample file, falls back to Genesis 1 in that voice', () => {
+    const { dialog, made } = setup();
+    dialog.toggleSample('ana');
+    made[0].fire('error');
+    expect(made[1].url).toBe(`${CDN}/ana/GEN/GEN 1.mp3`);
+    expect(made[1].play).toHaveBeenCalled();
+    expect(dialog.playing()).toBe('ana');
+    expect(dialog.failed()).toBeUndefined();
+  });
+
+  it('offline, plays Genesis 1 from the device for a voice that has it', () => {
+    const { dialog, made } = setup();
+    dialog.localSamples = { ariel: 'blob:local-gen-1' };
+    dialog.toggleSample('ariel');
+    made[0].fire('error');
+    expect(made[1].url).toBe('blob:local-gen-1');
+    expect(dialog.playing()).toBe('ariel');
   });
 
   it('stops the sample at 15 seconds', () => {
@@ -88,18 +109,18 @@ describe('NarratorChoiceDialog', () => {
     expect(dialog.playing()).toBe('ana');
   });
 
-  it('says so when the sample cannot be played', async () => {
+  it('says so only when no source can be played', async () => {
     const { dialog, made } = setup();
     dialog.toggleSample('ana');
     made[0].fire('error');
+    expect(dialog.failed()).toBeUndefined();
+    made[1].fire('error');
     expect(dialog.playing()).toBeUndefined();
     expect(dialog.failed()).toBe('ana');
 
     dialog.audioFactory = url => ({ ...fakeAudio(url), play: vi.fn().mockRejectedValue(new Error('NotAllowed')) }) as any;
     dialog.toggleSample('ariel');
-    await Promise.resolve();
-    await Promise.resolve();
-    expect(dialog.failed()).toBe('ariel');
+    await vi.waitFor(() => expect(dialog.failed()).toBe('ariel'));
   });
 
   it('dismisses with the chosen narrator and stops the sample', () => {

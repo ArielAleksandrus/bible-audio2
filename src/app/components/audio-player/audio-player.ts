@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PLAYBACK_RATES, PlaybackRate, PreferencesService } from '../../services/preferences.service';
 import { BibleNarrator, catalogEntry, narratorChoices } from '../../data/bible-catalog';
+import { CatalogService } from '../../services/catalog.service';
 
 @Component({
   selector: 'app-audio-player',
@@ -33,7 +34,8 @@ export class AudioPlayer implements OnDestroy {
     public audioService: AudioService,
     private cdr: ChangeDetectorRef,
     private prefs: PreferencesService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private catalog: CatalogService
   ) {
     this.subs.add(
       this.prefs.playbackRate$.subscribe(rate => {
@@ -45,6 +47,17 @@ export class AudioPlayer implements OnDestroy {
     this.subs.add(
       this.audioService.currentTrack$.subscribe(track => {
         this.currentTrack = track;
+        this.narrators = track?.lang && track.version
+          ? narratorChoices(catalogEntry(track.lang, track.version))
+          : [];
+        this.cdr.markForCheck();
+      })
+    );
+
+    // The list of versions and narrators was updated from the CDN.
+    this.subs.add(
+      this.catalog.changed$.subscribe(() => {
+        const track = this.currentTrack;
         this.narrators = track?.lang && track.version
           ? narratorChoices(catalogEntry(track.lang, track.version))
           : [];

@@ -13,6 +13,7 @@ import { BibleService } from '../../services/bible.service';
 import { AuthService } from '../../services/auth.service';
 import { SyncService } from '../../services/sync.service';
 import { NotificationsService } from '../../services/notifications.service';
+import { CatalogService } from '../../services/catalog.service';
 import { AudioDownloaderService } from '../../services/audio-downloader.service';
 import { UiService } from '../../services/ui.service';
 import { Bible } from 'bible-picker';
@@ -115,6 +116,10 @@ export class Settings implements ViewWillEnter {
       this.cdr.markForCheck();
     });
 
+    // The list of versions and narrators was updated from the CDN.
+    inject(CatalogService).changed$.pipe(takeUntilDestroyed()).subscribe(() => {
+      if (this.bibleData) this.useBible(this.bibleData);
+    });
     // The version can also be switched from Home, and the narrator from the player.
     this.bibleServ.bibleChanged$.pipe(takeUntilDestroyed()).subscribe(bible => this.useBible(bible));
     this.prefs.narratorChanged$.pipe(takeUntilDestroyed()).subscribe(() => {

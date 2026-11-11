@@ -13,6 +13,7 @@ import { UpdateService } from './services/update.service';
 import { UiService } from './services/ui.service';
 import { NativeShellService } from './services/native-shell.service';
 import { OtaService } from './services/ota.service';
+import { CatalogService } from './services/catalog.service';
 import { SafariWarningDialog } from './safari-warning-dialog/safari-warning-dialog';
 import { isIosDevice, isInstagramInAppBrowser } from './utils/browser.util';
 import { isNativeApp } from './utils/platform.util';
@@ -53,6 +54,8 @@ export class App {
     inject(NativeShellService);
     // Store apps: confirms this bundle opened and looks for a newer one over the air.
     inject(OtaService).listen();
+    // New versions and narrators, read from the CDN with no app update.
+    inject(CatalogService).listen();
 
     this.updateServ.updateReady$.subscribe(async ready => {
       if (!ready) return;
