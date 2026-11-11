@@ -15,6 +15,7 @@ import { Track } from '../../models/track';
 
 import { BiblePicker, Bible, BibleBook, BibleSelection, OverridableCSS as BibleCSS } from 'bible-picker';
 
+import { NarratorChoiceDialog } from '../../narrator-choice-dialog/narrator-choice-dialog';
 import { LanguageSelectorDialog } from '../../language-selector-dialog/language-selector-dialog';
 import { BibleTextViewer } from '../../components/bible-text-viewer/bible-text-viewer';
 import { AppStateService } from '../../services/app-state.service';
@@ -260,14 +261,14 @@ export class Home implements OnInit, ViewWillEnter {
 
     // A version read by two or more narrators: whose voice to download is a
     // required choice, asked every time, since each one is a separate ~1.3 GB
-    // set of files. The choice becomes the voice in use; the other one can be
+    // set of files; each can be sampled in the dialog first. The choice becomes the voice in use; the other one can be
     // downloaded later the same way (this button comes back whenever the
     // voice in use is not complete on the device).
     const entry = this.currentVersion;
     const choices = narratorChoices(entry);
     if (entry && choices.length && this.bibleData) {
       const downloaded = await this.bibleServ.narratorsDownloaded(this.bibleData);
-      const chosen = await this.askNarrator(choices, downloaded);
+      const chosen = await this.askNarrator(entry, choices, downloaded);
       if (!chosen) return [];
       this.prefs.setNarrator(entry, chosen);
       if (downloaded.includes(chosen)) return [];
@@ -311,25 +312,19 @@ export class Home implements OnInit, ViewWillEnter {
     });
   }
 
-  /** The narrator picked for a full download, or undefined when the sheet is dismissed without picking one. */
-  private async askNarrator(choices: BibleNarrator[], downloaded: string[]): Promise<string | undefined> {
-    let chosen: string | undefined;
-    const sheet = await this.actionSheets.create({
-      header: this.translate.instant('hero.choose_narrator'),
-      subHeader: this.translate.instant('hero.choose_narrator_note'),
-      buttons: [
-        ...choices.map(n => ({
-          text: downloaded.includes(n.id)
-            ? this.translate.instant('hero.narrator_downloaded', { name: n.label })
-            : n.label,
-          handler: () => { chosen = n.id; },
-        })),
-        { text: this.translate.instant('common.cancel'), role: 'cancel' },
-      ],
+  /**
+   * The narrator picked for a full download, or undefined when the dialog is
+   * closed without picking one. Each voice can be sampled there first.
+   */
+  private async askNarrator(entry: BibleCatalogEntry, choices: BibleNarrator[], downloaded: string[]): Promise<string | undefined> {
+    const modal = await this.modals.create({
+      component: NarratorChoiceDialog,
+      componentProps: { lang: entry.lang, version: entry.version, choices, downloaded },
+      cssClass: 'app-dialog',
     });
-    await sheet.present();
-    await sheet.onDidDismiss();
-    return chosen;
+    await modal.present();
+    const { data } = await modal.onDidDismiss<string>();
+    return data || undefined;
   }
 
   // Downloads and plays just Genesis 1, in place of the full-Bible download,

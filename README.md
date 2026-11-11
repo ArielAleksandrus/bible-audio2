@@ -74,7 +74,7 @@ What the user sees with two or more narrators:
 
 - A narrator switch in Settings and in the player (the saved choice is per version, `PreferencesService.narratorFor`).
 - The picker's "downloaded" marks and the **Download the entire Bible** button follow the voice in use: the button shows while that voice is incomplete on the device, so it comes back after switching to a voice that is not downloaded.
-- Tapping that button always asks **which narrator** first (`Home.fullDownload` → `askNarrator`); nothing downloads without a choice. Voices already complete on the device are marked, and picking one only switches to it. The pick becomes the voice in use. To download another voice later, tap the button again (switch narrator first if it is hidden).
+- Tapping that button always asks **which narrator** first (`Home.fullDownload` → `NarratorChoiceDialog`); nothing downloads without a choice. Each voice has a play button that streams the first 15 seconds of Genesis 1 in that voice straight from the CDN (`audios/{lang}/{VERSION}/{narratorId}/GEN/GEN 1.mp3`), so there are no separate sample files to record or upload — but Genesis 1 must exist for every narrator listed. Voices already complete on the device are marked, and picking one only switches to it. The pick becomes the voice in use. To download another voice later, tap the button again (switch narrator first if it is hidden).
 
 Adding a version or a narrator is a catalog change only, so it ships over the air (see [Versions and updates](#versions-and-updates)).
 

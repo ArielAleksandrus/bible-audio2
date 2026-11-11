@@ -1,0 +1,34 @@
+<div class="narrator-choice ion-padding">
+  <ion-button fill="clear" color="medium" class="close-button" (click)="close()" [attr.aria-label]="'common.cancel' | translate">
+    <ion-icon slot="icon-only" name="close"></ion-icon>
+  </ion-button>
+
+  <h2 class="title">{{ 'hero.choose_narrator' | translate }}</h2>
+  <p class="note">{{ 'hero.choose_narrator_note' | translate }}</p>
+
+  <ul class="narrators">
+    @for (narrator of choices; track narrator.id) {
+      <li>
+        <ion-button fill="outline" shape="round" class="sample" (click)="toggleSample(narrator.id)"
+                    [attr.aria-label]="'hero.narrator_sample' | translate: { name: narrator.label }">
+          <ion-icon slot="icon-only" [name]="playing() === narrator.id ? 'pause' : 'play'"></ion-icon>
+        </ion-button>
+
+        <div class="who">
+          <span class="name">{{ narrator.label }}</span>
+          @if (failed() === narrator.id) {
+            <small class="failed">{{ 'hero.narrator_sample_failed' | translate }}</small>
+          } @else if (downloaded.includes(narrator.id)) {
+            <small>{{ 'hero.narrator_downloaded' | translate }}</small>
+          }
+        </div>
+
+        <ion-button class="choose" (click)="choose(narrator.id)">
+          {{ (downloaded.includes(narrator.id) ? 'hero.narrator_use' : 'hero.narrator_download') | translate }}
+        </ion-button>
+      </li>
+    }
+  </ul>
+
+  <p class="hint">{{ 'hero.narrator_sample_hint' | translate }}</p>
+</div>
