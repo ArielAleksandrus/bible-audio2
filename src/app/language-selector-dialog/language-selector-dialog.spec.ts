@@ -2,7 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ModalController } from '@ionic/angular';
 
 import { LanguageSelectorDialog } from './language-selector-dialog';
-import { BUNDLED_CATALOG, resetCatalog, setCatalog } from '../data/bible-catalog';
+import { resetCatalog, setCatalog } from '../data/bible-catalog';
+import { FIVE_LICENSED } from '../../testing/bible-catalog';
 
 describe('LanguageSelectorDialog', () => {
   let component: LanguageSelectorDialog;
@@ -21,7 +22,7 @@ describe('LanguageSelectorDialog', () => {
     await fixture.whenStable();
   }
 
-  beforeEach(() => { modal.dismiss.mockClear(); resetCatalog(); });
+  beforeEach(() => { modal.dismiss.mockClear(); resetCatalog(); setCatalog(FIVE_LICENSED); });
   afterEach(() => resetCatalog());
 
   it('lists languages by name and picks the only version by itself', async () => {
@@ -32,7 +33,7 @@ describe('LanguageSelectorDialog', () => {
   });
 
   it('asks for the version when the language has two, and dismisses only after that choice', async () => {
-    setCatalog([...BUNDLED_CATALOG, otb]);
+    setCatalog([...FIVE_LICENSED, otb]);
     await open();
     component.chooseLanguage(component.options[0]);
     expect(modal.dismiss).not.toHaveBeenCalled();
@@ -42,7 +43,7 @@ describe('LanguageSelectorDialog', () => {
   });
 
   it('does not ask when the other versions of the language are hidden', async () => {
-    setCatalog([{ ...BUNDLED_CATALOG[0], hidden: true }, otb, ...BUNDLED_CATALOG.slice(1)]);
+    setCatalog([{ ...FIVE_LICENSED[0], hidden: true }, otb, ...FIVE_LICENSED.slice(1)]);
     await open();
     component.chooseLanguage(component.options[0]);
     expect(modal.dismiss).toHaveBeenCalledWith('pt-otb', 'selected');

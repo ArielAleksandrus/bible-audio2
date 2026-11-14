@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
 import { CATALOG_URL, CatalogService } from './catalog.service';
-import { BUNDLED_CATALOG, catalogEntry, currentCatalog, narratorChoices, resetCatalog, versionsForLanguage } from '../data/bible-catalog';
+import { catalogEntry, currentCatalog, narratorChoices, resetCatalog, setCatalog, versionsForLanguage } from '../data/bible-catalog';
+import { FIVE_LICENSED as FIVE } from '../../testing/bible-catalog';
 
 describe('CatalogService', () => {
   const otb = { lang: 'pt', version: 'otb', flag: '🇧🇷', label: 'Português - OTB', narrators: [{ id: 'ariel', label: 'Ariel' }, { id: 'ana', label: 'Ana' }] };
@@ -14,6 +15,7 @@ describe('CatalogService', () => {
   beforeEach(() => {
     localStorage.clear();
     resetCatalog();
+    setCatalog(FIVE);
     fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
     service = TestBed.inject(CatalogService);
@@ -27,7 +29,7 @@ describe('CatalogService', () => {
   });
 
   it('takes a new version and narrators from the CDN, with no app update', async () => {
-    serve({ bibles: [...BUNDLED_CATALOG, otb] });
+    serve({ bibles: [...FIVE, otb] });
     expect(await service.refresh()).toBe(true);
     expect(fetchMock).toHaveBeenCalledWith(CATALOG_URL, { cache: 'no-store' });
     expect(versionsForLanguage('pt').map(e => e.version)).toEqual(['ara', 'otb']);
@@ -36,13 +38,13 @@ describe('CatalogService', () => {
   });
 
   it('says nothing when the list is the one already in use', async () => {
-    serve({ bibles: BUNDLED_CATALOG });
+    serve({ bibles: FIVE });
     expect(await service.refresh()).toBe(false);
     expect(changes).toBe(0);
   });
 
   it('keeps the list it has when the file is missing, malformed or unreachable', async () => {
-    serve({ bibles: [...BUNDLED_CATALOG, otb] });
+    serve({ bibles: [...FIVE, otb] });
     await service.refresh();
     const good = currentCatalog();
 
@@ -58,11 +60,11 @@ describe('CatalogService', () => {
   });
 
   it('does not take away the version this device is using', async () => {
-    serve({ bibles: [...BUNDLED_CATALOG, otb] });
+    serve({ bibles: [...FIVE, otb] });
     await service.refresh();
     localStorage.setItem('selectedBible', 'pt-otb');
 
-    serve({ bibles: BUNDLED_CATALOG });
+    serve({ bibles: FIVE });
     await service.refresh();
     expect(catalogEntry('pt', 'otb')?.label).toBe('Português - OTB');
     expect(versionsForLanguage('pt')[0].version).toBe('ara');

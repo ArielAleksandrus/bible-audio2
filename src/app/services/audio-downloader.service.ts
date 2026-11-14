@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AvailableSpace } from '../storage/my-db';
-import { audioStorage, idToFileName } from '../storage/audio-storage';
+import { audioExt, audioStorage, idToFileName } from '../storage/audio-storage';
 import { Track } from '../models/track';
 import { runWithConcurrency } from '../utils/concurrency.util';
 import { isNativeApp, nativePlatform } from '../utils/platform.util';
@@ -218,7 +218,7 @@ export class AudioDownloaderService {
     this.bulkStatus = 'running';
     try {
       const snapshot = await BulkDownload.start({
-        items: tracks.map(t => ({ id: t.id, url: t.url, fileName: idToFileName(t.id) })),
+        items: tracks.map(t => ({ id: t.id, url: t.url, fileName: idToFileName(t.id, audioExt(t.url)) })),
         strings,
       });
       this.onBulkProgress(snapshot);
@@ -238,8 +238,11 @@ export class AudioDownloaderService {
   private attachBulkDownload(): void {
     void BulkDownload.addListener('progress', s => this.onBulkProgress(s));
     void BulkDownload.addListener('itemDone', ({ id, size }) => {
-      void audioStorage.markStored(id, size);
       const track = this.bulkTracks.get(id);
+      // Without the track (the WebView was recreated mid-batch) the file's
+      // extension is unknown here: re-read the folder instead.
+      if (track) void audioStorage.markStored(id, size, audioExt(track.url));
+      else audioStorage.invalidate();
       if (track) {
         track.status = 'done';
         this.trackDownloaded$.next(track);

@@ -20,13 +20,7 @@ The goal is simple: pick chapters or a reading plan, download the audio to the d
 
 ## Languages and translations
 
-| Language | Bible version |
-|---|---|
-| Português | ARA |
-| English | NIV |
-| Español | NVI |
-| 中文 (Simplified) | CNVS |
-| 日本語 | JCB |
+The app ships with **OTB** in Portuguese (the owner's own text and narration), the only entry of `BUNDLED_CATALOG`. The OTB text also exists in English, Spanish, Chinese and Japanese, offered once it has narration. The licensed versions offered until then (ARA, NIV, NVI, CNVS, JCB) are being retired from the CDN; chapters already saved on a device keep playing there.
 
 UI strings follow the selected Bible language (`public/assets/i18n/`).
 
@@ -45,13 +39,13 @@ The Bibles on offer come from a list, not from looking at the CDN (it can't list
 }
 ```
 
-**`hidden`** (optional, `true` or `false`): a hidden version is not offered anywhere — not in the language picker, not in the version switch of Home or Settings. A device that already has it selected keeps opening it (Settings shows it as the current value but does not offer it, and the switch lets the user move to a visible version). The default of a language is its first version that is not hidden, and a language whose versions are all hidden is not offered at all. Use it to upload a version and try it on your own device (select it before hiding it) before offering it, or to stop offering one without breaking it for people who use it. Hiding does not change audio paths or download keys: chapters saved under the old name-only key stay with the version that is first in the file, hidden or not.
+**`hidden`** (optional, `true` or `false`): a hidden version is not offered anywhere — not in the language picker, not in the version switch of Home or Settings. A device that already has it selected keeps opening it (Settings shows it as the current value but does not offer it, and the switch lets the user move to a visible version). The default of a language is its first version that is not hidden, and a language whose versions are all hidden is not offered at all. Use it to upload a version and try it on your own device (select it before hiding it) before offering it, or to stop offering one without breaking it for people who use it. Hiding does not change audio paths or download keys.
 
 It lives at `{BIBLE_CDN_URL}/catalog.json`. **Adding a version or a narrator needs no app update of any kind, not even over the air**: upload the files, add the entry to this file, upload it. `CatalogService` reads it every time the app opens or comes back with a connection (at most every 5 minutes), and a list that differs from the one in use replaces it, is saved on the device (`localStorage.bibleCatalog`) and repaints the open pages. A device that has never been online uses the bundled list.
 
 What protects the apps from a bad edit:
 
-- The whole file is ignored, and the app keeps the list it has, when anything in it is malformed or repeated: `lang` must be 2–3 lowercase letters, `version` lowercase letters/digits, `label` non-empty, a narrator `id` lowercase letters, digits, `-` or `_`, with a non-empty `label`, and `hidden`, when present, a boolean (`"true"` or `1` reject the file). Validate the JSON before uploading.
+- The whole file is ignored, and the app keeps the list it has, when anything in it is malformed or repeated: `lang` must be 2–3 lowercase letters, `version` lowercase letters/digits, `label` non-empty, a narrator `id` lowercase letters, digits, `-` or `_`, with a non-empty `label`, `hidden`, when present, a boolean (`"true"` or `1` reject the file), and `formats`, when present, a non-empty list of distinct strings. Validate the JSON before uploading.
 - The version a device has selected stays available on that device even if the file drops it. A narrator that is removed is simply no longer offered: whoever used it goes back to the version's first voice.
 - **A new language is not only data.** The interface texts (`public/assets/i18n/{lang}.json`) ship inside the app, so an entry in a language missing from `UI_LANGUAGES` is skipped until an app update (over the air) adds its texts and the language to that constant.
 
@@ -59,42 +53,45 @@ Keep `BUNDLED_CATALOG` reasonably close to the file (update it when the app is b
 
 ### Versions and narrators: where the files go
 
-Everything is on the CDN (Cloudflare R2, `BIBLE_CDN_URL` in `src/app/services/bible.service.ts`). `{lang}` is lowercase (`pt`), `{VERSION}` uppercase in audio paths (`OTB`) and lowercase in the JSON name, `{ISO}` is the book's three-letter code (`GEN`, `EXO`, `PSA`…), and the file name has a space: `GEN 1.mp3`.
+Everything is on the CDN (Cloudflare R2, `BIBLE_CDN_URL` in `src/app/services/bible.service.ts`). `{lang}` is lowercase (`pt`), `{VERSION}` uppercase in audio paths (`OTB`) and lowercase in the JSON name, `{ISO}` is the book's three-letter code (`GEN`, `EXO`, `PSA`…), and the file name has a space: `GEN 1.m4a`.
 
 | What | Path on the CDN |
 |---|---|
 | Text | `jsons/{lang}-{version}.json` |
-| Audio, version with **no or one** narrator | `audios/{lang}/{VERSION}/{ISO}/{ISO} {chapter}.mp3` |
-| Audio, version with **two or more** narrators | `audios/{lang}/{VERSION}/{narratorId}/{ISO}/{ISO} {chapter}.mp3` |
-| Narrator's sample (optional) | `audios/{lang}/{VERSION}/{narratorId}/sample.mp3` |
+| Audio, the version's **default** voice (first narrator, or none) | `audios/{lang}/{VERSION}/{ISO}/{ISO} {chapter}.{ext}` |
+| Audio, **any other** voice | `audios/{lang}/{VERSION}/{narratorId}/{ISO}/{ISO} {chapter}.{ext}` |
+| Sample (optional), default voice / other voice | `audios/{lang}/{VERSION}/sample.mp3` / `audios/{lang}/{VERSION}/{narratorId}/sample.mp3` |
 | The list of versions and narrators | `catalog.json` |
 
-A narrator belongs to a **version**, not to a language. So there are two different things one can add:
+A narrator belongs to a **version**, not to a language. The default voice has **no** folder of its own, so giving a version a second voice moves and copies nothing: the new voice goes in its folder next to the existing files.
 
-**A new version of a language** (e.g. the owner's own narration of the OTB text, next to ARA). Upload `jsons/pt-otb.json` and `audios/pt/OTB/GEN/GEN 1.mp3`…, then add the entry to `catalog.json` *after* `pt/ara`, so ARA stays the Portuguese default:
+```
+audios/pt/OTB/GEN/GEN 1.m4a          ← Ariel, the default voice
+audios/pt/OTB/lucas/GEN/GEN 1.m4a    ← Lucas
+```
 
 ```json
 { "lang": "pt", "version": "otb", "flag": "🇧🇷", "label": "Português - OTB",
-  "narrators": [{ "id": "ariel", "label": "Ariel" }] }
+  "formats": ["opus", "mp3"],
+  "narrators": [{ "id": "ariel", "label": "Ariel" }, { "id": "lucas", "label": "Lucas" }] }
 ```
 
-With a single narrator there is **no** narrator folder. The language now has two versions, so the version switch shows up and the first-run picker asks which one (add `"hidden": true` to upload it without offering it yet).
-
-**A second voice for a version that already has one.** Every voice gets its own folder — including the first one, whose files must be **copied** into it. Copy rather than move, and upload everything before editing `catalog.json`: a device that has not read the new list yet still asks for the old paths.
+**Formats.** `formats` lists what each chapter exists in, best first (`AUDIO_FORMATS` in `bible-catalog.ts`): `opus` is Opus 32 kbps mono in an MP4 container, `.m4a` (about a quarter of a 128 kbps MP3); `mp3` is `.mp3`. Every format listed must exist for **every** chapter of every voice, side by side with the same name (`GEN 1.m4a` and `GEN 1.mp3`). A device downloads the first one it plays; without `formats` it is mp3, as before. Whether a device plays Opus is found out by **playing** a fraction of a second of embedded silence (`utils/audio-format-probe.ts`), never by asking `canPlayType`: Safari says no on iPhones that play it fine. Older iPhones that really can't get the mp3. A format the app doesn't know is skipped, so a newer catalog can add one; an entry left with none it knows is left out. Encoding, from the original:
 
 ```
-audios/pt/OTB/ariel/GEN/GEN 1.mp3
-audios/pt/OTB/ana/GEN/GEN 1.mp3
+ffmpeg -i in.mp3 -c:a libopus -b:a 32k -application voip -map_metadata -1 -f mp4 "GEN 1.m4a"
+ffmpeg -i in.mp3 -c:a libmp3lame -b:a 48k -ac 1 -map_metadata -1 "GEN 1.mp3"
 ```
 
-```json
-"narrators": [{ "id": "ariel", "label": "Ariel" }, { "id": "ana", "label": "Ana" }]
-```
+(`-f mp4` is needed: ffmpeg's `.m4a` muxer refuses Opus.) On the device the file keeps its extension (`audio-storage.ts`), because AVPlayer reads a local file by its extension.
+
+**A new version of a language**: upload `jsons/{lang}-{version}.json` and the audio, then add the entry to `catalog.json`. The first entry of a language is its default; add `"hidden": true` to upload it without offering it yet.
 
 Rules:
 
 - `id` is the folder name and part of the download key: lowercase ASCII, no spaces, never renamed once people have downloaded it.
-- Keep the original narrator **first**. Chapters downloaded before the second voice existed were stored without a narrator in their key, and the app reuses them only for the first narrator. The first narrator is also the default voice.
+- Keep the default narrator **first**, and never change who is first: their files are the folder-less ones, and chapters downloaded while the version had a single voice were stored without a narrator in their key, which the app reuses only for the first narrator.
+- Chapters saved by the oldest app versions under a name-only key (`Gênesis 1.mp3`) are trusted only for the five versions that existed then (`hasNameOnlyKeys`), whatever order the list is in.
 - On the device each voice is a separate set of files. The key is `{version}-{abbrev}-{chapter}` with no choice of narrator and `{version}-{narratorId}-{abbrev}-{chapter}` with one (`trackId` in `bible.service.ts`), so two voices never share a file and both can stay downloaded.
 
 What the user sees with two or more narrators:

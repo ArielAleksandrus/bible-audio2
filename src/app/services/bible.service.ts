@@ -6,7 +6,7 @@ import { AudioDownloaderService, BulkDownloadStrings, DownloadProgress } from '.
 import { WakeLockService } from './wake-lock.service';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
-import { catalogEntry, baseLang, isDefaultVersion, narratorChoices } from '../data/bible-catalog';
+import { AUDIO_FORMATS, audioFormatFor, catalogEntry, baseLang, defaultNarrator, hasNameOnlyKeys, narratorChoices } from '../data/bible-catalog';
 import { PreferencesService } from './preferences.service';
 import { bookDisplayName } from '../utils/bible-text.util';
 import { saveBibleVersion, getBibleVersion, getAllSavedBibles, deleteBibleVersion, AvailableSpace } from '../storage/my-db';
@@ -27,14 +27,24 @@ export const BIBLE_ABBREV_ISO = [
   "JUD", "REV"
 ];
 /**
- * CDN path of one chapter's audio. A narrator folder is added only when one
- * is given — callers pass it only for versions with two or more narrators,
- * so every version that has a single voice keeps the path it always had.
+ * The CDN folder of a version's audio, with the narrator's own folder when
+ * the voice is not the version's default. The default voice (first
+ * narrator) has none, so a version keeps its paths when it gets a second
+ * voice, and no file is ever stored twice.
+ */
+function versionFolder(lang: string, version: string, narratorId?: string): string {
+  const own = narratorId && narratorId !== defaultNarrator(catalogEntry(lang, version)) ? `${narratorId}/` : '';
+  return `${BIBLE_CDN_URL}/audios/${baseLang(lang)}/${version.toUpperCase()}/${own}`;
+}
+
+/**
+ * CDN path of one chapter's audio, in the format this device downloads the
+ * version in (audioFormatFor): .mp3 unless the catalog offers a better one.
  */
 export function audioUrl(lang: string, version: string, bookIdx: number, chapter: number, narratorId?: string): string {
   const iso = BIBLE_ABBREV_ISO[bookIdx].toUpperCase();
-  const narrator = narratorId ? `${narratorId}/` : '';
-  return `${BIBLE_CDN_URL}/audios/${baseLang(lang)}/${version.toUpperCase()}/${narrator}${iso}/${iso} ${chapter}.mp3`;
+  const { ext } = AUDIO_FORMATS[audioFormatFor(catalogEntry(lang, version))];
+  return `${versionFolder(lang, version, narratorId)}${iso}/${iso} ${chapter}.${ext}`;
 }
 
 /**
@@ -43,7 +53,7 @@ export function audioUrl(lang: string, version: string, bookIdx: number, chapter
  * the app plays the opening of Genesis 1 instead (NarratorChoiceDialog).
  */
 export function sampleUrl(lang: string, version: string, narratorId: string): string {
-  return `${BIBLE_CDN_URL}/audios/${baseLang(lang)}/${version.toUpperCase()}/${narratorId}/sample.mp3`;
+  return `${versionFolder(lang, version, narratorId)}sample.mp3`;
 }
 
 /** Download/storage key of one chapter's audio. The narrator is part of it, so two voices never share a file. */
@@ -125,13 +135,13 @@ export class BibleService {
 
     // Storage keys this chapter may already be saved under from before:
     // - "Gênesis 1.mp3": the key used before ids existed. It names no
-    //   version, so it is only trusted for a language's default version
-    //   (the only one that existed then).
+    //   version, so it is only trusted for the versions that existed then
+    //   (hasNameOnlyKeys).
     // - the id without a narrator: what the first narrator's chapters were
     //   saved as while he was the version's only voice.
     let legacyKey = '';
     if (!narratorId) {
-      if (book.name && isDefaultVersion(bible.language, bible.version)) legacyKey = `${book.name} ${chapter}.mp3`;
+      if (book.name && hasNameOnlyKeys(bible.language, bible.version)) legacyKey = `${book.name} ${chapter}.mp3`;
     } else if (narratorId === firstNarrator) {
       legacyKey = trackId(bible.version, book.abbrev, chapter);
     }

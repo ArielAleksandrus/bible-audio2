@@ -1,14 +1,15 @@
 import { dbPromise } from './my-db';
 import { isNativeApp, nativePlatform, nativeSafeUrl } from '../utils/platform.util';
 import { bypassServiceWorker } from '../utils/sw-bypass.util';
+import { AUDIO_FORMATS } from '../data/bible-catalog';
 
 /**
- * Where downloaded chapter MP3s live.
+ * Where downloaded chapter audio lives (.mp3 or .m4a, see AUDIO_FORMATS).
  *
  * - Web/PWA: IndexedDB (`audio-db` → `files`), as Blobs — unchanged from
  *   before the native apps existed.
  * - Native (Capacitor): plain files under the app's private data directory
- *   (`audios/*.mp3` in Directory.Data on Android, Library/NoCloud on iOS).
+ *   (`audios/*.mp3|m4a` in Directory.Data on Android, Library/NoCloud on iOS).
  *   The OS media player (ExoPlayer /
  *   AVPlayer) has to be able to open them by path, which it can't do with a
  *   Blob inside the WebView's IndexedDB — and ~1.3 GB of Blobs in IndexedDB
@@ -35,8 +36,8 @@ export interface AudioStorage {
   list(): Promise<StoredAudio[]>;
   remove(id: string): Promise<void>;
   clear(): Promise<void>;
-  /** Record a file written by someone else (the native bulk-download service). */
-  markStored(id: string, size: number): Promise<void>;
+  /** Record a file written by someone else (the native bulk-download service), named idToFileName(id, ext). */
+  markStored(id: string, size: number, ext: string): Promise<void>;
   /** Forget cached state so the next call re-reads what is actually stored. */
   invalidate(): void;
 }
@@ -73,7 +74,7 @@ class IndexedDbAudioStorage implements AudioStorage {
     });
     if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
 
-    const blob = new Blob([await response.blob()], { type: 'audio/mpeg' });
+    const blob = new Blob([await response.blob()], { type: blobType(audioExt(url)) });
     const db = await dbPromise;
     await db.put('files', { id, blob, url, downloadedAt: Date.now() });
   }
@@ -111,26 +112,51 @@ class IndexedDbAudioStorage implements AudioStorage {
 
 const AUDIO_DIR = 'audios';
 
+/** Extensions a chapter can be stored with. */
+const AUDIO_EXTS: readonly string[] = Object.values(AUDIO_FORMATS).map(f => f.ext);
+
+/**
+ * The extension of the audio at `url`, kept on the stored file: AVPlayer
+ * picks how to read a local file by its extension, so an Opus file saved
+ * as .mp3 would not play on iOS.
+ */
+export function audioExt(url: string): string {
+  const ext = /\.([a-z0-9]+)(?:[?#].*)?$/i.exec(url)?.[1]?.toLowerCase();
+  return ext && AUDIO_EXTS.includes(ext) ? ext : 'mp3';
+}
+
+function blobType(ext: string): string {
+  return ext === 'm4a' ? 'audio/mp4' : 'audio/mpeg';
+}
+
 /**
  * Track ids look like `ara-gn-1`, but some translations use non-ASCII book
  * abbreviations (e.g. Chinese). Keep filenames plain ASCII so the resulting
  * `file://` URI never needs percent-encoding — iOS's `URL(string:)` (used by
  * the playlist plugin) returns nil for an unencoded non-ASCII path.
  */
-export function idToFileName(id: string): string {
+export function idToFileName(id: string, ext = 'mp3'): string {
   const safe = id.replace(/[^A-Za-z0-9-]/g, c => `_u${c.codePointAt(0)!.toString(16)}_`);
-  return `${safe}.mp3`;
+  return `${safe}.${ext}`;
 }
 
-export function fileNameToId(name: string): string {
+/** The id of a stored chapter's file, or null for a file that is not a chapter. */
+export function fileNameToId(name: string): string | null {
+  const dot = name.lastIndexOf('.');
+  if (dot < 0 || !AUDIO_EXTS.includes(name.slice(dot + 1))) return null;
   return name
-    .replace(/\.mp3$/, '')
+    .slice(0, dot)
     .replace(/_u([0-9a-f]+)_/g, (_, hex: string) => String.fromCodePoint(parseInt(hex, 16)));
+}
+
+/** A chapter on disk, with the name of its file. */
+interface StoredFile extends StoredAudio {
+  file: string;
 }
 
 class FilesystemAudioStorage implements AudioStorage {
   /** id → info, loaded once from a directory listing (1 bridge call instead of ~1200 stats). */
-  private index: Promise<Map<string, StoredAudio>> | null = null;
+  private index: Promise<Map<string, StoredFile>> | null = null;
   /** `.part` cleanup is only safe on the very first listing (see getIndex). */
   private firstListing = true;
 
@@ -148,13 +174,13 @@ class FilesystemAudioStorage implements AudioStorage {
     return { Filesystem, dir };
   }
 
-  private getIndex(): Promise<Map<string, StoredAudio>> {
+  private getIndex(): Promise<Map<string, StoredFile>> {
     if (!this.index) {
       const cleanUp = this.firstListing;
       this.firstListing = false;
       this.index = (async () => {
         const { Filesystem, dir } = await this.fs();
-        const map = new Map<string, StoredAudio>();
+        const map = new Map<string, StoredFile>();
         try {
           const { files } = await Filesystem.readdir({ path: AUDIO_DIR, directory: dir });
           for (const f of files) {
@@ -166,9 +192,9 @@ class FilesystemAudioStorage implements AudioStorage {
               if (cleanUp) void Filesystem.deleteFile({ path: `${AUDIO_DIR}/${f.name}`, directory: dir }).catch(() => {});
               continue;
             }
-            if (f.type !== 'file' || !f.name.endsWith('.mp3')) continue;
-            const id = fileNameToId(f.name);
-            map.set(id, { id, size: f.size, downloadedAt: f.mtime });
+            const id = f.type === 'file' ? fileNameToId(f.name) : null;
+            if (!id) continue;
+            map.set(id, { id, size: f.size, downloadedAt: f.mtime, file: f.name });
           }
         } catch {
           // Directory doesn't exist yet — nothing downloaded.
@@ -187,7 +213,8 @@ class FilesystemAudioStorage implements AudioStorage {
     const { Filesystem, dir } = await this.fs();
     const { FileTransfer } = await import('@capacitor/file-transfer');
 
-    const finalPath = `${AUDIO_DIR}/${idToFileName(id)}`;
+    const file = idToFileName(id, audioExt(url));
+    const finalPath = `${AUDIO_DIR}/${file}`;
     const partPath = `${finalPath}.part`;
 
     await Filesystem.mkdir({ path: AUDIO_DIR, directory: dir, recursive: true }).catch(() => {});
@@ -214,24 +241,28 @@ class FilesystemAudioStorage implements AudioStorage {
     }
 
     const stat = await Filesystem.stat({ path: finalPath, directory: dir });
-    (await this.getIndex()).set(id, { id, size: stat.size, downloadedAt: Date.now() });
+    (await this.getIndex()).set(id, { id, size: stat.size, downloadedAt: Date.now(), file });
   }
 
   async playableUrl(id: string): Promise<string | null> {
-    if (!(await this.has(id))) return null;
+    const stored = (await this.getIndex()).get(id);
+    if (!stored) return null;
     const { Filesystem, dir } = await this.fs();
-    const { uri } = await Filesystem.getUri({ path: `${AUDIO_DIR}/${idToFileName(id)}`, directory: dir });
+    const { uri } = await Filesystem.getUri({ path: `${AUDIO_DIR}/${stored.file}`, directory: dir });
     return uri;
   }
 
   async list(): Promise<StoredAudio[]> {
-    return [...(await this.getIndex()).values()];
+    return [...(await this.getIndex()).values()].map(({ id, size, downloadedAt }) => ({ id, size, downloadedAt }));
   }
 
   async remove(id: string): Promise<void> {
+    const index = await this.getIndex();
+    const file = index.get(id)?.file;
+    index.delete(id);
+    if (!file) return;
     const { Filesystem, dir } = await this.fs();
-    await Filesystem.deleteFile({ path: `${AUDIO_DIR}/${idToFileName(id)}`, directory: dir }).catch(() => {});
-    (await this.getIndex()).delete(id);
+    await Filesystem.deleteFile({ path: `${AUDIO_DIR}/${file}`, directory: dir }).catch(() => {});
   }
 
   async clear(): Promise<void> {
@@ -240,8 +271,8 @@ class FilesystemAudioStorage implements AudioStorage {
     (await this.getIndex()).clear();
   }
 
-  async markStored(id: string, size: number): Promise<void> {
-    (await this.getIndex()).set(id, { id, size, downloadedAt: Date.now() });
+  async markStored(id: string, size: number, ext: string): Promise<void> {
+    (await this.getIndex()).set(id, { id, size, downloadedAt: Date.now(), file: idToFileName(id, ext) });
   }
 
   invalidate(): void {

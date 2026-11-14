@@ -20,14 +20,22 @@
  * What an entry stands for on the CDN:
  *
  *   text    jsons/{lang}-{version}.json
- *   audio   audios/{lang}/{VERSION}/{ISO}/{ISO} {chapter}.mp3            (0 or 1 narrator)
- *           audios/{lang}/{VERSION}/{narratorId}/{ISO}/{ISO} {chapter}.mp3  (2 or more)
- *   sample  audios/{lang}/{VERSION}/{narratorId}/sample.mp3   (optional, 2 or more narrators)
+ *   audio   audios/{lang}/{VERSION}/{ISO}/{ISO} {chapter}.{ext}               (default voice)
+ *           audios/{lang}/{VERSION}/{narratorId}/{ISO}/{ISO} {chapter}.{ext}  (any other voice)
+ *   sample  audios/{lang}/{VERSION}/sample.mp3                (optional, default voice)
+ *           audios/{lang}/{VERSION}/{narratorId}/sample.mp3   (optional, any other voice)
  *
  * A narrator belongs to a version. Each voice is a separate set of files on
  * the CDN and on the device, and the full-Bible download asks which one when
- * there are two or more. README, "Versions and narrators: where the files
- * go", has the whole picture.
+ * there are two or more. The default voice (the first narrator, or the only
+ * one) has no folder of its own, so giving a version a second voice moves
+ * nothing that is already there.
+ *
+ * {ext} comes from the entry's `formats` (AUDIO_FORMATS): the first one this
+ * device can play. Without `formats` it is mp3, as it always was. Every
+ * format listed must exist for every chapter, side by side, same name.
+ *
+ * README, "Versions and narrators: where the files go", has the whole picture.
  *
  * Order matters twice:
  * - the first entry of a language that is not hidden is that language's
@@ -45,12 +53,27 @@ export interface BibleNarrator {
   label: string;
 }
 
+/**
+ * Audio formats a version can be offered in, with the file extension on the
+ * CDN and on the device.
+ * 'opus' is Opus in an MP4 container (.m4a): about a quarter of a 128 kbps
+ * MP3 for the same voice, but not every device plays it (older iPhones).
+ */
+export const AUDIO_FORMATS = {
+  opus: { ext: 'm4a' },
+  mp3: { ext: 'mp3' },
+} as const;
+
+export type AudioFormat = keyof typeof AUDIO_FORMATS;
+
 export interface BibleCatalogEntry {
   lang: string;
   version: string;
   label: string;
   flag: string;
   narrators?: BibleNarrator[];
+  /** Best first; the device uses the first one it can play. Absent = ['mp3']. */
+  formats?: AudioFormat[];
   /** Not offered for choosing; still opens on a device that already has it selected. */
   hidden?: boolean;
 }
@@ -78,11 +101,10 @@ export const LANGUAGE_NAMES: Readonly<Record<string, string>> = {
 
 /** What ships inside the app. catalog.json on the CDN starts as a copy of this. */
 export const BUNDLED_CATALOG: readonly BibleCatalogEntry[] = [
-  { lang: 'pt', version: 'ara', flag: '🇧🇷', label: 'Português - ARA' },
-  { lang: 'en', version: 'niv', flag: '🇺🇸', label: 'English - NIV' },
-  { lang: 'es', version: 'nvi', flag: '🇪🇸', label: 'Español - NVI' },
-  { lang: 'zh', version: 'cnvs', flag: '🇨🇳', label: 'Chinese - CNVS (简体)' },
-  { lang: 'ja', version: 'jcb', flag: '🇯🇵', label: '日本語 - JCB' },
+  {
+    lang: 'pt', version: 'otb', flag: '🇧🇷', label: 'Português - OTB',
+    narrators: [{ id: 'ariel', label: 'Ariel' }], formats: ['opus', 'mp3'],
+  },
 ];
 
 // ---- the list in use ----
@@ -143,7 +165,7 @@ export function parseCatalog(raw: unknown): BibleCatalogEntry[] | null {
   const seen = new Set<string>();
   for (const item of list) {
     if (!item || typeof item !== 'object') return null;
-    const { lang, version, label, flag, narrators, hidden } = item as Record<string, unknown>;
+    const { lang, version, label, flag, narrators, hidden, formats } = item as Record<string, unknown>;
     if (typeof lang !== 'string' || !LANG.test(lang)) return null;
     if (typeof version !== 'string' || !VERSION.test(version)) return null;
     if (!text(label)) return null;
@@ -164,6 +186,15 @@ export function parseCatalog(raw: unknown): BibleCatalogEntry[] | null {
         voices.push({ id, label: name });
       }
       if (voices.length) entry.narrators = voices;
+    }
+    if (formats !== undefined) {
+      if (!Array.isArray(formats) || !formats.length || formats.some(f => typeof f !== 'string')) return null;
+      if (new Set(formats).size !== formats.length) return null;
+      // A format a newer catalog may add is skipped, not an error; an entry
+      // left with none this app knows can't be played here, so it's left out.
+      const known = formats.filter((f): f is AudioFormat => Object.hasOwn(AUDIO_FORMATS, f));
+      if (!known.length) continue;
+      if (known.length !== 1 || known[0] !== 'mp3') entry.formats = known;
     }
     if (hidden) entry.hidden = true;
     if (UI_LANGUAGES.includes(lang)) entries.push(entry);
@@ -210,20 +241,51 @@ export function languageOptions(): LanguageOption[] {
 }
 
 /**
- * Whether this is the language's first entry in the catalog, hidden or not.
- * Only for storage keys (BibleService.buildTrack): chapters saved under the
- * old name-only key belong to the version that was first then, and hiding
- * it must not hand them to another version.
+ * The versions that existed before chapters were saved under ids, one per
+ * language: a chapter saved under the old name-only key ("Gênesis 1.mp3")
+ * can only be theirs. A fixed list, not the catalog's order, so a version
+ * that becomes a language's default later (or the removal of these) never
+ * plays someone else's audio.
  */
-export function isDefaultVersion(lang: string, version: string): boolean {
-  const l = baseLang(lang);
-  return active.find(e => e.lang === l)?.version === version.toLowerCase();
+const NAME_KEY_VERSIONS: readonly string[] = ['pt-ara', 'en-niv', 'es-nvi', 'zh-cnvs', 'ja-jcb'];
+
+/** Whether chapters of this version may be saved under the old name-only key. Only for BibleService.buildTrack. */
+export function hasNameOnlyKeys(lang: string, version: string): boolean {
+  return NAME_KEY_VERSIONS.includes(`${baseLang(lang)}-${version.toLowerCase()}`);
 }
 
 /** Narrators the user can choose between: empty unless the version declares two or more. */
 export function narratorChoices(entry: BibleCatalogEntry | undefined): BibleNarrator[] {
   const narrators = entry?.narrators ?? [];
   return narrators.length > 1 ? narrators : [];
+}
+
+/** The id of a version's default voice: its first narrator, or undefined without any. */
+export function defaultNarrator(entry: BibleCatalogEntry | undefined): string | undefined {
+  return entry?.narrators?.[0]?.id;
+}
+
+const playable = new Map<AudioFormat, boolean>();
+
+/**
+ * Whether this device plays a format, as found out by playing it
+ * (utils/audio-format-probe.ts) — never by asking canPlayType, which says no
+ * on iPhones that play Opus. Not known yet = no: mp3 is the fallback, and it
+ * plays everywhere.
+ */
+export function canPlayFormat(format: AudioFormat): boolean {
+  return format === 'mp3' || playable.get(format) === true;
+}
+
+/** What the probe found out about a format; undefined forgets it (tests). */
+export function setFormatSupport(format: AudioFormat, supported: boolean | undefined): void {
+  if (supported === undefined) playable.delete(format);
+  else playable.set(format, supported);
+}
+
+/** The format this device downloads a version in: the first of its formats it can play. */
+export function audioFormatFor(entry: BibleCatalogEntry | undefined): AudioFormat {
+  return entry?.formats?.find(canPlayFormat) ?? 'mp3';
 }
 
 /** 'pt-br' → 'pt'. Bible JSONs carry a regional language, the catalog and CDN don't. */
