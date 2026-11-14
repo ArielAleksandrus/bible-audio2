@@ -3,23 +3,26 @@
     "title": "Listen to the Word of God",
     "subtitle": "Select the book and chapters you want to listen to. Audios are automatically downloaded for offline listening.",
     "full_download": "Download the entire Bible",
-    "full_download_description": "This action requires about 1.3 GB",
-    "choose_narrator": "Which narrator?",
-    "choose_narrator_note": "Each narrator takes about 1.3 GB on the device.",
+    "full_download_description": "To listen offline. You'll see the size before it starts.",
     "narrator_downloaded": "already downloaded",
     "narrator_sample": "Play a sample of {{name}}",
     "narrator_sample_hint": "Tap ▶ to hear 15 seconds of each voice.",
     "narrator_sample_failed": "The sample could not be played. Check your connection.",
     "narrator_download": "Download",
-    "narrator_use": "Use",
     "downloading_bible": "Downloading the Bible: {{downloaded}} of {{total}} chapters",
     "current_chapter": "Current chapter",
     "download_complete": "Bible download complete!",
-    "confirm_mobile_data": "You are not connected to Wi-Fi. Downloading the entire Bible uses about 1.3 GB of data. Do you want to continue anyway?",
+    "confirm_mobile_data": "You're not on Wi-Fi. This download uses about {{size}} of data. Continue anyway?",
     "download_incomplete": "{{failed}} chapters were not downloaded. Tap “Download the entire Bible” to try again.",
     "notif_title": "Downloading the Bible",
     "notif_progress": "{{downloaded}} of {{total}} chapters",
-    "notif_incomplete": "{{failed}} chapters were not downloaded"
+    "notif_incomplete": "{{failed}} chapters were not downloaded",
+    "choose_narrators": "Which narrators to download?",
+    "choose_narrators_note": "Pick at least one. With more than one, you can switch voices offline.",
+    "narrators_total": "Total: {{size}}",
+    "narrators_free": "free on device: {{size}}",
+    "narrators_too_big": "There isn't enough space on the device for this choice.",
+    "confirm_low_space": "The download needs about {{size}}, but the device has only {{free}} free. Download anyway?"
   },
   "loading": {
     "bible": "Loading the Bible in your language",
@@ -135,6 +138,15 @@
       "title": "Playback",
       "autoplay": "Play when a plan or chapter is selected",
       "autoplay_note": "When off, the chapter or plan you choose is left ready in the player and only starts when you press play."
+    },
+    "voices": {
+      "on_device": "Voices on this device:",
+      "remove": "Remove",
+      "remove_confirm": "Remove {{name}}'s voice from this device? You can download it again later.",
+      "download": "Download a voice",
+      "download_another": "Download another voice",
+      "download_started": "Download started. Follow it on the home screen.",
+      "offline_note": "Offline: only voices on the device can be chosen."
     }
   },
   "dialog": {

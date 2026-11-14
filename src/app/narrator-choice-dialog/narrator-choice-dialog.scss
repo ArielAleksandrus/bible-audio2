@@ -50,7 +50,23 @@
   flex: 1;
   min-width: 0;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: var(--ion-color-primary);
+  }
+
+  .text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
 
   .name {
     font-weight: 500;
@@ -66,7 +82,28 @@
   }
 }
 
-.choose {
-  flex: none;
+li.done .who {
+  cursor: default;
+}
+
+.total {
   margin: 0;
+  font-size: 0.95rem;
+}
+
+.too-big {
+  margin: 6px 0 0;
+  color: var(--ion-color-danger);
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 12px 0;
+
+  ion-button {
+    margin: 0;
+  }
 }

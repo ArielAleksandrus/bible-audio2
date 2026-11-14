@@ -1,7 +1,7 @@
 import {
   audioFormatFor, BibleCatalogEntry, BUNDLED_CATALOG, catalogEntry, currentCatalog, defaultNarrator, hasNameOnlyKeys,
   languageOptions, narratorChoices, parseCatalog, resetCatalog, setCatalog, setFormatSupport, versionsForLanguage,
-  withSelectedKept,
+  voiceHasBook, withSelectedKept,
 } from './bible-catalog';
 import { audioUrl, retargetTracks, sampleUrl, trackId } from '../services/bible.service';
 import { Track } from '../models/track';
@@ -227,5 +227,33 @@ describe('formats in catalog.json', () => {
     expect(bad([])).toBeNull();
     expect(bad([1])).toBeNull();
     expect(bad(['opus', 'opus'])).toBeNull();
+  });
+});
+
+describe('books and sizes of a voice in catalog.json', () => {
+  afterEach(() => resetCatalog());
+  const otb = (narrators: unknown) => ({ lang: 'pt', version: 'otb', flag: '', label: 'OTB', narrators });
+
+  it('keeps the books a voice has so far, and its sizes per known format', () => {
+    const [entry] = parseCatalog({ bibles: [otb([
+      { id: 'ariel', label: 'Ariel', books: ['GEN', 'LEV', 'GEN'], bytes: { opus: 52e6, mp3: 80e6, flac: 1 } },
+      { id: 'lucas', label: 'Lucas' },
+    ])] })!;
+    expect(entry.narrators![0]).toEqual({ id: 'ariel', label: 'Ariel', books: ['GEN', 'LEV'], bytes: { opus: 52e6, mp3: 80e6 } });
+    expect(voiceHasBook(entry, 'ariel', 'GEN')).toBe(true);
+    expect(voiceHasBook(entry, 'ariel', 'EXO')).toBe(false);
+    expect(voiceHasBook(entry, undefined, 'exo')).toBe(false); // the default voice
+    expect(voiceHasBook(entry, 'lucas', 'EXO')).toBe(true); // no list: every book
+    expect(voiceHasBook(undefined, undefined, 'EXO')).toBe(true);
+  });
+
+  it('rejects the whole list when books or bytes are malformed', () => {
+    const bad = (extra: object) => parseCatalog({ bibles: [otb([{ id: 'ariel', label: 'Ariel', ...extra }])] });
+    expect(bad({ books: 'GEN' })).toBeNull();
+    expect(bad({ books: ['gen'] })).toBeNull();
+    expect(bad({ books: [1] })).toBeNull();
+    expect(bad({ bytes: 10 })).toBeNull();
+    expect(bad({ bytes: { opus: -1 } })).toBeNull();
+    expect(bad({ bytes: { opus: '10' } })).toBeNull();
   });
 });

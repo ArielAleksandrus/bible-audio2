@@ -123,12 +123,47 @@ describe('NarratorChoiceDialog', () => {
     await vi.waitFor(() => expect(dialog.failed()).toBe('ariel'));
   });
 
-  it('dismisses with the chosen narrator and stops the sample', () => {
+  it('ticks the voice in use, keeps the catalog order and dismisses with the voices ticked', () => {
     const { dialog, made } = setup();
+    dialog.preselected = ['ana'];
+    dialog.ngOnInit();
+    expect(dialog.selected()).toEqual(['ana']);
+    dialog.toggle('ariel');
+    expect(dialog.selected()).toEqual(['ariel', 'ana']);
     dialog.toggleSample('ana');
-    dialog.choose('ana');
+    dialog.confirm();
     expect(made[0].pause).toHaveBeenCalled();
-    expect(modal.dismiss).toHaveBeenCalledWith('ana', 'selected');
+    expect(modal.dismiss).toHaveBeenCalledWith(['ariel', 'ana'], 'selected');
+  });
+
+  it('needs at least one voice ticked', () => {
+    const { dialog } = setup();
+    dialog.ngOnInit();
+    dialog.confirm();
+    expect(modal.dismiss).not.toHaveBeenCalled();
+  });
+
+  it('does not let a voice already on the device be ticked again', () => {
+    const { dialog } = setup();
+    dialog.downloaded = ['ariel'];
+    dialog.preselected = ['ariel'];
+    dialog.ngOnInit();
+    expect(dialog.selected()).toEqual([]);
+    dialog.toggle('ariel');
+    expect(dialog.selected()).toEqual([]);
+  });
+
+  it('adds up the sizes and says when they do not fit', () => {
+    const { dialog } = setup();
+    dialog.sizes = { ariel: 1.1e9, ana: 1.0e9 };
+    dialog.freeBytes = 2.0e9;
+    dialog.ngOnInit();
+    dialog.toggle('ariel');
+    expect(dialog.totalBytes()).toBe(1.1e9);
+    expect(dialog.tooBig()).toBe(false);
+    dialog.toggle('ana');
+    expect(dialog.totalBytes()).toBe(2.1e9);
+    expect(dialog.tooBig()).toBe(true);
   });
 
   it('closing chooses nobody', () => {

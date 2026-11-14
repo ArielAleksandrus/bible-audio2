@@ -60,7 +60,9 @@
           <span>{{ 'player.narrator' | translate }}</span>
           <select [value]="currentTrack.narrator" (change)="changeNarrator($any($event.target).value)">
             @for (narrator of narrators; track narrator.id) {
-              <option [value]="narrator.id" [selected]="narrator.id === currentTrack.narrator">{{ narrator.label }}</option>
+              <option [value]="narrator.id" [selected]="narrator.id === currentTrack.narrator" [disabled]="narratorDisabled(narrator.id)">
+                {{ narrator.label }}{{ onDevice.includes(narrator.id) ? ' ✓' : '' }}
+              </option>
             }
           </select>
         </label>

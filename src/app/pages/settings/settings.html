@@ -140,10 +140,41 @@
             <span>{{ 'player.narrator' | translate }}</span>
             <select (change)="changeNarrator($any($event.target).value)">
               @for (n of narrators; track n.id) {
-                <option [value]="n.id" [selected]="n.id === currentNarrator">{{ n.label }}</option>
+                <option [value]="n.id" [selected]="n.id === currentNarrator" [disabled]="narratorDisabled(n.id)">
+                  {{ n.label }}{{ downloadedVoices.includes(n.id) ? ' ✓' : '' }}
+                </option>
               }
             </select>
           </label>
+
+          <div class="voices">
+            @if (downloadedVoices.length) {
+              <p class="voices-title">{{ 'settings.voices.on_device' | translate }}</p>
+              <ul>
+                @for (id of downloadedVoices; track id) {
+                  <li>
+                    <span>{{ narratorLabel(id) }}</span>
+                    <ion-button fill="clear" color="danger" size="small" [disabled]="!!removingVoice" (click)="removeVoice(id)">
+                      @if (removingVoice === id) {
+                        <ion-spinner name="crescent"></ion-spinner>
+                      } @else {
+                        {{ 'settings.voices.remove' | translate }}
+                      }
+                    </ion-button>
+                  </li>
+                }
+              </ul>
+            }
+            @if (canDownloadAnotherVoice) {
+              <ion-button fill="outline" size="small" [disabled]="!online" (click)="downloadAnotherVoice()">
+                <ion-icon slot="start" name="download-outline"></ion-icon>
+                {{ (downloadedVoices.length ? 'settings.voices.download_another' : 'settings.voices.download') | translate }}
+              </ion-button>
+            }
+            @if (!online) {
+              <p class="language-note">{{ 'settings.voices.offline_note' | translate }}</p>
+            }
+          </div>
         }
       </ion-card-content>
     </ion-card>

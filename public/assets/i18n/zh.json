@@ -3,23 +3,26 @@
     "title": "聆听上帝的话语",
     "subtitle": "请选择您想听的书卷和章节。音频会自动下载，以便离线收听。",
     "full_download": "下载整本圣经",
-    "full_download_description": "此操作需要大约 1.3 GB",
-    "choose_narrator": "选择哪位朗读者？",
-    "choose_narrator_note": "每位朗读者约占用设备 1.3 GB 空间。",
+    "full_download_description": "用于离线收听。开始前会显示所需大小。",
     "narrator_downloaded": "已下载",
     "narrator_sample": "试听 {{name}}",
     "narrator_sample_hint": "点按 ▶ 可试听每位朗读者 15 秒。",
     "narrator_sample_failed": "无法播放试听，请检查网络连接。",
     "narrator_download": "下载",
-    "narrator_use": "使用",
     "downloading_bible": "正在下载圣经：{{downloaded}} / {{total}} 章",
     "current_chapter": "当前章节",
     "download_complete": "圣经下载完成！",
-    "confirm_mobile_data": "您未连接到 Wi-Fi。下载整本圣经将使用大约 1.3 GB 数据。您要继续吗？",
+    "confirm_mobile_data": "您未连接 Wi-Fi。此次下载约使用 {{size}} 流量。仍要继续吗？",
     "download_incomplete": "有 {{failed}} 章未能下载。点击“下载整本圣经”重试。",
     "notif_title": "正在下载圣经",
     "notif_progress": "{{downloaded}} / {{total}} 章",
-    "notif_incomplete": "有 {{failed}} 章未能下载"
+    "notif_incomplete": "有 {{failed}} 章未能下载",
+    "choose_narrators": "要下载哪些朗读者？",
+    "choose_narrators_note": "至少选择一位。选择多位后，可以离线切换声音。",
+    "narrators_total": "合计：{{size}}",
+    "narrators_free": "设备可用空间：{{size}}",
+    "narrators_too_big": "设备空间不足以完成此选择。",
+    "confirm_low_space": "下载约需 {{size}}，但设备仅剩 {{free}} 可用空间。仍要下载吗？"
   },
   "loading": {
     "bible": "正在加载您语言的圣经",
@@ -135,6 +138,15 @@
       "title": "播放",
       "autoplay": "选择计划或章节后自动播放",
       "autoplay_note": "关闭后，所选章节或计划只会在播放器中准备好，按下播放键才开始。"
+    },
+    "voices": {
+      "on_device": "设备上的声音：",
+      "remove": "移除",
+      "remove_confirm": "要从此设备移除 {{name}} 的声音吗？之后可以重新下载。",
+      "download": "下载声音",
+      "download_another": "下载其他声音",
+      "download_started": "已开始下载。请在主页查看进度。",
+      "offline_note": "离线时只能选择设备上的声音。"
     }
   },
   "dialog": {

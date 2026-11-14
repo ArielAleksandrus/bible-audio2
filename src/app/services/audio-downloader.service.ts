@@ -54,6 +54,9 @@ export class AudioDownloaderService {
   /** Emits each track right after it lands on the device (NativeAudioEngine swaps its queue entry to the local file). */
   readonly trackDownloaded$ = new Subject<Track>();
 
+  /** A download was refused because the device is almost full (ensureFreeDiskSpace). */
+  readonly lowSpace$ = new Subject<void>();
+
   // --- Android foreground-service download (full Bible) ---
   /** Tracks of the running service job, so its per-chapter events can feed trackDownloaded$. */
   private bulkTracks = new Map<string, Track>();
@@ -293,36 +296,24 @@ export class AudioDownloaderService {
     }
   }
 
+  /**
+   * Refuses to start a download when the device is almost full, instead of
+   * making room: deleting chapters on its own could take away a voice the
+   * user downloaded to listen offline. Web only — in the native app the
+   * WebView's quota estimate doesn't cover the audio files at all, so a
+   * full disk there just fails the download.
+   */
   async ensureFreeDiskSpace(): Promise<void> {
+    if (isNativeApp()) return;
     const space = new AvailableSpace();
-
-    while(!await space.isSafe()) {
-      console.warn(`AudioDownloaderService::ensureFreeDiskSpace -> You have only ${await space.inMB()}Mb of storage left. Removing 3 oldest audios`);
-      const removed = await this.removeOldest(3); // remove the oldest three tracks
-      // Nothing left to evict: the space is taken by something else (or, in
-      // the native app, the WebView quota estimate doesn't even cover the
-      // audio files). Looping here would spin forever and hang every
-      // download waiting on it — let the download try and fail on its own.
-      if (removed.length === 0) return;
-      // little pause to ensure Safari updates our usage
-      await new Promise(r => setTimeout(r, 100));
-    }
+    if (await space.isSafe()) return;
+    this.lowSpace$.next();
+    throw new Error(`Only ${await space.inMB()} MB of storage left`);
   }
 
   async removeById(trackId: string): Promise<void> {
     await audioStorage.remove(trackId);
     console.log(`Removed file ${trackId} from cache`);
-  }
-
-  async removeOldest(count: number = 1): Promise<string[]> {
-    const sorted = (await audioStorage.list()).sort((a, b) => a.downloadedAt - b.downloadedAt);
-    const removedIds: string[] = [];
-    for (const oldest of sorted.slice(0, count)) {
-      await audioStorage.remove(oldest.id);
-      removedIds.push(oldest.id);
-    }
-    console.log(`Removed ${removedIds.length} oldest file(s):`, removedIds);
-    return removedIds;
   }
 
   /** Check if already downloaded (`fileName` is the legacy IndexedDB key). */

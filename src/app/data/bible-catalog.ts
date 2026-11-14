@@ -51,6 +51,14 @@ export interface BibleNarrator {
   id: string;
   /** Shown to the user as is (a person's name, not translated). */
   label: string;
+  /**
+   * The books this voice has so far, by ISO code ('GEN', 'LEV'), while the
+   * narration is being made. Absent = every book. Only these are downloaded
+   * and count for "complete"; the others are marked as not available yet.
+   */
+  books?: string[];
+  /** Size of the whole voice on the CDN, in bytes, per format; shown before a download. Absent = estimated. */
+  bytes?: Partial<Record<AudioFormat, number>>;
 }
 
 /**
@@ -144,6 +152,7 @@ function savedCatalog(): BibleCatalogEntry[] | null {
 const LANG = /^[a-z]{2,3}$/;
 const VERSION = /^[a-z0-9]+$/;
 const NARRATOR_ID = /^[a-z0-9][a-z0-9_-]*$/;
+const BOOK_ISO = /^[1-3]?[A-Z]{2,3}$/;
 const text = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0;
 
 // Read once, when the app starts — after the constants above, which reading a saved list needs.
@@ -180,10 +189,24 @@ export function parseCatalog(raw: unknown): BibleCatalogEntry[] | null {
       const ids = new Set<string>();
       const voices: BibleNarrator[] = [];
       for (const n of narrators) {
-        const { id, label: name } = (n ?? {}) as Record<string, unknown>;
+        const { id, label: name, books, bytes } = (n ?? {}) as Record<string, unknown>;
         if (typeof id !== 'string' || !NARRATOR_ID.test(id) || !text(name) || ids.has(id)) return null;
         ids.add(id);
-        voices.push({ id, label: name });
+        const voice: BibleNarrator = { id, label: name };
+        if (books !== undefined) {
+          if (!Array.isArray(books) || books.some(b => typeof b !== 'string' || !BOOK_ISO.test(b))) return null;
+          voice.books = [...new Set(books as string[])];
+        }
+        if (bytes !== undefined) {
+          if (!bytes || typeof bytes !== 'object' || Array.isArray(bytes)) return null;
+          const sizes: Partial<Record<AudioFormat, number>> = {};
+          for (const [format, size] of Object.entries(bytes)) {
+            if (typeof size !== 'number' || !Number.isFinite(size) || size < 0) return null;
+            if (Object.hasOwn(AUDIO_FORMATS, format)) sizes[format as AudioFormat] = size;
+          }
+          voice.bytes = sizes;
+        }
+        voices.push(voice);
       }
       if (voices.length) entry.narrators = voices;
     }
@@ -258,6 +281,18 @@ export function hasNameOnlyKeys(lang: string, version: string): boolean {
 export function narratorChoices(entry: BibleCatalogEntry | undefined): BibleNarrator[] {
   const narrators = entry?.narrators ?? [];
   return narrators.length > 1 ? narrators : [];
+}
+
+/** A voice of a version: the narrator with this id, or the default one (first) when no id is given. */
+export function narratorOf(entry: BibleCatalogEntry | undefined, narratorId?: string): BibleNarrator | undefined {
+  const narrators = entry?.narrators ?? [];
+  return narratorId ? narrators.find(n => n.id === narratorId) : narrators[0];
+}
+
+/** Whether a voice has this book yet (by ISO code). Without a `books` list, or without narrators at all, every book. */
+export function voiceHasBook(entry: BibleCatalogEntry | undefined, narratorId: string | undefined, iso: string): boolean {
+  const books = narratorOf(entry, narratorId)?.books;
+  return !books || books.includes(iso.toUpperCase());
 }
 
 /** The id of a version's default voice: its first narrator, or undefined without any. */

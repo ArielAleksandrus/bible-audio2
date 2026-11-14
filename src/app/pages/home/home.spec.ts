@@ -7,9 +7,7 @@ import { AudioDownloaderService } from '../../services/audio-downloader.service'
 import { BibleService } from '../../services/bible.service';
 import { PreferencesService } from '../../services/preferences.service';
 import { Bible } from 'bible-picker';
-import { ModalController } from '@ionic/angular';
-import { NarratorChoiceDialog } from '../../narrator-choice-dialog/narrator-choice-dialog';
-import { BibleCatalogEntry } from '../../data/bible-catalog';
+import { VoiceDownloadService } from '../../services/voice-download.service';
 
 describe('Home', () => {
   const bible = {
@@ -115,61 +113,10 @@ describe('Home', () => {
     expect(home.bibleData).toBe(other);
   });
 
-  describe('full download of a version with two narrators', () => {
-    const twoVoices: BibleCatalogEntry = {
-      lang: 'pt', version: 'ara', flag: '', label: 'ARA',
-      narrators: [{ id: 'ariel', label: 'Ariel' }, { id: 'ana', label: 'Ana' }],
-    };
-
-    /** Home on a two-narrator version, with the dialog answered with `pick` (undefined = closed without choosing). */
-    function setupChoice(pick: string | undefined, downloaded: string[] = []) {
-      const { home } = setup();
-      home.currentVersion = twoVoices;
-      const service = TestBed.inject(BibleService);
-      const prefs = TestBed.inject(PreferencesService);
-      vi.spyOn(service, 'booksDownloadStatus').mockResolvedValue([]);
-      vi.spyOn(service, 'narratorsDownloaded').mockResolvedValue(downloaded);
-      vi.spyOn(service, 'localSamples').mockResolvedValue({});
-      const downloadEntireBible = vi.spyOn(service, 'downloadEntireBible').mockResolvedValue([]);
-      const setNarrator = vi.spyOn(prefs, 'setNarrator');
-      const create = vi.spyOn(TestBed.inject(ModalController), 'create').mockResolvedValue({
-        present: async () => undefined,
-        onDidDismiss: async () => ({ data: pick, role: pick ? 'selected' : 'cancel' }),
-      } as any);
-      return { home, downloadEntireBible, setNarrator, create };
-    }
-
-    it('asks which narrator, makes it the voice in use and downloads it', async () => {
-      const { home, downloadEntireBible, setNarrator, create } = setupChoice('ana');
-      await home.fullDownload();
-      const opts = create.mock.calls[0][0] as any;
-      expect(opts.component).toBe(NarratorChoiceDialog);
-      expect(opts.componentProps).toEqual({ lang: 'pt', version: 'ara', choices: twoVoices.narrators, downloaded: [], localSamples: {} });
-      expect(setNarrator).toHaveBeenCalledWith(twoVoices, 'ana');
-      expect(downloadEntireBible).toHaveBeenCalled();
-    });
-
-    it('downloads nothing and keeps the voice when no narrator is picked', async () => {
-      const { home, downloadEntireBible, setNarrator } = setupChoice(undefined);
-      expect(await home.fullDownload()).toEqual([]);
-      expect(setNarrator).not.toHaveBeenCalled();
-      expect(downloadEntireBible).not.toHaveBeenCalled();
-    });
-
-    it('only switches to a narrator that is already on the device', async () => {
-      const { home, downloadEntireBible, setNarrator, create } = setupChoice('ariel', ['ariel']);
-      await home.fullDownload();
-      expect((create.mock.calls[0][0] as any).componentProps.downloaded).toEqual(['ariel']);
-      expect(setNarrator).toHaveBeenCalledWith(twoVoices, 'ariel');
-      expect(downloadEntireBible).not.toHaveBeenCalled();
-    });
-
-    it('does not ask when the version has a single voice', async () => {
-      const { home, downloadEntireBible, create } = setupChoice('ana');
-      home.currentVersion = { ...twoVoices, narrators: [twoVoices.narrators![0]] };
-      await home.fullDownload();
-      expect(create).not.toHaveBeenCalled();
-      expect(downloadEntireBible).toHaveBeenCalled();
-    });
+  it('hands the full download to VoiceDownloadService', async () => {
+    const { home } = setup();
+    const choose = vi.spyOn(TestBed.inject(VoiceDownloadService), 'chooseAndDownload').mockResolvedValue([]);
+    await home.fullDownload();
+    expect(choose).toHaveBeenCalledWith(bible);
   });
 });

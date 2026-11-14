@@ -3,23 +3,26 @@
     "title": "Escucha la Palabra de Dios",
     "subtitle": "Seleccione el libro y los capítulos que desea escuchar. Los audios se descargan automáticamente para escuchar sin conexión.",
     "full_download": "Descargar toda la Biblia",
-    "full_download_description": "Esta acción requiere aproximadamente 1.3 GB",
-    "choose_narrator": "¿Con qué narrador?",
-    "choose_narrator_note": "Cada narrador ocupa cerca de 1.3 GB en el dispositivo.",
+    "full_download_description": "Para escuchar sin internet. Verás el tamaño antes de empezar.",
     "narrator_downloaded": "ya descargado",
     "narrator_sample": "Escuchar una muestra de {{name}}",
     "narrator_sample_hint": "Toca ▶ para escuchar 15 segundos de cada voz.",
     "narrator_sample_failed": "No se pudo reproducir la muestra. Revisa tu conexión.",
     "narrator_download": "Descargar",
-    "narrator_use": "Usar",
     "downloading_bible": "Descargando la Biblia: {{downloaded}} de {{total}} capítulos",
     "current_chapter": "Capítulo actual",
     "download_complete": "¡Descarga de la Biblia completa!",
-    "confirm_mobile_data": "No estás conectado a Wi-Fi. Descargar toda la Biblia usa aproximadamente 1.3 GB de datos. ¿Deseas continuar de todos modos?",
+    "confirm_mobile_data": "No estás conectado a Wi-Fi. Esta descarga usa unos {{size}} de datos. ¿Deseas continuar?",
     "download_incomplete": "{{failed}} capítulos no se descargaron. Toca “Descargar toda la Biblia” para intentarlo de nuevo.",
     "notif_title": "Descargando la Biblia",
     "notif_progress": "{{downloaded}} de {{total}} capítulos",
-    "notif_incomplete": "{{failed}} capítulos no se descargaron"
+    "notif_incomplete": "{{failed}} capítulos no se descargaron",
+    "choose_narrators": "¿Qué narradores descargar?",
+    "choose_narrators_note": "Elige al menos uno. Con más de uno, puedes cambiar de voz sin internet.",
+    "narrators_total": "Total: {{size}}",
+    "narrators_free": "libre en el dispositivo: {{size}}",
+    "narrators_too_big": "No hay espacio suficiente en el dispositivo para esta elección.",
+    "confirm_low_space": "La descarga necesita unos {{size}}, pero el dispositivo solo tiene {{free}} libres. ¿Descargar de todos modos?"
   },
   "loading": {
     "bible": "Cargando la Biblia en tu idioma",
@@ -135,6 +138,15 @@
       "title": "Reproducción",
       "autoplay": "Reproducir al seleccionar un plan o capítulo",
       "autoplay_note": "Desactivado, el capítulo o plan elegido queda listo en el reproductor y solo empieza cuando pulsas reproducir."
+    },
+    "voices": {
+      "on_device": "Voces en el dispositivo:",
+      "remove": "Quitar",
+      "remove_confirm": "¿Quitar la voz de {{name}} de este dispositivo? Podrás descargarla de nuevo después.",
+      "download": "Descargar una voz",
+      "download_another": "Descargar otra voz",
+      "download_started": "Descarga iniciada. Síguela en la pantalla de inicio.",
+      "offline_note": "Sin internet: solo se pueden elegir las voces del dispositivo."
     }
   },
   "dialog": {

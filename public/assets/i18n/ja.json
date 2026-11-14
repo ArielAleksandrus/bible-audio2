@@ -3,23 +3,26 @@
     "title": "神の言葉を聞く",
     "subtitle": "聴きたい書と章を選択してください。音声はオフラインで聴けるように自動的にダウンロードされます。",
     "full_download": "聖書全体をダウンロード",
-    "full_download_description": "この操作には約1.3 GBが必要です",
-    "choose_narrator": "どのナレーターにしますか？",
-    "choose_narrator_note": "ナレーターごとに端末の容量を約1.3 GB使用します。",
+    "full_download_description": "オフラインで聴くためのものです。開始前にサイズが表示されます。",
     "narrator_downloaded": "ダウンロード済み",
     "narrator_sample": "{{name}}のサンプルを再生",
     "narrator_sample_hint": "▶ をタップすると、それぞれの声を15秒聞けます。",
     "narrator_sample_failed": "サンプルを再生できませんでした。接続を確認してください。",
     "narrator_download": "ダウンロード",
-    "narrator_use": "使う",
     "downloading_bible": "聖書をダウンロード中：{{total}}章中{{downloaded}}章",
     "current_chapter": "現在の章",
     "download_complete": "聖書のダウンロードが完了しました！",
-    "confirm_mobile_data": "Wi-Fiに接続されていません。聖書全体をダウンロードすると約1.3 GBのデータを使用します。それでも続行しますか？",
+    "confirm_mobile_data": "Wi-Fi に接続していません。このダウンロードは約 {{size}} のデータを使用します。続けますか？",
     "download_incomplete": "{{failed}}章をダウンロードできませんでした。「聖書全体をダウンロード」をタップしてもう一度お試しください。",
     "notif_title": "聖書をダウンロード中",
     "notif_progress": "{{total}}章中{{downloaded}}章",
-    "notif_incomplete": "{{failed}}章をダウンロードできませんでした"
+    "notif_incomplete": "{{failed}}章をダウンロードできませんでした",
+    "choose_narrators": "どの朗読者をダウンロードしますか？",
+    "choose_narrators_note": "少なくとも1人選んでください。複数選ぶと、オフラインでも声を切り替えられます。",
+    "narrators_total": "合計：{{size}}",
+    "narrators_free": "端末の空き容量：{{size}}",
+    "narrators_too_big": "この選択には端末の空き容量が足りません。",
+    "confirm_low_space": "ダウンロードには約 {{size}} 必要ですが、端末の空き容量は {{free}} しかありません。それでもダウンロードしますか？"
   },
   "loading": {
     "bible": "あなたの言語で聖書を読み込んでいます",
@@ -135,6 +138,15 @@
       "title": "再生",
       "autoplay": "プランや章を選んだら再生する",
       "autoplay_note": "オフにすると、選んだ章やプランはプレーヤーに準備されるだけで、再生ボタンを押すまで始まりません。"
+    },
+    "voices": {
+      "on_device": "端末にある声：",
+      "remove": "削除",
+      "remove_confirm": "{{name}} の声をこの端末から削除しますか？あとで再ダウンロードできます。",
+      "download": "声をダウンロード",
+      "download_another": "別の声をダウンロード",
+      "download_started": "ダウンロードを開始しました。ホーム画面で進行状況を確認できます。",
+      "offline_note": "オフラインでは端末にある声のみ選べます。"
     }
   },
   "dialog": {

@@ -44,8 +44,8 @@
 
         <!-- ÁREA DE DOWNLOAD -->
         <div class="download-area">
-          <!-- BOTÃO: aparece se houver espaço E NÃO estiver baixando -->
-          @if (availableMB > 1500 && !bibleFullyDownloaded && (progress$ | async)?.status !== 'running') {
+          <!-- BOTÃO: enquanto nenhuma voz estiver completa no aparelho, e nada baixando -->
+          @if (bibleData && !bibleFullyDownloaded && (progress$ | async)?.status !== 'running') {
             <div class="full-download-button-wrapper">
               <ion-button class="full-download-button" (click)="fullDownload()">
                 <ion-icon slot="start" name="download-outline"></ion-icon>
@@ -53,7 +53,6 @@
               </ion-button>
               <p class="full-download-description">
                 {{ 'hero.full_download_description' | translate }}
-                <ion-icon class="warning-icon" name="warning-outline"></ion-icon>
               </p>
             </div>
           }

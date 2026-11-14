@@ -7,6 +7,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PLAYBACK_RATES, PlaybackRate, PreferencesService } from '../../services/preferences.service';
 import { BibleNarrator, catalogEntry, narratorChoices } from '../../data/bible-catalog';
 import { CatalogService } from '../../services/catalog.service';
+import { AudioDownloaderService } from '../../services/audio-downloader.service';
+import { retargetTracks } from '../../services/bible.service';
 
 @Component({
   selector: 'app-audio-player',
@@ -27,16 +29,24 @@ export class AudioPlayer implements OnDestroy {
   playbackRate: PlaybackRate = 1;
   /** Voices of the version being played; empty (no control shown) unless it has two or more. */
   narrators: BibleNarrator[] = [];
+  /** Voices in which the chapter playing is on the device: marked, and the only ones offered offline. */
+  onDevice: string[] = [];
+  online = navigator.onLine;
 
   private subs = new Subscription();
+  private onLine = () => { this.online = navigator.onLine; this.cdr.markForCheck(); };
 
   constructor(
     public audioService: AudioService,
     private cdr: ChangeDetectorRef,
     private prefs: PreferencesService,
     private translate: TranslateService,
-    private catalog: CatalogService
+    private catalog: CatalogService,
+    private downloader: AudioDownloaderService,
   ) {
+    window.addEventListener('online', this.onLine);
+    window.addEventListener('offline', this.onLine);
+
     this.subs.add(
       this.prefs.playbackRate$.subscribe(rate => {
         this.playbackRate = rate;
@@ -51,6 +61,7 @@ export class AudioPlayer implements OnDestroy {
           ? narratorChoices(catalogEntry(track.lang, track.version))
           : [];
         this.cdr.markForCheck();
+        void this.findOnDevice();
       })
     );
 
@@ -102,6 +113,24 @@ export class AudioPlayer implements OnDestroy {
     void this.audioService.changeNarrator(narratorId);
   }
 
+  /** Offline, a voice that doesn't have this chapter on the device can't be switched to. */
+  narratorDisabled(id: string): boolean {
+    return !this.online && id !== this.currentTrack?.narrator && !this.onDevice.includes(id);
+  }
+
+  private async findOnDevice(): Promise<void> {
+    const track = this.currentTrack;
+    const found: string[] = [];
+    if (track && this.narrators.length) {
+      for (const n of this.narrators) {
+        if (await this.downloader.isDownloaded(retargetTracks([track], n.id)[0])) found.push(n.id);
+      }
+    }
+    if (track !== this.currentTrack) return; // another chapter started meanwhile
+    this.onDevice = found;
+    this.cdr.markForCheck();
+  }
+
   onSeekEnd(seconds: number) {
     this.dragging = false;
     if (typeof seconds === 'number' && isFinite(seconds)) this.audioService.seekTo(seconds);
@@ -126,5 +155,7 @@ export class AudioPlayer implements OnDestroy {
 
   ngOnDestroy() {
     this.subs.unsubscribe();
+    window.removeEventListener('online', this.onLine);
+    window.removeEventListener('offline', this.onLine);
   }
 }

@@ -94,11 +94,22 @@ Rules:
 - Chapters saved by the oldest app versions under a name-only key (`Gênesis 1.mp3`) are trusted only for the five versions that existed then (`hasNameOnlyKeys`), whatever order the list is in.
 - On the device each voice is a separate set of files. The key is `{version}-{abbrev}-{chapter}` with no choice of narrator and `{version}-{narratorId}-{abbrev}-{chapter}` with one (`trackId` in `bible.service.ts`), so two voices never share a file and both can stay downloaded.
 
+**A voice still being narrated.** A narrator may list the books it has so far, and the sizes of the whole voice per format (optional; without them the size is estimated per chapter):
+
+```json
+{ "id": "ariel", "label": "Ariel", "books": ["GEN", "LEV"], "bytes": { "opus": 54000000, "mp3": 81000000 } }
+```
+
+Only those books are downloaded, and "complete" means all of them; the others show dimmed in the picker and simply have no audio yet. When a book is ready: upload it, add its code to `books`, update `bytes`. Once the whole Bible is narrated, drop `books`. No app update for any of it.
+
 What the user sees with two or more narrators:
 
 - A narrator switch in Settings and in the player (the saved choice is per version, `PreferencesService.narratorFor`).
 - The picker's "downloaded" marks and the **Download the entire Bible** button follow the voice in use: the button shows while that voice is incomplete on the device, so it comes back after switching to a voice that is not downloaded.
-- Tapping that button always asks **which narrator** first (`Home.fullDownload` → `NarratorChoiceDialog`); nothing downloads without a choice. Each voice has a play button that plays at most 15 seconds of it, from the first of these that works: the narrator's own `sample.mp3` (optional — a clip you choose, e.g. to skip an opening jingle), Genesis 1 in that voice from the device when it is downloaded (so it works offline), and Genesis 1 streamed from the CDN. So no sample file is required, but Genesis 1 must exist for every narrator listed. Voices already complete on the device are marked, and picking one only switches to it. The pick becomes the voice in use. To download another voice later, tap the button again (switch narrator first if it is hidden).
+- **Download the entire Bible** (Home) opens a dialog with a checkbox per voice (`NarratorChoiceDialog`, flow in `VoiceDownloadService`): the size each still needs, the total and, on the web, the free space; at least one must be ticked, and ticking several downloads them one after the other in a single batch. Voices already complete show as such. Each voice has a play button that plays at most 15 seconds of it, from the first of these that works: the narrator's own `sample.mp3` (optional), Genesis 1 in that voice from the device, and Genesis 1 streamed from the CDN — so Genesis 1 must exist for every narrator listed. If the voice in use is neither on the device nor ticked, the first voice ticked becomes the voice in use.
+- The button disappears from Home once **one** voice is complete on the device. More voices are downloaded from Settings (**Download another voice**, same dialog), where each voice on the device can also be removed.
+- The narrator switch (Settings, player) marks the voices on the device with ✓, and offline only those can be chosen.
+- Nothing is ever deleted to make room: a download that doesn't fit is refused (web) or fails (native), never paid for with another voice's chapters.
 
 Adding a version or a narrator is an edit of `catalog.json` on the CDN: no app release, no over-the-air bundle.
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
@@ -15,6 +15,7 @@ import { SyncService } from '../../services/sync.service';
 import { NotificationsService } from '../../services/notifications.service';
 import { CatalogService } from '../../services/catalog.service';
 import { AudioDownloaderService } from '../../services/audio-downloader.service';
+import { VoiceDownloadService } from '../../services/voice-download.service';
 import { UiService } from '../../services/ui.service';
 import { Bible } from 'bible-picker';
 import type { User } from 'firebase/auth';
@@ -81,6 +82,12 @@ export class Settings implements ViewWillEnter {
   narrators: BibleNarrator[] = [];
   currentNarrator?: string;
   switchingVersion = false;
+  /** Voices of the current version complete on the device. */
+  downloadedVoices: string[] = [];
+  /** A voice is being removed (its id). */
+  removingVoice?: string;
+  online = navigator.onLine;
+  private voiceDownload = inject(VoiceDownloadService);
 
   constructor(
     private translate: TranslateService,
@@ -126,6 +133,17 @@ export class Settings implements ViewWillEnter {
       this.currentNarrator = this.prefs.narratorFor(this.currentVersion);
       this.cdr.markForCheck();
     });
+    const onLine = () => { this.online = navigator.onLine; this.cdr.markForCheck(); };
+    window.addEventListener('online', onLine);
+    window.addEventListener('offline', onLine);
+    inject(DestroyRef).onDestroy(() => {
+      window.removeEventListener('online', onLine);
+      window.removeEventListener('offline', onLine);
+    });
+    // A full download ended: which voices are complete may have changed.
+    this.bibleServ.downloadProgress$.pipe(takeUntilDestroyed()).subscribe(p => {
+      if (p.status !== 'running' && p.context === 'full-bible') void this.refreshVoices();
+    });
     this.prefs.autoplay$.pipe(takeUntilDestroyed()).subscribe(on => {
       this.autoplay = on;
       this.cdr.markForCheck();
@@ -160,6 +178,62 @@ export class Settings implements ViewWillEnter {
     this.narrators = narratorChoices(this.currentVersion);
     this.currentNarrator = this.prefs.narratorFor(this.currentVersion);
     this.cdr.markForCheck();
+    void this.refreshVoices();
+  }
+
+  private async refreshVoices(): Promise<void> {
+    const bible = this.bibleData;
+    this.downloadedVoices = bible && this.narrators.length ? await this.bibleServ.narratorsDownloaded(bible) : [];
+    this.cdr.markForCheck();
+  }
+
+  /** Offline, only a voice that is on the device can be chosen (the one in use always stays shown). */
+  narratorDisabled(id: string): boolean {
+    return !this.online && id !== this.currentNarrator && !this.downloadedVoices.includes(id);
+  }
+
+  /** There is a voice of this version that is not complete on the device yet. */
+  get canDownloadAnotherVoice(): boolean {
+    return this.narrators.some(n => !this.downloadedVoices.includes(n.id));
+  }
+
+  narratorLabel(id: string): string {
+    return this.narrators.find(n => n.id === id)?.label ?? id;
+  }
+
+  /** Same dialog as Home's "Download the entire Bible": tick voices, see sizes. Progress shows on Home. */
+  async downloadAnotherVoice() {
+    if (!this.bibleData) return;
+    const download = this.voiceDownload.chooseAndDownload(this.bibleData);
+    void download.then(() => this.refreshVoices());
+    // Started (not cancelled) when progress turns to running: say where to follow it.
+    const sub = this.bibleServ.downloadProgress$.subscribe(p => {
+      if (p.status === 'running' && p.context === 'full-bible') {
+        sub.unsubscribe();
+        void this.ui.toast(this.translate.instant('settings.voices.download_started'));
+      }
+    });
+    void download.finally(() => sub.unsubscribe());
+  }
+
+  async removeVoice(id: string) {
+    const bible = this.bibleData;
+    if (!bible || !this.currentVersion || this.removingVoice) return;
+    const ok = await this.ui.confirm(this.translate.instant('settings.voices.remove_confirm', { name: this.narratorLabel(id) }));
+    if (!ok) return;
+    this.removingVoice = id;
+    this.cdr.markForCheck();
+    try {
+      await this.bibleServ.removeVoice(bible, id);
+      await this.refreshVoices();
+      // What plays should be on the device: move to another downloaded voice.
+      const other = this.downloadedVoices.find(v => v !== id);
+      if (id === this.currentNarrator && other) this.prefs.setNarrator(this.currentVersion, other);
+      await this.calculateStorage();
+    } finally {
+      this.removingVoice = undefined;
+      this.cdr.markForCheck();
+    }
   }
 
   /** There is another version to switch to (see Home.canSwitchVersion). */

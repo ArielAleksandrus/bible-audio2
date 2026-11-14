@@ -15,7 +15,6 @@ import { Track } from '../../models/track';
 
 import { BiblePicker, Bible, BibleBook, BibleSelection, OverridableCSS as BibleCSS } from 'bible-picker';
 
-import { NarratorChoiceDialog } from '../../narrator-choice-dialog/narrator-choice-dialog';
 import { LanguageSelectorDialog } from '../../language-selector-dialog/language-selector-dialog';
 import { BibleTextViewer } from '../../components/bible-text-viewer/bible-text-viewer';
 import { AppStateService } from '../../services/app-state.service';
@@ -27,7 +26,8 @@ import { isNativeApp } from '../../utils/platform.util';
 import { UiService } from '../../services/ui.service';
 import { PreferencesService } from '../../services/preferences.service';
 import { CatalogService } from '../../services/catalog.service';
-import { BibleCatalogEntry, BibleNarrator, catalogEntry, narratorChoices, versionsForLanguage } from '../../data/bible-catalog';
+import { VoiceDownloadService } from '../../services/voice-download.service';
+import { BibleCatalogEntry, catalogEntry, versionsForLanguage } from '../../data/bible-catalog';
 import { SearchHit, SearchIndex, buildSearchIndex, searchBible, MIN_QUERY_LENGTH } from '../../utils/bible-search.util';
 import { bookDisplayName } from '../../utils/bible-text.util';
 
@@ -37,6 +37,7 @@ const SEARCH_LIMIT = 30;
 // What the picker draws on a book/chapter (bible-picker's customCSS): a
 // solid dot on a tinted cell for "downloaded", a hollow dot for "partly".
 const MARK_FULL = '--bp-mark: var(--app-downloaded); --bp-mark-ring: var(--app-downloaded); background-color: var(--app-downloaded-bg);';
+const MARK_NOT_YET = 'opacity: 0.45;';
 const MARK_PARTIAL = '--bp-mark-ring: var(--app-partial); background-color: var(--app-partial-bg);';
 
 
@@ -90,6 +91,7 @@ export class Home implements OnInit, ViewWillEnter {
   switchingVersion = false;
 
   private prefs = inject(PreferencesService);
+  private voiceDownload = inject(VoiceDownloadService);
   private actionSheets = inject(ActionSheetController);
 
   constructor(
@@ -278,22 +280,6 @@ export class Home implements OnInit, ViewWillEnter {
       });
     }
 
-    // A version read by two or more narrators: whose voice to download is a
-    // required choice, asked every time, since each one is a separate ~1.3 GB
-    // set of files; each can be sampled in the dialog first. The choice becomes the voice in use; the other one can be
-    // downloaded later the same way (this button comes back whenever the
-    // voice in use is not complete on the device).
-    const entry = this.currentVersion;
-    const choices = narratorChoices(entry);
-    if (entry && choices.length && this.bibleData) {
-      const downloaded = await this.bibleServ.narratorsDownloaded(this.bibleData);
-      const localSamples = await this.bibleServ.localSamples(this.bibleData);
-      const chosen = await this.askNarrator(entry, choices, downloaded, localSamples);
-      if (!chosen) return [];
-      this.prefs.setNarrator(entry, chosen);
-      if (downloaded.includes(chosen)) return [];
-    }
-
     // Any other mobile browser (a "real" one, not Instagram) where the app
     // hasn't been installed yet: background audio/offline storage are less
     // reliable in a plain browser tab, so we suggest installing — but it's
@@ -304,49 +290,11 @@ export class Home implements OnInit, ViewWillEnter {
       void this.modals.create({ component: InstallSuggestedDialog, cssClass: 'app-dialog' }).then(m => m.present());
     }
 
-    // Só avisa quando temos certeza de que a conexão é via dados móveis —
-    // a Network Information API (navigator.connection) não existe no
-    // Safari/Firefox, então "não sei dizer" não pode ser tratado como
-    // "está no celular", ou o aviso apareceria sempre nesses navegadores.
-    if (await this.isOnCellular() === true) {
-      const confirm = await this.ui.confirm(
-        this.translate.instant('hero.confirm_mobile_data') ||
-        'Você não está conectado ao Wi-Fi. O download da Bíblia inteira usa cerca de 1.3 GB de dados. Deseja continuar mesmo assim?'
-      );
-      if (!confirm) return []; // Usuário cancelou
-    }
-
-    let bd = this.bibleData;
-    if(!bd)
-      return [];
-
-    // The picker/legend refresh when it settles comes from the progress$
+    if (!this.bibleData) return [];
+    // Which voices, whether they fit, mobile data, then the download. The
+    // picker/legend refresh when it settles comes from the progress$
     // subscription in the constructor.
-    const t = (key: string, params?: object) => this.translate.instant(key, params);
-    return this.bibleServ.downloadEntireBible(bd, {
-      title: t('hero.notif_title'),
-      progress: t('hero.notif_progress', { downloaded: '{done}', total: '{total}' }),
-      complete: t('hero.download_complete'),
-      incomplete: t('hero.notif_incomplete', { failed: '{failed}' }),
-      cancel: t('common.cancel'),
-    });
-  }
-
-  /**
-   * The narrator picked for a full download, or undefined when the dialog is
-   * closed without picking one. Each voice can be sampled there first.
-   */
-  private async askNarrator(
-    entry: BibleCatalogEntry, choices: BibleNarrator[], downloaded: string[], localSamples: Record<string, string>,
-  ): Promise<string | undefined> {
-    const modal = await this.modals.create({
-      component: NarratorChoiceDialog,
-      componentProps: { lang: entry.lang, version: entry.version, choices, downloaded, localSamples },
-      cssClass: 'app-dialog',
-    });
-    await modal.present();
-    const { data } = await modal.onDidDismiss<string>();
-    return data || undefined;
+    return this.voiceDownload.chooseAndDownload(this.bibleData);
   }
 
   // Downloads and plays just Genesis 1, in place of the full-Bible download,
@@ -370,10 +318,13 @@ export class Home implements OnInit, ViewWillEnter {
     }
     this.painting = true;
     this.customCSS = {"b": {}, "c": {}, "v": {}};
-    this.bibleServ.booksDownloadStatus(this.bibleData).then((booksStatus: BookDownloadStatus[]) => {
-      this.booksDownloadStatus = booksStatus;
-      this.paintBooks();
-    });
+    const bible = this.bibleData;
+    Promise.all([this.bibleServ.booksDownloadStatus(bible), this.bibleServ.anyVoiceComplete(bible)])
+      .then(([booksStatus, complete]) => {
+        this.booksDownloadStatus = booksStatus;
+        this.bibleFullyDownloaded = complete;
+        this.paintBooks();
+      });
   }
 
   async openLanguageSelector() {
@@ -407,7 +358,10 @@ export class Home implements OnInit, ViewWillEnter {
 
     for(let i = 0; i < booksStatus.length; i++) {
       const stat = booksStatus[i];
-      if(stat.total > 0) { // something was downloaded
+      if (!stat.available) {
+        // Not narrated yet in the voice in use.
+        this.customCSS["b"][i] = MARK_NOT_YET;
+      } else if(stat.total > 0) { // something was downloaded
         if(stat.pendingCount == 0) // book was fully downloaded
           this.customCSS["b"][i] = MARK_FULL;
         else //book was partially downloaded
@@ -492,28 +446,11 @@ export class Home implements OnInit, ViewWillEnter {
     return this.tracks.length - this.completedCount;
   }
 
-  get bibleFullyDownloaded(): boolean {
-    return this.booksDownloadStatus.length > 0 &&
-      this.booksDownloadStatus.every(b => b.pendingCount === 0);
-  }
-
   /**
-   * true = definitely on cellular, false = definitely not, null = can't tell
-   * (API unsupported, e.g. Safari/Firefox, or `type` not exposed by this
-   * browser — Chrome itself only reports it on Android, not desktop).
+   * At least one voice of this Bible is complete on the device (every book
+   * it has so far): the full download is then no longer offered here, only
+   * in Settings, for another voice.
    */
-  private async isOnCellular(): Promise<boolean | null> {
-    if (isNativeApp()) {
-      const { Network } = await import('@capacitor/network');
-      const status = await Network.getStatus().catch(() => null);
-      return status ? status.connectionType === 'cellular' : null;
-    }
-    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
-    if (!connection || typeof connection.type === 'undefined') {
-      return null;
-    }
-    // Tipo de conexão: 'wifi', 'cellular', 'ethernet', 'none', 'unknown', ...
-    return connection.type === 'cellular';
-  }
+  bibleFullyDownloaded = false;
 }
 export default Home;

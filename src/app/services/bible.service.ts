@@ -6,7 +6,10 @@ import { AudioDownloaderService, BulkDownloadStrings, DownloadProgress } from '.
 import { WakeLockService } from './wake-lock.service';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
-import { AUDIO_FORMATS, audioFormatFor, catalogEntry, baseLang, defaultNarrator, hasNameOnlyKeys, narratorChoices } from '../data/bible-catalog';
+import {
+  AUDIO_FORMATS, AudioFormat, audioFormatFor, catalogEntry, baseLang, defaultNarrator, hasNameOnlyKeys, narratorChoices, narratorOf,
+  voiceHasBook,
+} from '../data/bible-catalog';
 import { PreferencesService } from './preferences.service';
 import { bookDisplayName } from '../utils/bible-text.util';
 import { saveBibleVersion, getBibleVersion, getAllSavedBibles, deleteBibleVersion, AvailableSpace } from '../storage/my-db';
@@ -84,8 +87,17 @@ export type BookDownloadStatus = {
   abbrev: string,
   total: number,
   pendingCount: number,
-  pending: string[]
+  pending: string[],
+  /** false: the voice in use has no narration of this book yet (catalog `books`). */
+  available: boolean,
 };
+
+/**
+ * Rough size of one chapter, for a voice the catalog gives no `bytes` for:
+ * a whole Bible (1189 chapters) of OTB in Opus 32 kbps is ~1.1 GB, in MP3
+ * 48 kbps ~1.65 GB.
+ */
+const CHAPTER_BYTES: Record<AudioFormat, number> = { opus: 0.95e6, mp3: 1.4e6 };
 
 @Injectable({ providedIn: 'root' })
 export class BibleService {
@@ -268,9 +280,16 @@ export class BibleService {
   async narratorsDownloaded(bible: Bible): Promise<string[]> {
     const done: string[] = [];
     for (const narrator of narratorChoices(catalogEntry(bible.language, bible.version))) {
-      if (await this.hasEveryChapter(bible, narrator.id)) done.push(narrator.id);
+      if (await this.isVoiceComplete(bible, narrator.id)) done.push(narrator.id);
     }
     return done;
+  }
+
+  /** Whether at least one voice of this Bible is complete on the device: then the full download is no longer offered on Home. */
+  async anyVoiceComplete(bible: Bible): Promise<boolean> {
+    const choices = narratorChoices(catalogEntry(bible.language, bible.version));
+    if (!choices.length) return this.isVoiceComplete(bible, undefined);
+    return (await this.narratorsDownloaded(bible)).length > 0;
   }
 
   /**
@@ -287,13 +306,57 @@ export class BibleService {
     return found;
   }
 
-  private async hasEveryChapter(bible: Bible, narratorId: string): Promise<boolean> {
-    for (let bookIdx = 0; bookIdx < bible.books.length; bookIdx++) {
-      for (let chapter = 1; chapter <= bible.books[bookIdx].chapters.length; chapter++) {
-        if (!(await this.ads.isDownloaded(this.buildTrack(bible, bookIdx, chapter, narratorId)))) return false;
+  /**
+   * Every chapter a voice has so far (the books in its catalog `books`, or
+   * all of them). undefined = the version offers no choice of narrator.
+   */
+  voiceTracks(bible: Bible, narratorId: string | undefined): Track[] {
+    const entry = catalogEntry(bible.language, bible.version);
+    const tracks: Track[] = [];
+    bible.books.forEach((book, bookIdx) => {
+      if (!voiceHasBook(entry, narratorId, BIBLE_ABBREV_ISO[bookIdx])) return;
+      for (let chapter = 1; chapter <= book.chapters.length; chapter++) {
+        tracks.push(this.buildTrack(bible, bookIdx, chapter, narratorId));
       }
+    });
+    return tracks;
+  }
+
+  /** Every chapter the voice has so far is on the device (and it has at least one). */
+  async isVoiceComplete(bible: Bible, narratorId: string | undefined): Promise<boolean> {
+    const tracks = this.voiceTracks(bible, narratorId);
+    if (!tracks.length) return false;
+    for (const track of tracks) {
+      if (!(await this.ads.isDownloaded(track))) return false;
     }
     return true;
+  }
+
+  /**
+   * About how many bytes a full download of this voice still needs, in the
+   * format this device downloads: the catalog's `bytes` for the voice when it
+   * has them, else an estimate per chapter; minus what is already here.
+   */
+  async voiceBytesToDownload(bible: Bible, narratorId: string | undefined): Promise<number> {
+    const entry = catalogEntry(bible.language, bible.version);
+    const format = audioFormatFor(entry);
+    const tracks = this.voiceTracks(bible, narratorId);
+    if (!tracks.length) return 0;
+    let pending = 0;
+    for (const track of tracks) if (!(await this.ads.isDownloaded(track))) pending++;
+    const whole = narratorOf(entry, narratorId)?.bytes?.[format] ?? tracks.length * CHAPTER_BYTES[format];
+    return Math.round(whole * pending / tracks.length);
+  }
+
+  /** Deletes every chapter of one voice from the device (also under the keys it was saved with before). */
+  async removeVoice(bible: Bible, narratorId: string | undefined): Promise<void> {
+    for (let bookIdx = 0; bookIdx < bible.books.length; bookIdx++) {
+      for (let chapter = 1; chapter <= bible.books[bookIdx].chapters.length; chapter++) {
+        const track = this.buildTrack(bible, bookIdx, chapter, narratorId);
+        await this.ads.removeById(track.id);
+        if (track.fileName) await this.ads.removeById(track.fileName);
+      }
+    }
   }
 
   async booksDownloadStatus(bible: Bible): Promise<BookDownloadStatus[]> {
@@ -302,14 +365,23 @@ export class BibleService {
     for(let book of bible.books) {
       const tracks: Track[] = await this.genTracks(bible, book.abbrev);
       const stats: {total: number, pendingCount: number, pending: string[]} = await this.ads.areDownloaded(tracks);
+      const available = this.bookAvailable(bible, bible.books.indexOf(book));
       res.push({
         abbrev: book.abbrev,
         total: stats.total,
-        pendingCount: stats.pendingCount,
-        pending: stats.pending
+        // A book not narrated yet is not "missing" from the device.
+        pendingCount: available ? stats.pendingCount : 0,
+        pending: available ? stats.pending : [],
+        available,
       });
     }
     return res;
+  }
+
+  /** Whether the voice in use has this book yet (catalog `books`). */
+  bookAvailable(bible: Bible, bookIdx: number): boolean {
+    const entry = catalogEntry(bible.language, bible.version);
+    return voiceHasBook(entry, this.narratorOf(bible), BIBLE_ABBREV_ISO[bookIdx]);
   }
 
   async genTracks(bible: Bible, bookAbbrev?: string, chapters?: number[]): Promise<Track[]> {
@@ -386,18 +458,25 @@ export class BibleService {
     return tracks;
   }
 
-  async downloadEntireBible(bible: Bible, strings: BulkDownloadStrings): Promise<Track[]> {
+  /**
+   * Downloads every chapter the given voices have so far (catalog `books`),
+   * one voice after the other in a single batch. Default: the voice in use.
+   * Resolves with the tracks of the batch once it is over.
+   */
+  async downloadEntireBible(
+    bible: Bible, strings: BulkDownloadStrings, narratorIds: (string | undefined)[] = [this.narratorOf(bible)],
+  ): Promise<Track[]> {
     // Reset progress
     this.progressSubject.next({ downloaded: 0, total: 0, status: 'running', context: 'full-bible' });
 
     const allTracks: Track[] = [];
-
-    for (const book of bible.books) {
-      const bookTracks = await this.genTracks(bible, book.abbrev);
-      allTracks.push(...bookTracks);
+    for (const narratorId of narratorIds) {
+      for (const track of this.voiceTracks(bible, narratorId)) {
+        if (await this.ads.isDownloaded(track)) track.status = 'done';
+        allTracks.push(track);
+      }
     }
 
-    // Filter only pending tracks (optional optimization)
     const pendingTracks = allTracks.filter(t => t.status !== 'done');
 
     // Native: a foreground service on Android, which doesn't need the
@@ -413,7 +492,6 @@ export class BibleService {
       if (holdScreen) this.wakeLock.release();
     }
 
-    // Return all tracks (with updated status)
     return allTracks;
   }
 }

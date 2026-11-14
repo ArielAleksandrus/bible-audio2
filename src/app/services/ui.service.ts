@@ -37,6 +37,12 @@ export class UiService {
     return role === 'confirm';
   }
 
+  /** A short message that goes away by itself. */
+  async toast(message: string, duration = 3000): Promise<void> {
+    const toast = await this.toasts.create({ message, duration, position: 'top' });
+    await toast.present();
+  }
+
   /** A toast with one action button; resolves true if the action was tapped. */
   async actionToast(message: string, action: string): Promise<boolean> {
     const toast = await this.toasts.create({

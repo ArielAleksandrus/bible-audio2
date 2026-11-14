@@ -4,22 +4,20 @@ import { AudioDownloaderService } from './audio-downloader.service';
 describe('AudioDownloaderService.ensureFreeDiskSpace', () => {
   afterEach(() => vi.restoreAllMocks());
 
-  it('keeps evicting the oldest chapters until there is room', async () => {
-    vi.spyOn(AvailableSpace.prototype, 'inMB').mockResolvedValue(5);
-    vi.spyOn(AvailableSpace.prototype, 'isSafe')
-      .mockResolvedValueOnce(false).mockResolvedValueOnce(false).mockResolvedValue(true);
-    const svc = new AudioDownloaderService();
-    const removeOldest = vi.spyOn(svc, 'removeOldest').mockResolvedValue(['a', 'b', 'c']);
-    await svc.ensureFreeDiskSpace();
-    expect(removeOldest).toHaveBeenCalledTimes(2);
+  it('lets the download go on when there is room', async () => {
+    vi.spyOn(AvailableSpace.prototype, 'isSafe').mockResolvedValue(true);
+    await expect(new AudioDownloaderService().ensureFreeDiskSpace()).resolves.toBeUndefined();
   });
 
-  it('gives up instead of spinning forever when there is nothing left to evict', async () => {
+  it('refuses the download and says so when the device is almost full, deleting nothing', async () => {
     vi.spyOn(AvailableSpace.prototype, 'inMB').mockResolvedValue(5);
-    const isSafe = vi.spyOn(AvailableSpace.prototype, 'isSafe').mockResolvedValue(false);
+    vi.spyOn(AvailableSpace.prototype, 'isSafe').mockResolvedValue(false);
     const svc = new AudioDownloaderService();
-    vi.spyOn(svc, 'removeOldest').mockResolvedValue([]);
-    await expect(svc.ensureFreeDiskSpace()).resolves.toBeUndefined();
-    expect(isSafe).toHaveBeenCalledTimes(1);
+    const remove = vi.spyOn(svc, 'removeById');
+    let told = 0;
+    svc.lowSpace$.subscribe(() => told++);
+    await expect(svc.ensureFreeDiskSpace()).rejects.toThrow('5 MB');
+    expect(told).toBe(1);
+    expect(remove).not.toHaveBeenCalled();
   });
 });

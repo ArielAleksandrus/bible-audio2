@@ -3,32 +3,49 @@
     <ion-icon slot="icon-only" name="close"></ion-icon>
   </ion-button>
 
-  <h2 class="title">{{ 'hero.choose_narrator' | translate }}</h2>
-  <p class="note">{{ 'hero.choose_narrator_note' | translate }}</p>
+  <h2 class="title">{{ 'hero.choose_narrators' | translate }}</h2>
+  <p class="note">{{ 'hero.choose_narrators_note' | translate }}</p>
 
   <ul class="narrators">
     @for (narrator of choices; track narrator.id) {
-      <li>
+      <li [class.done]="downloaded.includes(narrator.id)">
         <ion-button fill="outline" shape="round" class="sample" (click)="toggleSample(narrator.id)"
                     [attr.aria-label]="'hero.narrator_sample' | translate: { name: narrator.label }">
           <ion-icon slot="icon-only" [name]="playing() === narrator.id ? 'pause' : 'play'"></ion-icon>
         </ion-button>
 
-        <div class="who">
-          <span class="name">{{ narrator.label }}</span>
-          @if (failed() === narrator.id) {
-            <small class="failed">{{ 'hero.narrator_sample_failed' | translate }}</small>
-          } @else if (downloaded.includes(narrator.id)) {
-            <small>{{ 'hero.narrator_downloaded' | translate }}</small>
-          }
-        </div>
-
-        <ion-button class="choose" (click)="choose(narrator.id)">
-          {{ (downloaded.includes(narrator.id) ? 'hero.narrator_use' : 'hero.narrator_download') | translate }}
-        </ion-button>
+        <label class="who">
+          <input type="checkbox" [checked]="downloaded.includes(narrator.id) || isSelected(narrator.id)"
+                 [disabled]="downloaded.includes(narrator.id)" (change)="toggle(narrator.id)">
+          <span class="text">
+            <span class="name">{{ narrator.label }}</span>
+            @if (failed() === narrator.id) {
+              <small class="failed">{{ 'hero.narrator_sample_failed' | translate }}</small>
+            } @else if (downloaded.includes(narrator.id)) {
+              <small>{{ 'hero.narrator_downloaded' | translate }}</small>
+            } @else {
+              <small>~{{ size(sizes[narrator.id] || 0) }}</small>
+            }
+          </span>
+        </label>
       </li>
     }
   </ul>
+
+  <p class="total">
+    {{ 'hero.narrators_total' | translate: { size: size(totalBytes()) } }}
+    @if (freeBytes !== undefined) {
+      · {{ 'hero.narrators_free' | translate: { size: size(freeBytes) } }}
+    }
+  </p>
+  @if (tooBig()) {
+    <p class="too-big">{{ 'hero.narrators_too_big' | translate }}</p>
+  }
+
+  <div class="actions">
+    <ion-button fill="clear" color="medium" (click)="close()">{{ 'common.cancel' | translate }}</ion-button>
+    <ion-button [disabled]="!selected().length" (click)="confirm()">{{ 'hero.narrator_download' | translate }}</ion-button>
+  </div>
 
   <p class="hint">{{ 'hero.narrator_sample_hint' | translate }}</p>
 </div>
