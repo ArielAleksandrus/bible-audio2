@@ -165,11 +165,18 @@ What changes on native (`isNativeApp()` in `src/app/utils/platform.util.ts`):
 | | Web / PWA | Native app |
 |---|---|---|
 | Playback | `WebAudioEngine` — two `<audio>` elements + all the locked-screen workarounds (see `.claude/skills/gapless-audio-lockscreen`) | `NativeAudioEngine` — the whole playlist goes to the OS player via [`@dwbn/capacitor-plugin-playlist`](https://www.npmjs.com/package/@dwbn/capacitor-plugin-playlist): Media3/ExoPlayer foreground service on Android, AVQueuePlayer on iOS. Lock screen, notification, headset and car Bluetooth controls are native. |
-| Downloaded chapters | IndexedDB blobs | Files in the app's data dir (`audios/*.mp3`), downloaded with the native HTTP stack (`@capacitor/file-transfer`), so the OS player can open them and downloads continue in the background |
+| Downloaded chapters | IndexedDB blobs | Files in the app's data dir (`audios/*.m4a` / `*.mp3`), downloaded with the native HTTP stack (`@capacitor/file-transfer`), so the OS player can open them and downloads continue in the background |
 | Bible JSON | `fetch` with progress | native HTTP (no CORS) |
 | Google sign-in | Firebase popup | native account picker (`@capacitor-firebase/authentication`), then the same Firebase JS SDK/Firestore sync |
 | Daily verse | Web Push from the Vercel cron | 30 days of local notifications scheduled on the device, with verses from the downloaded Bible (works offline, no FCM/APNs needed) |
 | Service worker, install banner, Safari/Instagram warnings | yes | off |
+
+Plugins that live in this repo rather than in npm (`src/app/native/`):
+
+- `BulkDownload` (Android, `BulkDownloadPlugin.java` + `BulkDownloadService.java`): the full-Bible download as a foreground service.
+- `DeviceVolume` (Android `DeviceVolumePlugin.java`, iOS `DeviceVolumePlugin.swift`): the media volume, so tapping play with it almost at zero shows "volume too low" (`VolumeCheckService`). No permission. Shells without it simply don't warn.
+
+They are registered by hand: Android in `MainActivity.onCreate`, iOS in `MainViewController.capacitorDidLoad` (the storyboard's view controller). A new iOS file must also be added to the App target in `project.pbxproj`.
 
 A chapter queued while still streaming is swapped for its local file as soon
 as it finishes downloading, so a playlist started online keeps playing after

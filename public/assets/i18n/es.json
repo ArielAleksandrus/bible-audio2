@@ -196,7 +196,8 @@
   "player": {
     "speed": "Velocidad de reproducción",
     "speed_fast_note": "no recomendado. disfruta y medita en la palabra de Dios sin prisa.",
-    "narrator": "Narrador"
+    "narrator": "Narrador",
+    "volume_low": "El volumen está muy bajo. Súbelo para poder escuchar."
   },
   "search": {
     "placeholder": "Buscar en la Biblia",

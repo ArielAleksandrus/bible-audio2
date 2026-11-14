@@ -196,7 +196,8 @@
   "player": {
     "speed": "Playback speed",
     "speed_fast_note": "not recommended. enjoy and meditate on the word of God without hurry.",
-    "narrator": "Narrator"
+    "narrator": "Narrator",
+    "volume_low": "The volume is very low. Turn it up to hear."
   },
   "search": {
     "placeholder": "Search the Bible",

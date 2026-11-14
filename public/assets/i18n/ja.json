@@ -196,7 +196,8 @@
   "player": {
     "speed": "再生速度",
     "speed_fast_note": "おすすめしません。急がずに、神の言葉を味わい、思い巡らしましょう。",
-    "narrator": "朗読者"
+    "narrator": "朗読者",
+    "volume_low": "音量がとても小さいです。聴くには音量を上げてください。"
   },
   "search": {
     "placeholder": "聖書を検索",

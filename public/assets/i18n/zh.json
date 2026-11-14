@@ -196,7 +196,8 @@
   "player": {
     "speed": "播放速度",
     "speed_fast_note": "不建议。请从容地品味、默想神的话语。",
-    "narrator": "朗读者"
+    "narrator": "朗读者",
+    "volume_low": "音量太低。请调高音量以便收听。"
   },
   "search": {
     "placeholder": "搜索圣经",

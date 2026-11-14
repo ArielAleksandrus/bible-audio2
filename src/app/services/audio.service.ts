@@ -10,6 +10,7 @@ import { isNativeApp } from '../utils/platform.util';
 import { PreferencesService } from './preferences.service';
 import { retargetTracks } from './bible.service';
 import { catalogEntry } from '../data/bible-catalog';
+import { VolumeCheckService } from './volume-check.service';
 
 /**
  * App-wide player. Same API everywhere; the backend is chosen once:
@@ -19,6 +20,7 @@ import { catalogEntry } from '../data/bible-catalog';
 export class AudioService implements AudioEngine {
   private readonly engine: AudioEngine;
   private readonly prefs = inject(PreferencesService);
+  private readonly volume = inject(VolumeCheckService);
   /** The playlist last handed to the engine, to rebuild it when the narrator changes. */
   private playlist: Track[] = [];
 
@@ -40,7 +42,9 @@ export class AudioService implements AudioEngine {
     if (playlist) this.playlist = playlist;
     return this.engine.playTrack(track, playlist, startIndex);
   }
+  /** Starts playing at the user's request: also says when the device's volume is too low to hear it. */
   playPlaylist(tracks: Track[], startIndex = 0) {
+    void this.volume.warnIfLow();
     this.playlist = tracks;
     return this.engine.playPlaylist(tracks, startIndex);
   }
@@ -82,7 +86,11 @@ export class AudioService implements AudioEngine {
     await (wasPlaying ? this.playPlaylist(tracks, index) : this.loadPlaylist(tracks, index));
   }
 
-  play() { this.engine.play(); }
+  /** Resumes at the user's request: also says when the device's volume is too low to hear it. */
+  play() {
+    void this.volume.warnIfLow();
+    this.engine.play();
+  }
   pause() { this.engine.pause(); }
   toggle() { this.engine.toggle(); }
   stop() { this.engine.stop(); }

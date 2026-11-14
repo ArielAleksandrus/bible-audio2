@@ -4,6 +4,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { BibleNarrator } from '../data/bible-catalog';
 import { AudioService } from '../services/audio.service';
+import { VolumeCheckService } from '../services/volume-check.service';
 import { audioUrl, sampleUrl } from '../services/bible.service';
 import { SPACE_MARGIN_BYTES, formatSize } from '../utils/format-size.util';
 
@@ -70,6 +71,7 @@ export class NarratorChoiceDialog implements OnInit, OnDestroy {
   private modalCtrl = inject(ModalController);
   private player = inject(AudioService);
   private translate = inject(TranslateService);
+  private volume = inject(VolumeCheckService);
   private audio?: SampleAudio;
 
   ngOnInit(): void {
@@ -96,6 +98,7 @@ export class NarratorChoiceDialog implements OnInit, OnDestroy {
 
     // Not over whatever chapter is playing in the app.
     this.player.pause();
+    void this.volume.warnIfLow();
     this.failed.set(undefined);
 
     const local = this.localSamples[narratorId];
