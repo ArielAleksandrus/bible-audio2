@@ -162,6 +162,11 @@ export class Settings implements ViewWillEnter {
     this.cdr.markForCheck();
   }
 
+  /** There is another version to switch to (see Home.canSwitchVersion). */
+  get canSwitchVersion(): boolean {
+    return this.versions.some(v => v !== this.currentVersion);
+  }
+
   setAutoplay(on: boolean) {
     this.autoplay = on;
     this.prefs.setAutoplay(on);

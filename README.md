@@ -30,7 +30,7 @@ The goal is simple: pick chapters or a reading plan, download the audio to the d
 
 UI strings follow the selected Bible language (`public/assets/i18n/`).
 
-The Bibles on offer come from a list, not from looking at the CDN (it can't list its own files). The list exists twice: `BUNDLED_CATALOG` in `src/app/data/bible-catalog.ts` ships inside the app, and `catalog.json` at the root of the CDN is the copy that is edited from then on — see [The list on the CDN](#the-list-on-the-cdn-catalogjson). The first entry of a language is its default. A language with two or more entries gets a version switch (Home and Settings); a version with two or more `narrators` gets a narrator switch (Settings and the player) and keeps each narrator's audio in its own CDN folder and under its own download key.
+The Bibles on offer come from a list, not from looking at the CDN (it can't list its own files). The list exists twice: `BUNDLED_CATALOG` in `src/app/data/bible-catalog.ts` ships inside the app, and `catalog.json` at the root of the CDN is the copy that is edited from then on — see [The list on the CDN](#the-list-on-the-cdn-catalogjson). The first entry of a language that is not `hidden` is its default. On first run (and after a language reset) the picker lists languages by name; a language with one visible version opens it straight away, and one with two or more then lists them and the Bible opens only after one is chosen. A language with two or more visible entries also gets a version switch (Home and Settings); a version with two or more `narrators` gets a narrator switch (Settings and the player) and keeps each narrator's audio in its own CDN folder and under its own download key.
 
 ### The list on the CDN (`catalog.json`)
 
@@ -39,16 +39,19 @@ The Bibles on offer come from a list, not from looking at the CDN (it can't list
   "bibles": [
     { "lang": "pt", "version": "ara", "flag": "🇧🇷", "label": "Português - ARA" },
     { "lang": "pt", "version": "otb", "flag": "🇧🇷", "label": "Português - OTB",
-      "narrators": [{ "id": "ariel", "label": "Ariel" }, { "id": "ana", "label": "Ana" }] }
+      "narrators": [{ "id": "ariel", "label": "Ariel" }, { "id": "ana", "label": "Ana" }] },
+    { "lang": "pt", "version": "nvt", "flag": "🇧🇷", "label": "Português - NVT", "hidden": true }
   ]
 }
 ```
+
+**`hidden`** (optional, `true` or `false`): a hidden version is not offered anywhere — not in the language picker, not in the version switch of Home or Settings. A device that already has it selected keeps opening it (Settings shows it as the current value but does not offer it, and the switch lets the user move to a visible version). The default of a language is its first version that is not hidden, and a language whose versions are all hidden is not offered at all. Use it to upload a version and try it on your own device (select it before hiding it) before offering it, or to stop offering one without breaking it for people who use it. Hiding does not change audio paths or download keys: chapters saved under the old name-only key stay with the version that is first in the file, hidden or not.
 
 It lives at `{BIBLE_CDN_URL}/catalog.json`. **Adding a version or a narrator needs no app update of any kind, not even over the air**: upload the files, add the entry to this file, upload it. `CatalogService` reads it every time the app opens or comes back with a connection (at most every 5 minutes), and a list that differs from the one in use replaces it, is saved on the device (`localStorage.bibleCatalog`) and repaints the open pages. A device that has never been online uses the bundled list.
 
 What protects the apps from a bad edit:
 
-- The whole file is ignored, and the app keeps the list it has, when anything in it is malformed or repeated: `lang` must be 2–3 lowercase letters, `version` lowercase letters/digits, `label` non-empty, a narrator `id` lowercase letters, digits, `-` or `_`, with a non-empty `label`. Validate the JSON before uploading.
+- The whole file is ignored, and the app keeps the list it has, when anything in it is malformed or repeated: `lang` must be 2–3 lowercase letters, `version` lowercase letters/digits, `label` non-empty, a narrator `id` lowercase letters, digits, `-` or `_`, with a non-empty `label`, and `hidden`, when present, a boolean (`"true"` or `1` reject the file). Validate the JSON before uploading.
 - The version a device has selected stays available on that device even if the file drops it. A narrator that is removed is simply no longer offered: whoever used it goes back to the version's first voice.
 - **A new language is not only data.** The interface texts (`public/assets/i18n/{lang}.json`) ship inside the app, so an entry in a language missing from `UI_LANGUAGES` is skipped until an app update (over the air) adds its texts and the language to that constant.
 
@@ -75,7 +78,7 @@ A narrator belongs to a **version**, not to a language. So there are two differe
   "narrators": [{ "id": "ariel", "label": "Ariel" }] }
 ```
 
-With a single narrator there is **no** narrator folder. The language now has two versions, so the version switch shows up.
+With a single narrator there is **no** narrator folder. The language now has two versions, so the version switch shows up and the first-run picker asks which one (add `"hidden": true` to upload it without offering it yet).
 
 **A second voice for a version that already has one.** Every voice gets its own folder — including the first one, whose files must be **copied** into it. Copy rather than move, and upload everything before editing `catalog.json`: a device that has not read the new list yet still asks for the old paths.
 

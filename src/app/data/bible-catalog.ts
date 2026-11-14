@@ -30,9 +30,13 @@
  * go", has the whole picture.
  *
  * Order matters twice:
- * - the first entry of a language is that language's default (what the
- *   language picker offers on first run);
+ * - the first entry of a language that is not hidden is that language's
+ *   default (listed first when the language picker asks for a version);
  * - the first narrator of a version is its default voice.
+ *
+ * An entry with `hidden: true` is offered nowhere (language picker, Home,
+ * Settings), but a device that already has it selected keeps using it. A
+ * language whose entries are all hidden is not offered.
  */
 export interface BibleNarrator {
   /** Folder name on the CDN and part of the download key. Lowercase ASCII, no spaces. */
@@ -47,10 +51,30 @@ export interface BibleCatalogEntry {
   label: string;
   flag: string;
   narrators?: BibleNarrator[];
+  /** Not offered for choosing; still opens on a device that already has it selected. */
+  hidden?: boolean;
+}
+
+/** One language in the language picker, with the versions it offers (default first, never empty). */
+export interface LanguageOption {
+  lang: string;
+  /** The language's own name, e.g. 'Português'. */
+  name: string;
+  flag: string;
+  versions: BibleCatalogEntry[];
 }
 
 /** Languages the interface has texts for (public/assets/i18n/{lang}.json). */
 export const UI_LANGUAGES: readonly string[] = ['pt', 'en', 'es', 'zh', 'ja'];
+
+/** How each of UI_LANGUAGES is named in the language picker, in that language. */
+export const LANGUAGE_NAMES: Readonly<Record<string, string>> = {
+  pt: 'Português',
+  en: 'English',
+  es: 'Español',
+  zh: '中文',
+  ja: '日本語',
+};
 
 /** What ships inside the app. catalog.json on the CDN starts as a copy of this. */
 export const BUNDLED_CATALOG: readonly BibleCatalogEntry[] = [
@@ -119,11 +143,12 @@ export function parseCatalog(raw: unknown): BibleCatalogEntry[] | null {
   const seen = new Set<string>();
   for (const item of list) {
     if (!item || typeof item !== 'object') return null;
-    const { lang, version, label, flag, narrators } = item as Record<string, unknown>;
+    const { lang, version, label, flag, narrators, hidden } = item as Record<string, unknown>;
     if (typeof lang !== 'string' || !LANG.test(lang)) return null;
     if (typeof version !== 'string' || !VERSION.test(version)) return null;
     if (!text(label)) return null;
     if (flag !== undefined && typeof flag !== 'string') return null;
+    if (hidden !== undefined && typeof hidden !== 'boolean') return null;
     if (seen.has(`${lang}-${version}`)) return null;
     seen.add(`${lang}-${version}`);
 
@@ -140,6 +165,7 @@ export function parseCatalog(raw: unknown): BibleCatalogEntry[] | null {
       }
       if (voices.length) entry.narrators = voices;
     }
+    if (hidden) entry.hidden = true;
     if (UI_LANGUAGES.includes(lang)) entries.push(entry);
   }
   return entries.length ? entries : null;
@@ -167,20 +193,31 @@ export function catalogEntry(lang: string, version: string): BibleCatalogEntry |
   return active.find(e => e.lang === l && e.version === v);
 }
 
-/** Every version offered for a language, default first. */
+/** Every version offered for a language (hidden ones left out), default first. */
 export function versionsForLanguage(lang: string): BibleCatalogEntry[] {
   const l = baseLang(lang);
-  return active.filter(e => e.lang === l);
+  return active.filter(e => e.lang === l && !e.hidden);
 }
 
-/** One entry per language (its default version), in catalog order. */
-export function languageOptions(): BibleCatalogEntry[] {
-  const seen = new Set<string>();
-  return active.filter(e => !seen.has(e.lang) && !!seen.add(e.lang));
+/** The languages offered, in catalog order: those with at least one version that is not hidden. */
+export function languageOptions(): LanguageOption[] {
+  const options: LanguageOption[] = [];
+  for (const e of active) {
+    if (e.hidden || options.some(o => o.lang === e.lang)) continue;
+    options.push({ lang: e.lang, name: LANGUAGE_NAMES[e.lang] ?? e.lang, flag: e.flag, versions: versionsForLanguage(e.lang) });
+  }
+  return options;
 }
 
+/**
+ * Whether this is the language's first entry in the catalog, hidden or not.
+ * Only for storage keys (BibleService.buildTrack): chapters saved under the
+ * old name-only key belong to the version that was first then, and hiding
+ * it must not hand them to another version.
+ */
 export function isDefaultVersion(lang: string, version: string): boolean {
-  return versionsForLanguage(lang)[0]?.version === version.toLowerCase();
+  const l = baseLang(lang);
+  return active.find(e => e.lang === l)?.version === version.toLowerCase();
 }
 
 /** Narrators the user can choose between: empty unless the version declares two or more. */

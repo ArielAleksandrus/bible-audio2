@@ -32,7 +32,7 @@
         <ion-icon class="hero-icon" name="book-outline"></ion-icon>
         <p>{{ 'hero.subtitle' | translate }}</p>
 
-        @if (versions.length > 1 && currentVersion) {
+        @if (canSwitchVersion && currentVersion) {
           <button type="button" class="version-chip" [disabled]="switchingVersion" (click)="chooseVersion()">
             <ion-icon name="swap-horizontal-outline" aria-hidden="true"></ion-icon>
             <span>{{ currentVersion.label }}</span>

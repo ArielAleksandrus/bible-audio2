@@ -113,10 +113,14 @@
           {{ 'settings.playback.autoplay_note' | translate }}
         </p>
 
-        @if (versions.length > 1) {
+        @if (canSwitchVersion) {
           <label class="setting-select">
             <span>{{ 'version.title' | translate }}</span>
             <select [disabled]="switchingVersion" (change)="changeVersion($any($event.target).value)">
+              @if (currentVersion?.hidden) {
+                <!-- the hidden version in use: shown as the current value, not offered -->
+                <option value="" disabled selected>{{ currentVersion?.label }}</option>
+              }
               @for (v of versions; track v.version) {
                 <option [value]="v.version" [selected]="v === currentVersion">{{ v.label }}</option>
               }

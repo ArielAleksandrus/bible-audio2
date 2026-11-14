@@ -1,14 +1,29 @@
 <div class="ion-padding">
-  <h2 class="title">Escolha o idioma da Bíblia</h2>
+  @if (!language) {
+    <h2 class="title">Escolha o idioma da Bíblia</h2>
 
-  <ion-list lines="full" class="language-list">
-    @for (option of options; track option.lang) {
-      <ion-item button [detail]="false" [disabled]="loading" (click)="select(option.lang, option.version)">
-        <span slot="start" class="flag">{{ option.flag }}</span>
-        <ion-label>{{ option.label }}</ion-label>
-      </ion-item>
-    }
-  </ion-list>
+    <ion-list lines="full" class="language-list">
+      @for (option of options; track option.lang) {
+        <ion-item button [detail]="false" [disabled]="loading" (click)="chooseLanguage(option)">
+          <span slot="start" class="flag">{{ option.flag }}</span>
+          <ion-label>{{ option.name }}</ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  } @else {
+    <h2 class="title">{{ versionStep.title }}</h2>
+
+    <ion-list lines="full" class="language-list">
+      @for (v of language.versions; track v.version) {
+        <ion-item button [detail]="false" [disabled]="loading" (click)="select(v)">
+          <span slot="start" class="flag">{{ v.flag }}</span>
+          <ion-label>{{ v.label }}</ion-label>
+        </ion-item>
+      }
+    </ion-list>
+
+    <ion-button fill="clear" [disabled]="loading" (click)="backToLanguages()">{{ versionStep.back }}</ion-button>
+  }
 
   @if (loading) {
     <div class="loading">

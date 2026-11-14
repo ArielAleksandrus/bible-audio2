@@ -1,6 +1,6 @@
 import {
-  BUNDLED_CATALOG, catalogEntry, currentCatalog, languageOptions, narratorChoices, parseCatalog, resetCatalog,
-  setCatalog, versionsForLanguage, withSelectedKept,
+  BUNDLED_CATALOG, catalogEntry, currentCatalog, isDefaultVersion, languageOptions, narratorChoices, parseCatalog,
+  resetCatalog, setCatalog, versionsForLanguage, withSelectedKept,
 } from './bible-catalog';
 import { audioUrl, retargetTracks, trackId } from '../services/bible.service';
 import { Track } from '../models/track';
@@ -11,9 +11,8 @@ describe('bible catalog', () => {
 
   it('offers exactly the five versions the app has always had, in the same order', () => {
     expect(BUNDLED_CATALOG.map(e => `${e.lang}-${e.version}`)).toEqual(['pt-ara', 'en-niv', 'es-nvi', 'zh-cnvs', 'ja-jcb']);
-    expect(languageOptions().map(e => e.label)).toEqual([
-      'Português - ARA', 'English - NIV', 'Español - NVI', 'Chinese - CNVS (简体)', '日本語 - JCB',
-    ]);
+    expect(languageOptions().map(o => o.name)).toEqual(['Português', 'English', 'Español', '中文', '日本語']);
+    expect(languageOptions().map(o => o.versions.map(v => v.version))).toEqual([['ara'], ['niv'], ['nvi'], ['cnvs'], ['jcb']]);
   });
 
   it('finds a version by the regional language a Bible JSON carries', () => {
@@ -46,7 +45,8 @@ describe('catalog.json from the CDN', () => {
     setCatalog(parseCatalog({ bibles: [...BUNDLED_CATALOG, otb] })!);
     expect(versionsForLanguage('pt-br').map(e => e.version)).toEqual(['ara', 'otb']);
     expect(narratorChoices(catalogEntry('pt', 'otb')).map(n => n.id)).toEqual(['ariel', 'ana']);
-    expect(languageOptions().map(e => e.version)).toEqual(['ara', 'niv', 'nvi', 'cnvs', 'jcb']);
+    expect(languageOptions().map(o => o.lang)).toEqual(['pt', 'en', 'es', 'zh', 'ja']);
+    expect(languageOptions()[0].versions.map(v => v.version)).toEqual(['ara', 'otb']);
     expect(parseCatalog(JSON.parse(localStorage.getItem('bibleCatalog')!))).toEqual(currentCatalog());
   });
 
@@ -77,6 +77,9 @@ describe('catalog.json from the CDN', () => {
     expect(bad({ ...otb, narrators: [{ id: 'ana' }] })).toBeNull();
     expect(bad({ ...otb, narrators: [{ id: 'ana', label: 'Ana' }, { id: 'ana', label: 'Ana 2' }] })).toBeNull();
     expect(bad(BUNDLED_CATALOG[0])).toBeNull();
+    expect(bad({ ...otb, hidden: 'true' })).toBeNull();
+    expect(bad({ ...otb, hidden: 1 })).toBeNull();
+    expect(bad({ ...otb, hidden: null })).toBeNull();
   });
 
   it('keeps the version this device has selected when the new list dropped it', () => {
@@ -86,6 +89,51 @@ describe('catalog.json from the CDN', () => {
     expect(withSelectedKept(remote, previous, 'pt-ara')).toBe(remote);
     expect(withSelectedKept(remote, previous, null)).toBe(remote);
     expect(withSelectedKept(remote, previous, 'pt-xyz')).toBe(remote);
+  });
+});
+
+describe('hidden versions', () => {
+  beforeEach(() => resetCatalog());
+  afterEach(() => resetCatalog());
+
+  const otb = { lang: 'pt', version: 'otb', flag: '🇧🇷', label: 'Português - OTB' };
+  const ara = BUNDLED_CATALOG[0];
+  const others = BUNDLED_CATALOG.slice(1);
+
+  it('reads hidden only as a boolean, and keeps it only when true', () => {
+    expect(parseCatalog({ bibles: [ara, { ...otb, hidden: true }] })![1].hidden).toBe(true);
+    expect(parseCatalog({ bibles: [ara, { ...otb, hidden: false }] })![1]).toEqual(otb);
+  });
+
+  it('offers a hidden version nowhere, but still finds it for a device that has it selected', () => {
+    setCatalog(parseCatalog({ bibles: [ara, { ...otb, hidden: true }, ...others] })!);
+    expect(versionsForLanguage('pt').map(e => e.version)).toEqual(['ara']);
+    expect(languageOptions()[0].versions.map(v => v.version)).toEqual(['ara']);
+    expect(catalogEntry('pt', 'otb')?.label).toBe('Português - OTB');
+  });
+
+  it('makes the first version that is not hidden the default', () => {
+    setCatalog(parseCatalog({ bibles: [{ ...ara, hidden: true }, otb, ...others] })!);
+    expect(versionsForLanguage('pt')[0].version).toBe('otb');
+    expect(languageOptions()[0]).toMatchObject({ lang: 'pt', name: 'Português', versions: [otb] });
+  });
+
+  it('does not offer a language whose versions are all hidden', () => {
+    setCatalog(parseCatalog({ bibles: [{ ...ara, hidden: true }, { ...otb, hidden: true }, ...others] })!);
+    expect(languageOptions().map(o => o.lang)).toEqual(['en', 'es', 'zh', 'ja']);
+    expect(versionsForLanguage('pt')).toEqual([]);
+  });
+
+  it('keeps old storage keys with the version that was first, even once hidden', () => {
+    setCatalog(parseCatalog({ bibles: [{ ...ara, hidden: true }, otb, ...others] })!);
+    expect(isDefaultVersion('pt-br', 'ara')).toBe(true);
+    expect(isDefaultVersion('pt', 'otb')).toBe(false);
+  });
+
+  it('keeps a hidden version selected on this device when the new list drops it', () => {
+    const previous = [ara, { ...otb, hidden: true }, ...others];
+    const kept = withSelectedKept([...BUNDLED_CATALOG], previous, 'pt-otb');
+    expect(kept.at(-1)).toEqual({ ...otb, hidden: true });
   });
 });
 

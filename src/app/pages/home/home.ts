@@ -194,6 +194,15 @@ export class Home implements OnInit, ViewWillEnter {
     this.cdr.detectChanges();
   }
 
+  /**
+   * There is another version to switch to. `versions` leaves hidden ones
+   * out, while the version in use may be one of them (still open on this
+   * device), so this is not simply "two or more versions".
+   */
+  get canSwitchVersion(): boolean {
+    return this.versions.some(v => v !== this.currentVersion);
+  }
+
   /** Home shortcut for the version switch (the same switch is in Settings). */
   async chooseVersion() {
     const sheet = await this.actionSheets.create({
