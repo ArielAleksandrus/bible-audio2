@@ -95,6 +95,13 @@
     "speed": "播放速度",
     "download": "管理下载",
     "coming_soon": "更多选项即将推出...",
+    "credits": {
+      "title": "经文出处",
+      "text": "本应用的圣经经文来自 Open Translation Bible（OTB），以 CC BY-SA 4.0 许可协议发布。",
+      "changes": "本应用对经文作了修改（标点调整和译文修订）。",
+      "site": "OTB 网站",
+      "license": "查看许可协议"
+    },
     "storage": {
       "title": "存储空间",
       "used_by_app": "应用已使用（音频 + 计划）：",

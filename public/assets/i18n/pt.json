@@ -95,6 +95,13 @@
     "speed": "Velocidade de reprodução",
     "download": "Gerenciar downloads",
     "coming_soon": "Mais opções em breve...",
+    "credits": {
+      "title": "Créditos do texto",
+      "text": "O texto bíblico deste app é a Open Translation Bible (OTB), publicada sob a licença CC BY-SA 4.0.",
+      "changes": "Neste app, o texto foi adaptado (pontuação e revisão da tradução).",
+      "site": "Site da OTB",
+      "license": "Ver a licença"
+    },
     "storage": {
       "title": "Armazenamento",
       "used_by_app": "Usado pelo app (áudios + planos):",

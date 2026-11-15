@@ -95,6 +95,13 @@
     "speed": "再生速度",
     "download": "ダウンロードを管理",
     "coming_soon": "その他のオプションは近日公開予定...",
+    "credits": {
+      "title": "本文の出典",
+      "text": "このアプリの聖書本文は、CC BY-SA 4.0 ライセンスで公開されている Open Translation Bible（OTB）です。",
+      "changes": "このアプリでは、本文に変更を加えています（句読点の調整と翻訳の見直し）。",
+      "site": "OTB のサイト",
+      "license": "ライセンスを見る"
+    },
     "storage": {
       "title": "ストレージ",
       "used_by_app": "アプリの使用量（音声＋プラン）：",

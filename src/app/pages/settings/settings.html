@@ -262,6 +262,30 @@
       </div>
     }
 
+    <!-- TEXT CREDITS CARD (OTB is CC BY-SA 4.0: credit, licence link and note of changes are required) -->
+    <ion-card class="session-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon color="primary" name="book-outline"></ion-icon>
+          {{ 'settings.credits.title' | translate }}
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="language-info">{{ 'settings.credits.text' | translate }}</p>
+        <p class="language-note">{{ 'settings.credits.changes' | translate }}</p>
+        <div class="credit-links">
+          <a href="https://openbible.uk" target="_blank" rel="noopener noreferrer">
+            {{ 'settings.credits.site' | translate }}
+            <ion-icon name="open-outline"></ion-icon>
+          </a>
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">
+            {{ 'settings.credits.license' | translate }}
+            <ion-icon name="open-outline"></ion-icon>
+          </a>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
     <section class="future-sections">
       <p class="coming-soon">{{ 'settings.coming_soon' | translate }}</p>
     </section>

@@ -199,3 +199,19 @@ ion-card-title {
     gap: 8px;
   }
 }
+
+.credit-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 12px;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--ion-color-primary);
+    font-weight: 500;
+    text-decoration: none;
+  }
+}
