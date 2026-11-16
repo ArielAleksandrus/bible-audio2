@@ -224,14 +224,18 @@ class FilesystemAudioStorage implements AudioStorage {
     // going while the WebView is throttled in the background. Written to a
     // `.part` file first so an interrupted download is never mistaken for a
     // finished chapter by the directory index above.
+    const rename = () => Filesystem.rename({ from: partPath, to: finalPath, directory: dir, toDirectory: dir });
     try {
       await FileTransfer.downloadFile({ url: nativeSafeUrl(url), path: partUri, progress: false });
-      await Filesystem.rename({
-        from: partPath,
-        to: finalPath,
-        directory: dir,
-        toDirectory: dir,
-      });
+      try {
+        await rename();
+      } catch {
+        // Replacing a chapter with a newer revision: iOS (and possibly
+        // Android) won't rename over an existing file. The old one goes
+        // only now that the new one is complete.
+        await Filesystem.deleteFile({ path: finalPath, directory: dir }).catch(() => {});
+        await rename();
+      }
     } catch (err) {
       // A connection drop / HTTP error / full disk mid-transfer leaves a
       // truncated `.part` behind. It's never indexed, but it does keep

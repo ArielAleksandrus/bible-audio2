@@ -1,5 +1,5 @@
 import {
-  audioFormatFor, BibleCatalogEntry, BUNDLED_CATALOG, catalogEntry, currentCatalog, defaultNarrator, hasNameOnlyKeys,
+  audioFormatFor, audioRev, BibleCatalogEntry, BUNDLED_CATALOG, catalogEntry, currentCatalog, defaultNarrator, hasNameOnlyKeys,
   languageOptions, narratorChoices, parseCatalog, resetCatalog, setCatalog, setFormatSupport, versionsForLanguage,
   voiceHasBook, withSelectedKept,
 } from './bible-catalog';
@@ -255,5 +255,28 @@ describe('books and sizes of a voice in catalog.json', () => {
     expect(bad({ bytes: 10 })).toBeNull();
     expect(bad({ bytes: { opus: -1 } })).toBeNull();
     expect(bad({ bytes: { opus: '10' } })).toBeNull();
+  });
+
+  it('keeps the revision of republished books, and reads every other book as revision 1', () => {
+    const [entry] = parseCatalog({ bibles: [otb([
+      { id: 'ariel', label: 'Ariel', rev: { GEN: 2, EXO: 1 } },
+      { id: 'lucas', label: 'Lucas', rev: {} },
+    ])] })!;
+    expect(entry.narrators![0].rev).toEqual({ GEN: 2 });
+    expect(entry.narrators![1].rev).toBeUndefined();
+    expect(audioRev(entry, 'ariel', 'gen')).toBe(2);
+    expect(audioRev(entry, undefined, 'GEN')).toBe(2); // the default voice
+    expect(audioRev(entry, 'ariel', 'EXO')).toBe(1);
+    expect(audioRev(entry, 'lucas', 'GEN')).toBe(1);
+    expect(audioRev(undefined, undefined, 'GEN')).toBe(1);
+  });
+
+  it('rejects the whole list when a revision is malformed', () => {
+    const bad = (rev: unknown) => parseCatalog({ bibles: [otb([{ id: 'ariel', label: 'Ariel', rev }])] });
+    expect(bad([2])).toBeNull();
+    expect(bad({ gen: 2 })).toBeNull();
+    expect(bad({ GEN: 0 })).toBeNull();
+    expect(bad({ GEN: 1.5 })).toBeNull();
+    expect(bad({ GEN: '2' })).toBeNull();
   });
 });

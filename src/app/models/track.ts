@@ -17,4 +17,6 @@ export interface Track {
   bookIdx?: number;    // 0-65
   abbrev?: string;     // the Bible JSON's own book abbreviation, e.g. "Gn"
   narrator?: string;   // set only when the version has two or more narrators
+  // Revision of this chapter's audio on the CDN (catalog `rev`); absent = 1.
+  rev?: number;
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AvailableSpace } from '../storage/my-db';
 import { audioExt, audioStorage, idToFileName } from '../storage/audio-storage';
+import { clearStoredRevs, forgetStoredRev, setStoredRev, storedRev } from '../storage/audio-revs';
 import { Track } from '../models/track';
 import { runWithConcurrency } from '../utils/concurrency.util';
 import { isNativeApp, nativePlatform } from '../utils/platform.util';
@@ -45,6 +46,9 @@ export class AudioDownloaderService {
   private tracks: Track[] = [];
   /** Dedup concurrent downloads of the same chapter (plan preload + playlist preload). */
   private inFlight = new Map<string, Promise<void>>();
+  /** Chapters whose newer revision is being fetched (refreshIfStale), one at a time. */
+  private refreshing = new Set<string>();
+  private refreshQueue: Promise<void> = Promise.resolve();
 
   private downloadProgressSubject = new Subject<DownloadProgress>();
 
@@ -96,6 +100,7 @@ export class AudioDownloaderService {
     track.status = 'downloading';
     try {
       await audioStorage.download(track.id || track.fileName, track.url, signal);
+      setStoredRev(track.id || track.fileName, track.rev);
     } catch (err) {
       track.status = 'error';
       console.error(`Falha: ${track.title}`, err);
@@ -244,8 +249,12 @@ export class AudioDownloaderService {
       const track = this.bulkTracks.get(id);
       // Without the track (the WebView was recreated mid-batch) the file's
       // extension is unknown here: re-read the folder instead.
-      if (track) void audioStorage.markStored(id, size, audioExt(track.url));
-      else audioStorage.invalidate();
+      if (track) {
+        void audioStorage.markStored(id, size, audioExt(track.url));
+        setStoredRev(id, track.rev);
+      } else {
+        audioStorage.invalidate();
+      }
       if (track) {
         track.status = 'done';
         this.trackDownloaded$.next(track);
@@ -313,6 +322,7 @@ export class AudioDownloaderService {
 
   async removeById(trackId: string): Promise<void> {
     await audioStorage.remove(trackId);
+    forgetStoredRev(trackId);
     console.log(`Removed file ${trackId} from cache`);
   }
 
@@ -321,10 +331,57 @@ export class AudioDownloaderService {
     return (await audioStorage.has(track.id)) || (!!track.fileName && await audioStorage.has(track.fileName));
   }
 
-  /** A URL the player can open for this track if it's on the device, else null. */
+  /**
+   * A URL the player can open for this track if it's on the device, else
+   * null. When the stored file is an older revision than the catalog's, it
+   * is still what plays now, and the new one is fetched in the background to
+   * replace it (refreshIfStale): the next time, the chapter plays the new file.
+   */
   async localUrl(track: Track): Promise<string | null> {
-    return (await audioStorage.playableUrl(track.id)) ||
-      (track.fileName ? await audioStorage.playableUrl(track.fileName) : null);
+    for (const key of [track.id, track.fileName]) {
+      if (!key) continue;
+      const url = await audioStorage.playableUrl(key);
+      if (url) {
+        this.refreshIfStale(track, key);
+        return url;
+      }
+    }
+    return null;
+  }
+
+  /** Whether the audio stored under `key` is older than the revision the catalog gives this track. */
+  isStale(track: Track, key = track.id): boolean {
+    return (track.rev ?? 1) > storedRev(key);
+  }
+
+  /**
+   * Fetch the catalog's revision of a chapter stored at an older one, over
+   * the old file, without telling anyone: the old file stays usable until
+   * the new one is complete (and stays, if the download fails — it is tried
+   * again the next time the chapter is looked up). One at a time, so a
+   * queue of a whole book does not open dozens of downloads at once.
+   */
+  private refreshIfStale(track: Track, key: string): void {
+    if (!track.id || !this.isStale(track, key)) return;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    if (this.refreshing.has(track.id) || this.inFlight.has(track.id)) return;
+    this.refreshing.add(track.id);
+    this.refreshQueue = this.refreshQueue.then(async () => {
+      try {
+        if (!this.isStale(track, key)) return;
+        await audioStorage.download(track.id, track.url);
+        setStoredRev(track.id, track.rev);
+        if (key !== track.id) {
+          // It was under an old key: the new file is under the id now.
+          await audioStorage.remove(key);
+          forgetStoredRev(key);
+        }
+      } catch (err) {
+        console.warn(`Could not fetch the new revision of ${track.title}; keeping the one on the device`, err);
+      } finally {
+        this.refreshing.delete(track.id);
+      }
+    });
   }
 
   async areDownloaded(tracks: Track[]): Promise<{total: number, pendingCount: number, pending: string[]}> {
@@ -352,6 +409,7 @@ export class AudioDownloaderService {
 
   async clearAll(): Promise<void> {
     await audioStorage.clear();
+    clearStoredRevs();
   }
 
   private reportProgress(

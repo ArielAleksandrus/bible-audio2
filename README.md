@@ -102,6 +102,14 @@ Rules:
 
 Only those books are downloaded, and "complete" means all of them; the others show dimmed in the picker and simply have no audio yet. When a book is ready: upload it, add its code to `books`, update `bytes`. Once the whole Bible is narrated, drop `books`. No app update for any of it.
 
+**Replacing a book's audio after it was published** (a fix, silence added at the start…). Upload the new files over the old ones (same names) and raise the book's revision in that voice's `rev`, by ISO code; a book not listed is at revision 1:
+
+```json
+{ "id": "ariel", "label": "Ariel", "rev": { "GEN": 2, "EXO": 2 } }
+```
+
+Streaming gets the new file at once (the CDN sends no cache headers). A chapter already on the device at a lower revision keeps playing as it is, and the first time it is looked up to play with a connection the new file is fetched in the background, one chapter at a time, and replaces it once complete (`AudioDownloaderService.localUrl`); the next time it plays the new one. If that fails the old file stays and it is tried again later. The revision each chapter was downloaded at is kept in `localStorage` (`storage/audio-revs.ts`, only entries above 1); if that is lost, the republished chapters are fetched once more. `assets/tools/publicar-otb.py --refazer` (BibleProjects) re-uploads and bumps `rev` in one go.
+
 What the user sees with two or more narrators:
 
 - A narrator switch in Settings and in the player (the saved choice is per version, `PreferencesService.narratorFor`).

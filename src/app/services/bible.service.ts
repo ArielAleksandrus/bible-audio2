@@ -7,7 +7,7 @@ import { WakeLockService } from './wake-lock.service';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import {
-  AUDIO_FORMATS, AudioFormat, audioFormatFor, catalogEntry, baseLang, defaultNarrator, hasNameOnlyKeys, narratorChoices, narratorOf,
+  AUDIO_FORMATS, AudioFormat, audioFormatFor, audioRev, catalogEntry, baseLang, defaultNarrator, hasNameOnlyKeys, narratorChoices, narratorOf,
   voiceHasBook,
 } from '../data/bible-catalog';
 import { PreferencesService } from './preferences.service';
@@ -143,7 +143,9 @@ export class BibleService {
   private buildTrack(bible: Bible, bookIdx: number, chapter: number, narratorId: string | undefined): Track {
     const book = bible.books[bookIdx];
     const title = `${bookDisplayName(book)} ${chapter}`;
-    const firstNarrator = narratorChoices(catalogEntry(bible.language, bible.version))[0]?.id;
+    const entry = catalogEntry(bible.language, bible.version);
+    const firstNarrator = narratorChoices(entry)[0]?.id;
+    const rev = audioRev(entry, narratorId, BIBLE_ABBREV_ISO[bookIdx]);
 
     // Storage keys this chapter may already be saved under from before:
     // - "Gênesis 1.mp3": the key used before ids existed. It names no
@@ -171,6 +173,7 @@ export class BibleService {
       bookIdx,
       abbrev: book.abbrev,
       narrator: narratorId,
+      ...(rev > 1 ? { rev } : {}),
     };
   }
 
