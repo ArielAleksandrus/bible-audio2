@@ -20,7 +20,7 @@ The goal is simple: pick chapters or a reading plan, download the audio to the d
 
 ## Languages and translations
 
-The app ships with **OTB** in Portuguese (the owner's own text and narration), the only entry of `BUNDLED_CATALOG`. The OTB text also exists in English, Spanish, Chinese and Japanese, offered once it has narration. The licensed versions offered until then (ARA, NIV, NVI, CNVS, JCB) are being retired from the CDN; chapters already saved on a device keep playing there.
+The app uses the **Open Translation Bible (OTB)** ([openbible.uk](https://openbible.uk), [GitHub](https://github.com/OpenTranslationBible/open-bible), CC BY-SA 4.0). Portuguese is narrated in full, with two voices (Ariel and Lucas), and is the only entry of `BUNDLED_CATALOG`. The OTB text also exists in English, Spanish, Chinese and Japanese, offered once it has narration.
 
 UI strings follow the selected Bible language (`public/assets/i18n/`).
 
@@ -31,10 +31,9 @@ The Bibles on offer come from a list, not from looking at the CDN (it can't list
 ```json
 {
   "bibles": [
-    { "lang": "pt", "version": "ara", "flag": "🇧🇷", "label": "Português - ARA" },
     { "lang": "pt", "version": "otb", "flag": "🇧🇷", "label": "Português - OTB",
-      "narrators": [{ "id": "ariel", "label": "Ariel" }, { "id": "ana", "label": "Ana" }] },
-    { "lang": "pt", "version": "nvt", "flag": "🇧🇷", "label": "Português - NVT", "hidden": true }
+      "narrators": [{ "id": "ariel", "label": "Ariel" }, { "id": "lucas", "label": "Lucas" }] },
+    { "lang": "en", "version": "otb", "flag": "🇺🇸", "label": "English - OTB", "hidden": true }
   ]
 }
 ```
@@ -329,3 +328,7 @@ public/assets/
   verses/         fallback daily-reminder verses
 api/              Vercel Cron handler
 ```
+
+## License
+
+The app's code is released under the [MIT License](LICENSE). The Bible text is the [Open Translation Bible](https://openbible.uk) and keeps its own licence, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/); the MIT License does not cover it.
