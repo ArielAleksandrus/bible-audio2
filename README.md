@@ -2,7 +2,7 @@
 
 An app (PWA + native Android/iOS via Ionic & Capacitor) for listening to the Bible offline, including with the screen locked and from car Bluetooth controls.
 
-Live app: [https://bible-audio2.vercel.app/](https://bible-audio2.vercel.app/) or [https://biblia-narrada.vercel.app/](https://biblia-narrada.vercel.app/) — same build, deployed twice (see [Deploy](#deploy)).
+Site: [https://biblia.nlabs.live/](https://biblia.nlabs.live/) · Web app: [https://bible-audio2.vercel.app/](https://bible-audio2.vercel.app/). (`biblia-narrada.vercel.app` was never this project's — it belongs to someone else; don't link to it.)
 
 The goal is simple: pick chapters or a reading plan, download the audio to the device, and keep listening for over an hour without the phone having to stay awake or online.
 
@@ -284,22 +284,20 @@ App version is read from `package.json` (`environment.appVersion`) and shown on 
 
 ## Deploy
 
-The same repo is deployed as **two separate Vercel projects** — `bible-audio2` (original URL, already had users before the rename) and `biblia-narrada` (new branded domain) — rather than two domains on one project, since a second `.vercel.app` alias on a single project requires a paid plan. Both build independently on every push to `master`. The production build registers `ngsw-worker.js`. The store apps read their over-the-air updates from `bible-audio2.vercel.app/ota/` (see [Versions and updates](#versions-and-updates)).
+The web app is deployed as one Vercel project, `bible-audio2` (bible-audio2.vercel.app), built on every push to `master`. The landing site (biblia.nlabs.live / bible.nlabs.live) is separate: see `site/build.py`. The production build registers `ngsw-worker.js`. The store apps read their over-the-air updates from `bible-audio2.vercel.app/ota/` (see [Versions and updates](#versions-and-updates)).
 
-The daily-reminder function (`api/send-daily-reminder.ts`) needs these Vercel environment variables (not committed), set separately on **each** project:
+The daily-reminder function (`api/send-daily-reminder.ts`) needs these Vercel environment variables (not committed), set on the Vercel project:
 
 | Variable | Purpose |
 |---|---|
 | `CRON_SECRET` | Vercel Cron `Authorization` bearer token |
 | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web Push VAPID pair (public key also in `environment.ts`) |
 | `FIREBASE_SERVICE_ACCOUNT` | Firebase Admin JSON, as a string |
-| `ENABLE_DAILY_REMINDER_CRON` | Must be `true` on **exactly one** of the two projects — both register the same cron against the same Firestore data, so leaving it unset on the other prevents every subscriber getting the daily push twice |
+| `ENABLE_DAILY_REMINDER_CRON` | Must be `true` for the cron to send the daily push |
 
-`api/plan-stats.ts` keeps the global per-plan counters (`planStats/{planId}`: `starts`, `completions`, `listens`) behind the "most listened" sort. It only needs `FIREBASE_SERVICE_ACCOUNT`, on **both** projects. It is public by design and accepts nothing but `{ planId, event }` for a known plan. The native apps call it at `environment.apiOrigin`.
+`api/plan-stats.ts` keeps the global per-plan counters (`planStats/{planId}`: `starts`, `completions`, `listens`) behind the "most listened" sort. It only needs `FIREBASE_SERVICE_ACCOUNT`. It is public by design and accepts nothing but `{ planId, event }` for a known plan. The native apps call it at `environment.apiOrigin`.
 
 Sign in with Apple on the web needs the Apple provider configured in Firebase first: see [docs/apple-sign-in-web.md](docs/apple-sign-in-web.md).
-
-Both projects point at the same Firebase project, so `biblia-narrada.vercel.app` also needs to be added under Firebase Console → Authentication → Settings → Authorized domains for Google sign-in to work there.
 
 Firestore rules live in `firestore.rules` (paste them into Firebase Console → Firestore → Rules to deploy): each signed-in user can only read/write `users/{uid}/**`; devices can create/overwrite/delete their own `push_subscriptions/{deviceId}` but not read any; `verses/{lang}` and `planStats/{planId}` are closed to clients.
 

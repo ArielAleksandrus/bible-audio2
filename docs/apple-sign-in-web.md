@@ -24,10 +24,11 @@ Nothing here goes in the repository: the key file and its ids are typed into the
 
 ## 3. Authorized domains (Authentication → Settings → Authorized domains)
 
-Both sites must be listed, as they already are for Google sign-in:
+The web app's domain must be listed, as it already is for Google sign-in:
 
 - `bible-audio2.vercel.app`
-- `biblia-narrada.vercel.app`
+
+(`biblia-narrada.vercel.app` is not ours: if it is listed, remove it.)
 
 ## Checking it
 
