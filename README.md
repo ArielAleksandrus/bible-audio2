@@ -2,7 +2,17 @@
 
 An app (PWA + native Android/iOS via Ionic & Capacitor) for listening to the Bible offline, including with the screen locked and from car Bluetooth controls.
 
-Site: [https://biblia.nlabs.live/](https://biblia.nlabs.live/) · Web app: [https://bible-audio2.vercel.app/](https://bible-audio2.vercel.app/). (`biblia-narrada.vercel.app` was never this project's — it belongs to someone else; don't link to it.)
+<p>
+  <a href="https://play.google.com/store/apps/details?id=live.nlabs.biblia"><img src="site/img/badges/google-play-en.png" alt="Get it on Google Play" height="48"></a>
+  &nbsp;
+  <a href="https://apps.apple.com/app/id6832831597"><img src="site/img/badges/app-store-en.svg" alt="Download on the App Store" height="48"></a>
+</p>
+
+**Site:** [https://biblia.nlabs.live](https://biblia.nlabs.live) · **Web app:** [bible-audio2.vercel.app](https://bible-audio2.vercel.app/) · [Google Play](https://play.google.com/store/apps/details?id=live.nlabs.biblia) · [App Store](https://apps.apple.com/app/id6832831597)
+
+**Bible text:** [Open Translation Bible (OTB)](https://openbible.uk) — [site](https://openbible.uk) · [GitHub](https://github.com/OpenTranslationBible/open-bible) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). See [Credits](#credits).
+
+(`biblia-narrada.vercel.app` was never this project's — it belongs to someone else; don't link to it.)
 
 The goal is simple: pick chapters or a reading plan, download the audio to the device, and keep listening for over an hour without the phone having to stay awake or online.
 
@@ -326,6 +336,11 @@ public/assets/
   verses/         fallback daily-reminder verses
 api/              Vercel Cron handler
 ```
+
+## Credits
+
+- **Bible text:** the [Open Translation Bible (OTB)](https://openbible.uk), by the Open Translation Bible project — website [openbible.uk](https://openbible.uk), source [github.com/OpenTranslationBible/open-bible](https://github.com/OpenTranslationBible/open-bible). Licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Thank you for making the Scriptures freely available.
+- **Store badges:** Google Play and the Google Play logo are trademarks of Google LLC. App Store and the Apple logo are trademarks of Apple Inc.
 
 ## License
 
