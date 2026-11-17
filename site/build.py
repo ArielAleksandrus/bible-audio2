@@ -44,8 +44,6 @@ def canonical(lang: str) -> str:
 
 DEPLOY_TARGET = "nlabs@nlabs.live:/home/nlabs/sites/biblia-narrada/"
 
-ICON_PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3.6 1.8 13.8 12 3.6 22.2a1.6 1.6 0 0 1-.6-1.3V3.1c0-.5.2-1 .6-1.3Zm11.4 11.4 2.6 2.6-11.2 6.4 8.6-9Zm3.9-3.9 3 1.7c.8.5.8 1.6 0 2.1l-3 1.7-2.8-2.8 2.8-2.7ZM6.4 1.8l11.2 6.4-2.6 2.6-8.6-9Z"/></svg>'
-ICON_APPLE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.5 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.6-1-2.6-4.2ZM13.9 4.9c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1.1 3 1.1.1 2.3-.6 3-1.4Z"/></svg>'
 ICON_WEB = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm-9 9h18M12 3c2.5 2.5 3.6 5.6 3.6 9s-1.1 6.5-3.6 9c-2.5-2.5-3.6-5.6-3.6-9S9.5 5.5 12 3Z"/></svg>'
 ICON_GITHUB = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5a10.5 10.5 0 0 0-3.3 20.5c.5.1.7-.2.7-.5v-1.8c-2.9.6-3.5-1.4-3.5-1.4-.5-1.2-1.2-1.5-1.2-1.5-1-.7 0-.6 0-.6 1 .1 1.6 1.1 1.6 1.1.9 1.6 2.5 1.2 3.1.9.1-.7.4-1.2.7-1.4-2.3-.3-4.8-1.2-4.8-5.2 0-1.1.4-2.1 1.1-2.8-.1-.3-.5-1.4.1-2.8 0 0 .9-.3 2.9 1.1a10 10 0 0 1 5.3 0c2-1.4 2.9-1.1 2.9-1.1.6 1.4.2 2.5.1 2.8.7.7 1.1 1.7 1.1 2.8 0 4-2.5 4.9-4.8 5.2.4.3.7 1 .7 2v2.9c0 .3.2.6.7.5A10.5 10.5 0 0 0 12 1.5Z"/></svg>'
 ICON_LINK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>'
@@ -130,8 +128,8 @@ def page(lang: str) -> str:
           <h1>{e(t['app_name'])}</h1>
           <p class="tagline">{e(t['tagline'])}</p>
           <div class="stores">
-            <a class="store" href="{PLAY_URL}" rel="noopener">{ICON_PLAY}<span><small>{e(t['get_it_on'])}</small>Google Play</span></a>
-            <a class="store" href="{IOS_URL}" rel="noopener">{ICON_APPLE}<span><small>{e(t['download_on'])}</small>App Store</span></a>
+            <a class="store" href="{PLAY_URL}" rel="noopener"><img src="../assets/badges/google-play-{lang}.png" alt="{e(t['get_it_on'])} Google Play" height="54"></a>
+            <a class="store" href="{IOS_URL}" rel="noopener"><img src="../assets/badges/app-store-{lang}.svg" alt="{e(t['download_on'])} App Store" height="54"></a>
           </div>
           <a class="web-link" href="{WEB_URL}" rel="noopener">{ICON_WEB}{e(t['use_web'])}</a>
         </div>
@@ -253,6 +251,8 @@ def build() -> None:
     shutil.copy(HERE / "style.css", DIST / "assets" / "style.css")
     shutil.copy(HERE / "img/icon-512.png", DIST / "assets/icon-512.png")
     shutil.copy(HERE / "img/icon-192.png", DIST / "assets/icon-192.png")
+    # Official store badges, one per language (Apple: toolbox.marketingtools.apple.com; Google: play.google.com/intl/en_us/badges)
+    shutil.copytree(HERE / "img/badges", DIST / "assets/badges")
     for lang in LANGS:
         (DIST / lang).mkdir()
         (DIST / lang / "index.html").write_text(page(lang), encoding="utf-8")
