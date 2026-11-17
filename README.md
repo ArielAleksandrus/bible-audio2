@@ -8,29 +8,27 @@ An app (PWA + native Android/iOS via Ionic & Capacitor) for listening to the Bib
   <a href="https://apps.apple.com/app/id6832831597"><img src="site/img/badges/app-store-en.svg" alt="Download on the App Store" height="48"></a>
 </p>
 
-**Site:** [https://biblia.nlabs.live](https://biblia.nlabs.live) · **Web app:** [bible-audio2.vercel.app](https://bible-audio2.vercel.app/) · [Google Play](https://play.google.com/store/apps/details?id=live.nlabs.biblia) · [App Store](https://apps.apple.com/app/id6832831597)
+**Site:** [https://biblia.nlabs.live](https://biblia.nlabs.live) · **Web app:** [bible-audio2.vercel.app](https://bible-audio2.vercel.app/)
 
 **Bible text:** [Open Translation Bible (OTB)](https://openbible.uk) — [site](https://openbible.uk) · [GitHub](https://github.com/OpenTranslationBible/open-bible) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). See [Credits](#credits).
-
-(`biblia-narrada.vercel.app` was never this project's — it belongs to someone else; don't link to it.)
 
 The goal is simple: pick chapters or a reading plan, download the audio to the device, and keep listening for over an hour without the phone having to stay awake or online.
 
 ## What it does
 
 - **Listen by book and chapter** — choose a translation, then any range of chapters. The first chapter starts as soon as it is cached; the rest of the selection downloads in the background.
-- **Offline playback** — chapter MP3s and Bible text live in IndexedDB on the device. After a download, Wi‑Fi is not required.
+- **Offline playback** — chapter audio and Bible text live in IndexedDB on the device. After a download, Wi‑Fi is not required.
 - **Download the whole Bible** — about 1.3 GB. The button is shown only when the device has enough free space; a warning is shown on cellular data.
 - **Reading plans** — start, resume, mark days complete, and play a day’s portions as a playlist. Progress is stored locally and can sync across devices.
 - **Lock screen and car controls** — play, pause, next, previous, and seek go through the Media Session API (notification shade, headset, Bluetooth head unit).
 - **Continuous chapters** — the next chapter is pre-downloaded into a blob and started on a second `<audio>` element *before* the current one finishes, so mobile browsers do not treat the handoff as a new autoplay (which they would block).
 - **Bible text beside the audio** — when you pick chapters on Home, the matching text is shown while it plays.
 - **Daily verse reminder** — optional Web Push, once a day, in the language of the selected Bible.
-- **Optional Google sign-in** — plan progress and completion counts sync through Firestore. The app works fully without an account.
+- **Optional sign-in (Google or Apple)** — plan progress and completion counts sync through Firestore. The app works fully without an account.
 
 ## Languages and translations
 
-The app uses the **Open Translation Bible (OTB)** ([openbible.uk](https://openbible.uk), [GitHub](https://github.com/OpenTranslationBible/open-bible), CC BY-SA 4.0). Portuguese is narrated in full, with two voices (Ariel and Lucas), and is the only entry of `BUNDLED_CATALOG`. The OTB text also exists in English, Spanish, Chinese and Japanese, offered once it has narration.
+The app uses the **Open Translation Bible (OTB)** (see [Credits](#credits)). Portuguese is narrated in full, with two voices (Ariel and Lucas), and is the only entry of `BUNDLED_CATALOG`. The OTB text also exists in English, Spanish, Chinese and Japanese, offered once it has narration.
 
 UI strings follow the selected Bible language (`public/assets/i18n/`).
 
@@ -58,7 +56,7 @@ What protects the apps from a bad edit:
 - The version a device has selected stays available on that device even if the file drops it. A narrator that is removed is simply no longer offered: whoever used it goes back to the version's first voice.
 - **A new language is not only data.** The interface texts (`public/assets/i18n/{lang}.json`) ship inside the app, so an entry in a language missing from `UI_LANGUAGES` is skipped until an app update (over the air) adds its texts and the language to that constant.
 
-Keep `BUNDLED_CATALOG` reasonably close to the file (update it when the app is being released anyway): it is what a first run without a connection sees. A local copy of the file is kept at `BibleProjects/assets/catalog.json`.
+Keep `BUNDLED_CATALOG` reasonably close to the file (update it when the app is being released anyway): it is what a first run without a connection sees.
 
 ### Versions and narrators: where the files go
 
@@ -117,7 +115,7 @@ Only those books are downloaded, and "complete" means all of them; the others sh
 { "id": "ariel", "label": "Ariel", "rev": { "GEN": 2, "EXO": 2 } }
 ```
 
-Streaming gets the new file at once (the CDN sends no cache headers). A chapter already on the device at a lower revision keeps playing as it is, and the first time it is looked up to play with a connection the new file is fetched in the background, one chapter at a time, and replaces it once complete (`AudioDownloaderService.localUrl`); the next time it plays the new one. If that fails the old file stays and it is tried again later. The revision each chapter was downloaded at is kept in `localStorage` (`storage/audio-revs.ts`, only entries above 1); if that is lost, the republished chapters are fetched once more. `assets/tools/publicar-otb.py --refazer` (BibleProjects) re-uploads and bumps `rev` in one go.
+Streaming gets the new file at once (the CDN sends no cache headers). A chapter already on the device at a lower revision keeps playing as it is, and the first time it is looked up to play with a connection the new file is fetched in the background, one chapter at a time, and replaces it once complete (`AudioDownloaderService.localUrl`); the next time it plays the new one. If that fails the old file stays and it is tried again later. The revision each chapter was downloaded at is kept in `localStorage` (`storage/audio-revs.ts`, only entries above 1); if that is lost, the republished chapters are fetched once more.
 
 What the user sees with two or more narrators:
 
@@ -147,13 +145,13 @@ Starting a plan builds a playlist from the current day plus the next 7 days of a
 
 - **Home** — language/version picker, book/chapter selection, full-Bible download, text viewer.
 - **Plans** — available / started / completed plans, day table, play a day, resume where you stopped.
-- **Settings** — storage usage, clear downloaded audio, reset language, Google sign-in, daily reminders, app version.
+- **Settings** — storage usage, clear downloaded audio, reset language, sign-in, daily reminders, app version.
 
 A global mini-player (skip ±10s, previous/next, seek) stays on screen while something is playing.
 
 ## How playback works
 
-Audio files are fetched from a Cloudflare R2 CDN (`…/audios/{lang}/{VERSION}/{BOOK}/{BOOK} {chapter}.mp3`) and stored as blobs in IndexedDB (`audio-db` → `files`). Bible JSON, plan state, an analytics queue, and plan completion counts use the same database.
+Audio files are fetched from a Cloudflare R2 CDN (see [where the files go](#versions-and-narrators-where-the-files-go)) and stored as blobs in IndexedDB (`audio-db` → `files`). Bible JSON, plan state, an analytics queue, and plan completion counts use the same database.
 
 Two `HTMLAudioElement`s are used:
 
@@ -181,7 +179,7 @@ What changes on native (`isNativeApp()` in `src/app/utils/platform.util.ts`):
 
 | | Web / PWA | Native app |
 |---|---|---|
-| Playback | `WebAudioEngine` — two `<audio>` elements + all the locked-screen workarounds (see `.claude/skills/gapless-audio-lockscreen`) | `NativeAudioEngine` — the whole playlist goes to the OS player via [`@dwbn/capacitor-plugin-playlist`](https://www.npmjs.com/package/@dwbn/capacitor-plugin-playlist): Media3/ExoPlayer foreground service on Android, AVQueuePlayer on iOS. Lock screen, notification, headset and car Bluetooth controls are native. |
+| Playback | `WebAudioEngine` — two `<audio>` elements + the locked-screen workarounds described in [How playback works](#how-playback-works) | `NativeAudioEngine` — the whole playlist goes to the OS player via [`@dwbn/capacitor-plugin-playlist`](https://www.npmjs.com/package/@dwbn/capacitor-plugin-playlist): Media3/ExoPlayer foreground service on Android, AVQueuePlayer on iOS. Lock screen, notification, headset and car Bluetooth controls are native. |
 | Downloaded chapters | IndexedDB blobs | Files in the app's data dir (`audios/*.m4a` / `*.mp3`), downloaded with the native HTTP stack (`@capacitor/file-transfer`), so the OS player can open them and downloads continue in the background |
 | Bible JSON | `fetch` with progress | native HTTP (no CORS) |
 | Google sign-in | Firebase popup | native account picker (`@capacitor-firebase/authentication`), then the same Firebase JS SDK/Firestore sync |
@@ -229,38 +227,9 @@ So a web-only release is: bump the version in `package.json`, merge to `master`.
 
 After a new **major** is live in a store, write its version in `ota-store.json` (`{ "android": "3.0.0", "ios": null }`) and deploy: apps still on the older shell then get a dismissible notice that leads to the store, since they no longer receive anything over the air.
 
-### Before the first store upload
+### App ids
 
-- [x] **App id** — Android uses `live.nlabs.biblia` (`capacitor.config.ts`,
-      `applicationId`); `live.nlabs.bible` is permanently taken on Google Play
-      by an old app. The Java namespace and the iOS bundle id are still
-      `live.nlabs.bible`. Both packages are registered in Firebase. The Play
-      package cannot change after publishing.
-- [ ] **Privacy policy URL** — both stores require one; any public page works
-      (e.g. a `/privacy` page on the Vercel deploy or on `biblia.nlabs.live`).
-- [ ] **Firebase native apps** — add an Android app and an iOS app with that id
-      in the Firebase console, then put `google-services.json` in
-      `android/app/` and `GoogleService-Info.plist` in `ios/App/App/` (add it to
-      the Xcode target). Without them native Google sign-in fails; everything
-      else works.
-- [ ] **Android Google sign-in** — register the SHA-1 of the debug and
-      release/Play signing keys in the Firebase Android app.
-- [ ] **iOS Google sign-in** — replace `REPLACE_WITH_REVERSED_CLIENT_ID` in
-      `ios/App/App/Info.plist` with `REVERSED_CLIENT_ID` from
-      `GoogleService-Info.plist`.
-- [x] **Sign in with Apple** — App Store guideline 4.8 requires it when Google
-      sign-in is offered. iOS only: `App/App.entitlements`, `'apple.com'` in
-      `FirebaseAuthentication.providers`, a button in Settings. Still needs the
-      Apple provider enabled in Firebase Auth and the capability on the App ID.
-- [ ] **iOS release (Codemagic `ios-loja`)** — register the bundle id
-      `live.nlabs.bible` (with Sign in with Apple), create the app in App Store
-      Connect, reuse the `carteira_pro_asc` App Store Connect integration in Codemagic,
-      then start the workflow from the button; every build goes to TestFlight.
-- [ ] **Store icon** — `assets/icon-only.png` is cropped from the PWA icon
-      (which has a black border and a generator watermark); replace it with a
-      clean 1024×1024 master and regenerate.
-- [ ] Test on real devices: locked-screen playback across chapters, car
-      Bluetooth next/previous, offline playback after a full download.
+Android uses `live.nlabs.biblia` (`live.nlabs.bible` is permanently taken on Google Play by an old app); the Java namespace and the iOS bundle id are `live.nlabs.bible`.
 
 ## Tech stack
 
@@ -294,7 +263,7 @@ App version is read from `package.json` (`environment.appVersion`) and shown on 
 
 ## Deploy
 
-The web app is deployed as one Vercel project, `bible-audio2` (bible-audio2.vercel.app), built on every push to `master`. The landing site (biblia.nlabs.live / bible.nlabs.live) is separate: see `site/build.py`. The production build registers `ngsw-worker.js`. The store apps read their over-the-air updates from `bible-audio2.vercel.app/ota/` (see [Versions and updates](#versions-and-updates)).
+The web app is deployed on Vercel (bible-audio2.vercel.app) on every push to `master`. The landing site (biblia.nlabs.live / bible.nlabs.live) is separate: see `site/build.py`. The production build registers `ngsw-worker.js`. The store apps read their over-the-air updates from `bible-audio2.vercel.app/ota/` (see [Versions and updates](#versions-and-updates)).
 
 The daily-reminder function (`api/send-daily-reminder.ts`) needs these Vercel environment variables (not committed), set on the Vercel project:
 
