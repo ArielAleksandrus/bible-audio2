@@ -57,6 +57,17 @@ FEATURE_ICONS = [  # offline, lock, car, plans, text, account
 ]
 
 
+def og_image(lang: str) -> str:
+    """Share preview: the App Store launch banner (Portuguese art) on /pt/, the icon elsewhere."""
+    if lang == "pt":
+        url = canonical(lang).replace(f"/{lang}/", "/assets/og-pt.jpg")
+        return (f'  <meta property="og:image" content="{url}">\n'
+                '  <meta property="og:image:width" content="1280">\n'
+                '  <meta property="og:image:height" content="720">\n'
+                '  <meta name="twitter:card" content="summary_large_image">')
+    return f'  <meta property="og:image" content="{canonical(lang).replace(f'/{lang}/', '/assets/icon-512.png')}">'
+
+
 def e(s: str) -> str:
     return html.escape(s, quote=True)
 
@@ -102,7 +113,7 @@ def page(lang: str) -> str:
   <meta property="og:title" content="{e(t['title'])}">
   <meta property="og:description" content="{e(t['meta_description'])}">
   <meta property="og:url" content="{canonical(lang)}">
-  <meta property="og:image" content="{canonical(lang)}../assets/icon-512.png">
+{og_image(lang)}
   <meta name="theme-color" content="#0f3d3e">
   <link rel="icon" href="../assets/icon-192.png">
   <link rel="apple-touch-icon" href="../assets/icon-192.png">
@@ -251,6 +262,7 @@ def build() -> None:
     shutil.copy(HERE / "style.css", DIST / "assets" / "style.css")
     shutil.copy(HERE / "img/icon-512.png", DIST / "assets/icon-512.png")
     shutil.copy(HERE / "img/icon-192.png", DIST / "assets/icon-192.png")
+    shutil.copy(HERE / "img/og-pt.jpg", DIST / "assets/og-pt.jpg")
     # Official store badges, one per language (Apple: toolbox.marketingtools.apple.com; Google: play.google.com/intl/en_us/badges)
     shutil.copytree(HERE / "img/badges", DIST / "assets/badges")
     for lang in LANGS:
