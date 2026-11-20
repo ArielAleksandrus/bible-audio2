@@ -67,6 +67,13 @@ export interface BibleNarrator {
    * is fetched in the background to replace it (AudioDownloaderService).
    */
   rev?: Record<string, number>;
+  /**
+   * Revision of single chapters, by ISO code and chapter number, for chapters
+   * re-narrated on their own (a text correction): { JER: { "51": 3 } }. A
+   * chapter's revision is the larger of this and its book's `rev`, so only
+   * the chapters listed are fetched again. Older app versions ignore the field.
+   */
+  chapterRev?: Record<string, Record<string, number>>;
 }
 
 /**
@@ -92,6 +99,12 @@ export interface BibleCatalogEntry {
   formats?: AudioFormat[];
   /** Not offered for choosing; still opens on a device that already has it selected. */
   hidden?: boolean;
+  /**
+   * Revision of the version's text on the CDN (jsons/{lang}-{version}.json),
+   * raised when the text is corrected. A device holding a lower one keeps
+   * using it and fetches the new text in the background. Absent = 1.
+   */
+  textRev?: number;
 }
 
 /** One language in the language picker, with the versions it offers (default first, never empty). */
@@ -182,7 +195,7 @@ export function parseCatalog(raw: unknown): BibleCatalogEntry[] | null {
   const seen = new Set<string>();
   for (const item of list) {
     if (!item || typeof item !== 'object') return null;
-    const { lang, version, label, flag, narrators, hidden, formats } = item as Record<string, unknown>;
+    const { lang, version, label, flag, narrators, hidden, formats, textRev } = item as Record<string, unknown>;
     if (typeof lang !== 'string' || !LANG.test(lang)) return null;
     if (typeof version !== 'string' || !VERSION.test(version)) return null;
     if (!text(label)) return null;
@@ -191,13 +204,16 @@ export function parseCatalog(raw: unknown): BibleCatalogEntry[] | null {
     if (seen.has(`${lang}-${version}`)) return null;
     seen.add(`${lang}-${version}`);
 
+    if (textRev !== undefined && (typeof textRev !== 'number' || !Number.isInteger(textRev) || textRev < 1)) return null;
+
     const entry: BibleCatalogEntry = { lang, version, flag: flag ?? '', label };
+    if (typeof textRev === 'number' && textRev > 1) entry.textRev = textRev;
     if (narrators !== undefined) {
       if (!Array.isArray(narrators)) return null;
       const ids = new Set<string>();
       const voices: BibleNarrator[] = [];
       for (const n of narrators) {
-        const { id, label: name, books, bytes, rev } = (n ?? {}) as Record<string, unknown>;
+        const { id, label: name, books, bytes, rev, chapterRev } = (n ?? {}) as Record<string, unknown>;
         if (typeof id !== 'string' || !NARRATOR_ID.test(id) || !text(name) || ids.has(id)) return null;
         ids.add(id);
         const voice: BibleNarrator = { id, label: name };
@@ -222,6 +238,20 @@ export function parseCatalog(raw: unknown): BibleCatalogEntry[] | null {
             if (r > 1) revs[iso] = r;
           }
           if (Object.keys(revs).length) voice.rev = revs;
+        }
+        if (chapterRev !== undefined) {
+          if (!chapterRev || typeof chapterRev !== 'object' || Array.isArray(chapterRev)) return null;
+          const byBook: Record<string, Record<string, number>> = {};
+          for (const [iso, chapters] of Object.entries(chapterRev)) {
+            if (!BOOK_ISO.test(iso) || !chapters || typeof chapters !== 'object' || Array.isArray(chapters)) return null;
+            const revs: Record<string, number> = {};
+            for (const [ch, r] of Object.entries(chapters)) {
+              if (!/^[1-9]\d*$/.test(ch) || typeof r !== 'number' || !Number.isInteger(r) || r < 1) return null;
+              if (r > 1) revs[ch] = r;
+            }
+            if (Object.keys(revs).length) byBook[iso] = revs;
+          }
+          if (Object.keys(byBook).length) voice.chapterRev = byBook;
         }
         voices.push(voice);
       }
@@ -312,9 +342,16 @@ export function voiceHasBook(entry: BibleCatalogEntry | undefined, narratorId: s
   return !books || books.includes(iso.toUpperCase());
 }
 
-/** Revision of a book's audio in a voice (by ISO code): 1 unless the catalog says otherwise. */
-export function audioRev(entry: BibleCatalogEntry | undefined, narratorId: string | undefined, iso: string): number {
-  return narratorOf(entry, narratorId)?.rev?.[iso.toUpperCase()] ?? 1;
+/**
+ * Revision of a book's audio in a voice (by ISO code), or of one chapter when
+ * `chapter` is given (the larger of the chapter's and the book's): 1 unless
+ * the catalog says otherwise.
+ */
+export function audioRev(entry: BibleCatalogEntry | undefined, narratorId: string | undefined, iso: string, chapter?: number): number {
+  const voice = narratorOf(entry, narratorId);
+  const book = voice?.rev?.[iso.toUpperCase()] ?? 1;
+  const own = chapter === undefined ? undefined : voice?.chapterRev?.[iso.toUpperCase()]?.[String(chapter)];
+  return Math.max(book, own ?? 1);
 }
 
 /** The id of a version's default voice: its first narrator, or undefined without any. */

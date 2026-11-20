@@ -14,6 +14,10 @@ import { PreferencesService } from './preferences.service';
 import { bookDisplayName } from '../utils/bible-text.util';
 import { saveBibleVersion, getBibleVersion, getAllSavedBibles, deleteBibleVersion, AvailableSpace } from '../storage/my-db';
 import { isNativeApp, nativePlatform } from '../utils/platform.util';
+import { setStoredRev, storedRev } from '../storage/audio-revs';
+
+/** Key prefix, in the revisions map, of a saved Bible text (catalog `textRev`). */
+const TEXT_REV_PREFIX = 'text:';
 
 
 export const BIBLE_CDN_URL = "https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev";
@@ -145,7 +149,7 @@ export class BibleService {
     const title = `${bookDisplayName(book)} ${chapter}`;
     const entry = catalogEntry(bible.language, bible.version);
     const firstNarrator = narratorChoices(entry)[0]?.id;
-    const rev = audioRev(entry, narratorId, BIBLE_ABBREV_ISO[bookIdx]);
+    const rev = audioRev(entry, narratorId, BIBLE_ABBREV_ISO[bookIdx], chapter);
 
     // Storage keys this chapter may already be saved under from before:
     // - "Gênesis 1.mp3": the key used before ids existed. It names no
@@ -193,9 +197,13 @@ export class BibleService {
 
   async downloadAndSaveBible(language: string, versionName: string): Promise<Bible|undefined> {
     const url = `${BIBLE_CDN_URL}/jsons/${language}-${versionName}.json`;
+    const key = language + "-" + versionName;
+    const textRev = catalogEntry(language, versionName)?.textRev ?? 1;
     let found = await this.loadBibleVersion(language, versionName);
-    if(found)
+    if(found) {
+      if (textRev > storedRev(TEXT_REV_PREFIX + key)) void this.refreshText(url, key, versionName, language, textRev);
       return found;
+    }
 
     const space = new AvailableSpace();
     if (!(await space.isSafe(50))) { // deixa 50MB livres
@@ -207,7 +215,8 @@ export class BibleService {
       this.textProgressSubject.next({ loaded: 0, total: 0 });
       const bibleData = await this.fetchJsonWithProgress(url);
 
-      await saveBibleVersion(language + "-" + versionName, versionName, language, language + "-" + versionName, bibleData);
+      await saveBibleVersion(key, versionName, language, key, bibleData);
+      setStoredRev(TEXT_REV_PREFIX + key, textRev);
 
       return <Bible>bibleData;
     } catch (err) {
@@ -218,10 +227,25 @@ export class BibleService {
     return undefined;
   }
 
+  /**
+   * Fetch a corrected text (catalog `textRev` above the stored one) over the
+   * saved copy, quietly: the old text stays in use until the new one is
+   * saved, and stays if the download fails (tried again on the next open).
+   */
+  private async refreshText(url: string, key: string, versionName: string, language: string, textRev: number): Promise<void> {
+    try {
+      const bibleData = await this.fetchJsonWithProgress(url, false);
+      await saveBibleVersion(key, versionName, language, key, bibleData);
+      setStoredRev(TEXT_REV_PREFIX + key, textRev);
+    } catch (err) {
+      console.warn('Texto corrigido não baixado agora:', err);
+    }
+  }
+
   // fetch() alone gives no progress feedback for a multi-MB response — read
   // the stream manually so the UI can show real download progress instead
   // of an indefinite "loading" spinner.
-  private async fetchJsonWithProgress(url: string): Promise<unknown> {
+  private async fetchJsonWithProgress(url: string, progress = true): Promise<unknown> {
     if (isNativeApp()) {
       // Native HTTP: the WebView's origin (https://localhost /
       // capacitor://localhost) isn't one the CDN's CORS policy knows about.
@@ -246,7 +270,7 @@ export class BibleService {
       if (done) break;
       chunks.push(value);
       loaded += value.length;
-      this.textProgressSubject.next({ loaded, total });
+      if (progress) this.textProgressSubject.next({ loaded, total });
     }
 
     const text = await new Blob(chunks as BlobPart[]).text();

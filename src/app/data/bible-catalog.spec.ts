@@ -271,6 +271,40 @@ describe('books and sizes of a voice in catalog.json', () => {
     expect(audioRev(undefined, undefined, 'GEN')).toBe(1);
   });
 
+  it('reads a chapter revision as the larger of its own and its book\'s, only for the chapters listed', () => {
+    const [entry] = parseCatalog({ bibles: [otb([
+      { id: 'ariel', label: 'Ariel', rev: { JER: 2 }, chapterRev: { JER: { '51': 3, '47': 1 }, EXO: { '2': 2 } } },
+    ])] })!;
+    expect(entry.narrators![0].chapterRev).toEqual({ JER: { '51': 3 }, EXO: { '2': 2 } });
+    expect(audioRev(entry, 'ariel', 'JER', 51)).toBe(3);
+    expect(audioRev(entry, 'ariel', 'JER', 47)).toBe(2); // the book's revision
+    expect(audioRev(entry, 'ariel', 'jer', 1)).toBe(2);
+    expect(audioRev(entry, 'ariel', 'EXO', 2)).toBe(2);
+    expect(audioRev(entry, 'ariel', 'EXO', 3)).toBe(1);
+    expect(audioRev(entry, 'ariel', 'JER')).toBe(2); // no chapter: the book's
+  });
+
+  it('keeps the text revision of a version, and rejects a malformed one', () => {
+    const one = (textRev: unknown) => parseCatalog({ bibles: [{ ...otb([]), textRev }] });
+    expect(one(3)![0].textRev).toBe(3);
+    expect(one(1)![0].textRev).toBeUndefined();
+    expect(one(undefined)![0].textRev).toBeUndefined();
+    expect(one(0)).toBeNull();
+    expect(one(1.5)).toBeNull();
+    expect(one('2')).toBeNull();
+  });
+
+  it('rejects the whole list when a chapter revision is malformed', () => {
+    const bad = (chapterRev: unknown) => parseCatalog({ bibles: [otb([{ id: 'ariel', label: 'Ariel', chapterRev }])] });
+    expect(bad({ JER: { '51': 3 } })).not.toBeNull();
+    expect(bad([])).toBeNull();
+    expect(bad({ XYZ1: { '1': 2 } })).toBeNull();
+    expect(bad({ JER: [3] })).toBeNull();
+    expect(bad({ JER: { '0': 2 } })).toBeNull();
+    expect(bad({ JER: { a: 2 } })).toBeNull();
+    expect(bad({ JER: { '5': 1.5 } })).toBeNull();
+  });
+
   it('rejects the whole list when a revision is malformed', () => {
     const bad = (rev: unknown) => parseCatalog({ bibles: [otb([{ id: 'ariel', label: 'Ariel', rev }])] });
     expect(bad([2])).toBeNull();
