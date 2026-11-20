@@ -18,6 +18,9 @@ Ouça a Bíblia sem internet, com a tela bloqueada e pelos botões do carro. Pla
 Palavras-chave:
 sagrada,escritura,evangelho,jesus,deus,salmos,versículo,devocional,leitura,plano,oração,cristão
 
+Novidades (3.1.0):
+Os capítulos já baixados são atualizados automaticamente quando a narração é revisada. Créditos da Open Translation Bible nas Configs.
+
 Descrição:
 Bíblia Narrada é um app para ouvir a Bíblia em áudio, onde você estiver — mesmo sem internet, com a tela bloqueada ou dirigindo.
 
@@ -73,6 +76,9 @@ Listen to the Bible offline, with the screen locked and from your car controls. 
 
 Palavras-chave:
 holy,scripture,gospel,jesus,god,psalms,verse,devotional,reading,plan,prayer,christian,listen,daily
+
+Novidades (3.1.0):
+Downloaded chapters now update automatically when a narration is revised. Open Translation Bible credits in Settings.
 
 Descrição:
 Narrated Bible is an app for listening to the Bible wherever you are — even without internet, with the screen locked, or while driving.
@@ -130,6 +136,9 @@ Escucha la Biblia sin internet, con la pantalla bloqueada y desde los botones de
 Palavras-chave:
 santa,escritura,evangelio,jesus,dios,salmos,versículo,devocional,lectura,plan,oración,cristiano,oír
 
+Novidades (3.1.0):
+Los capítulos descargados se actualizan automáticamente cuando se revisa la narración. Créditos de la Open Translation Bible en Ajustes.
+
 Descrição:
 Biblia Narrada es una app para escuchar la Biblia en audio donde estés — incluso sin internet, con la pantalla bloqueada o mientras manejas.
 
@@ -186,6 +195,9 @@ Texto promocional:
 Palavras-chave:
 圣经,和合本,福音,耶稣,上帝,诗篇,经文,灵修,读经,计划,祷告,基督徒,有声书,每日
 
+Novidades (3.1.0):
+已下载的章节在朗读修订后会自动更新。可在设置中查看 Open Translation Bible 致谢。
+
 Descrição:
 有声圣经是一款随时随地收听圣经音频的应用——即使没有网络、锁屏或正在开车也可以。
 
@@ -241,6 +253,9 @@ Texto promocional:
 
 Palavras-chave:
 聖書,バイブル,福音,イエス,神,詩篇,みことば,デボーション,通読,プラン,祈り,クリスチャン,朗読
+
+Novidades (3.1.0):
+朗読が改訂されると、ダウンロード済みの章が自動で更新されます。設定に Open Translation Bible のクレジットを追加しました。
 
 Descrição:
 朗読聖書は、どこにいても聖書の朗読を聴けるアプリです。インターネットがなくても、画面がロックされていても、運転中でも聴くことができます。
