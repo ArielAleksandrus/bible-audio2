@@ -33,19 +33,30 @@ describe('AudioDownloaderService: a chapter republished at a newer revision', ()
   let stored: Map<string, string>;
   let download: ReturnType<typeof vi.spyOn>;
   let release: () => void;
+  let gate: Promise<void>;
 
   beforeEach(() => {
     localStorage.clear();
     clearStoredRevs();
     stored = new Map([['otb-ariel-gn-1', 'old']]);
-    const gate = new Promise<void>(r => (release = r));
+    gate = new Promise<void>(r => (release = r));
     vi.spyOn(audioStorage, 'playableUrl').mockImplementation(async id => stored.has(id) ? `blob:${stored.get(id)}` : null);
     vi.spyOn(audioStorage, 'remove').mockImplementation(async id => { stored.delete(id); });
     download = vi.spyOn(audioStorage, 'download').mockImplementation(async id => { await gate; stored.set(id, 'new'); });
   });
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    Reflect.deleteProperty(navigator, 'connection');
+  });
 
   const settle = async () => { for (let i = 0; i < 10; i++) await Promise.resolve(); };
+
+  /** What `onWifi` reads. An empty type is a browser that cannot say. */
+  const connection = (type?: string) => {
+    const reported = { type: type ?? '' };
+    Object.defineProperty(navigator, 'connection', { configurable: true, value: reported });
+    return reported;
+  };
 
   it('plays the file on the device right away and fetches the new one behind it', async () => {
     const svc = new AudioDownloaderService();
@@ -101,5 +112,52 @@ describe('AudioDownloaderService: a chapter republished at a newer revision', ()
     release();
     await new AudioDownloaderService().download(track(2));
     expect(storedRev('otb-ariel-gn-1')).toBe(2);
+  });
+
+  it('fetches ahead of play only on wifi, and still fetches on play off wifi', async () => {
+    connection('cellular');
+    const svc = new AudioDownloaderService();
+    svc.prefetchStaleOnWifi([track(2)]);
+    await settle();
+    expect(download).not.toHaveBeenCalled();
+    expect(await svc.localUrl(track(2))).toBe('blob:old');
+    expect(download).toHaveBeenCalledTimes(1);
+  });
+
+  it('downloads stale chapters one at a time while on wifi', async () => {
+    connection('wifi');
+    const svc = new AudioDownloaderService();
+    const second = { ...track(2), id: 'otb-ariel-gn-2', title: 'Gênesis 2', url: 'https://cdn/GEN 2.m4a' };
+    svc.prefetchStaleOnWifi([track(2), second]);
+    await vi.waitFor(() => expect(download).toHaveBeenCalledTimes(1));
+    expect(download).toHaveBeenCalledWith('otb-ariel-gn-1', 'https://cdn/GEN 1.m4a');
+    release();
+    await vi.waitFor(() => expect(download).toHaveBeenCalledTimes(2));
+    expect(storedRev('otb-ariel-gn-2')).toBe(2);
+  });
+
+  it('does not start a chapter that was waiting once the device has left wifi', async () => {
+    const reported = connection('wifi');
+    download.mockImplementation(async (id: string) => {
+      reported.type = 'cellular';
+      await gate;
+      stored.set(id, 'new');
+    });
+    const svc = new AudioDownloaderService();
+    const second = { ...track(2), id: 'otb-ariel-gn-2', title: 'Gênesis 2', url: 'https://cdn/GEN 2.m4a' };
+    svc.prefetchStaleOnWifi([track(2), second]);
+    await vi.waitFor(() => expect(download).toHaveBeenCalledTimes(1));
+    release();
+    await vi.waitFor(() => expect(storedRev('otb-ariel-gn-1')).toBe(2));
+    expect(download).toHaveBeenCalledTimes(1);
+    expect(storedRev('otb-ariel-gn-2')).toBe(1);
+  });
+
+  it('skips a chapter the device already stored at the catalog revision', async () => {
+    connection('wifi');
+    setStoredRev('otb-ariel-gn-1', 2);
+    new AudioDownloaderService().prefetchStaleOnWifi([track(2)]);
+    await settle();
+    expect(download).not.toHaveBeenCalled();
   });
 });

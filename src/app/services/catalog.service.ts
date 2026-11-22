@@ -1,8 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { currentCatalog, parseCatalog, setCatalog, withSelectedKept } from '../data/bible-catalog';
+import { tracksForStoredIds } from '../data/stored-chapters';
+import { audioStorage } from '../storage/audio-storage';
+import { onWifi, watchWifi } from '../utils/network.util';
 import { isNativeApp } from '../utils/platform.util';
+import { AudioDownloaderService } from './audio-downloader.service';
 import { BIBLE_CDN_URL } from './bible.service';
 
 export const CATALOG_URL = `${BIBLE_CDN_URL}/catalog.json`;
@@ -17,21 +21,29 @@ const MIN_INTERVAL_MS = 5 * 60 * 1000;
  * differs from the one in use replaces it and is kept on the device
  * (bible-catalog.ts). Offline, file missing or malformed: the app goes on
  * with the list it has.
+ *
+ * After a catalog is in hand, chapters already on the device whose audio
+ * revision moved are downloaded on Wi-Fi, without waiting for play
+ * (AudioDownloaderService.prefetchStaleOnWifi). A connection that is
+ * cellular, or that the browser cannot identify, waits for the next play.
  */
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
   /** Emits after the list in use changes, so open pages can re-read versions and narrators. */
   readonly changed$ = new Subject<void>();
 
+  private readonly downloader = inject(AudioDownloaderService);
   private checking = false;
   private lastCheck = 0;
 
   listen(): void {
     void this.refresh();
+    void this.prefetchUpdates();
     window.addEventListener('online', () => void this.refresh());
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible' && Date.now() - this.lastCheck >= MIN_INTERVAL_MS) void this.refresh();
     });
+    watchWifi(() => void this.prefetchUpdates());
   }
 
   /** Resolves true when the list in use changed. */
@@ -44,15 +56,31 @@ export class CatalogService {
       if (!remote) return false;
       const previous = currentCatalog();
       const next = withSelectedKept(remote, previous, localStorage.getItem('selectedBible'));
-      if (JSON.stringify(next) === JSON.stringify(previous)) return false;
-      setCatalog(next);
-      this.changed$.next();
-      return true;
+      const changed = JSON.stringify(next) !== JSON.stringify(previous);
+      if (changed) {
+        setCatalog(next);
+        this.changed$.next();
+      }
+      // The list may already have been the current one: stored chapters can
+      // still be older than it, and this is the moment the device is online.
+      void this.prefetchUpdates();
+      return changed;
     } catch {
       // Offline or the CDN is unreachable: try again on the next occasion.
       return false;
     } finally {
       this.checking = false;
+    }
+  }
+
+  /** Chapters already stored, at a revision the catalog has since raised. No-op off Wi-Fi. */
+  private async prefetchUpdates(): Promise<void> {
+    if (!(await onWifi())) return;
+    try {
+      const files = await audioStorage.list();
+      this.downloader.prefetchStaleOnWifi(tracksForStoredIds(files.map(file => file.id)));
+    } catch (err) {
+      console.warn('Could not look for updated chapters', err);
     }
   }
 

@@ -63,8 +63,9 @@ export interface BibleNarrator {
    * Revision of each book's audio, by ISO code, for the books whose files
    * were replaced on the CDN after they were first published (e.g. silence
    * added at the start). A book that is not listed is at revision 1. A
-   * chapter downloaded at a lower revision keeps playing, and the new file
-   * is fetched in the background to replace it (AudioDownloaderService).
+   * chapter downloaded at a lower revision keeps playing. On Wi-Fi the new
+   * file is fetched without waiting for play; on any other connection it is
+   * fetched the next time the chapter is opened (AudioDownloaderService).
    */
   rev?: Record<string, number>;
   /**

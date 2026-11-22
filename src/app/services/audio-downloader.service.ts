@@ -4,6 +4,7 @@ import { audioExt, audioStorage, idToFileName } from '../storage/audio-storage';
 import { clearStoredRevs, forgetStoredRev, setStoredRev, storedRev } from '../storage/audio-revs';
 import { Track } from '../models/track';
 import { runWithConcurrency } from '../utils/concurrency.util';
+import { onWifi } from '../utils/network.util';
 import { isNativeApp, nativePlatform } from '../utils/platform.util';
 import { BulkDownload, type BulkDownloadSnapshot, type BulkDownloadStatus } from '../native/bulk-download';
 import { Subject } from 'rxjs';
@@ -335,7 +336,9 @@ export class AudioDownloaderService {
    * A URL the player can open for this track if it's on the device, else
    * null. When the stored file is an older revision than the catalog's, it
    * is still what plays now, and the new one is fetched in the background to
-   * replace it (refreshIfStale): the next time, the chapter plays the new file.
+   * replace it (refreshIfStale), on any connection: the next time, the
+   * chapter plays the new file. Chapters already on the device are also
+   * fetched ahead of play when the connection is Wi-Fi (prefetchStaleOnWifi).
    */
   async localUrl(track: Track): Promise<string | null> {
     for (const key of [track.id, track.fileName]) {
@@ -355,13 +358,30 @@ export class AudioDownloaderService {
   }
 
   /**
+   * Fetch newer revisions of chapters the device already has, one at a time,
+   * and only while `onWifi` is true. Nothing is queued on cellular or when
+   * the browser cannot say what the connection is. No progress is reported:
+   * the file in use now is left alone until the new one is complete.
+   */
+  prefetchStaleOnWifi(tracks: readonly Track[]): void {
+    void this.enqueueWifiRefresh(tracks);
+  }
+
+  private async enqueueWifiRefresh(tracks: readonly Track[]): Promise<void> {
+    if (!(await onWifi())) return;
+    for (const track of tracks) this.refreshIfStale(track, track.id, true);
+  }
+
+  /**
    * Fetch the catalog's revision of a chapter stored at an older one, over
    * the old file, without telling anyone: the old file stays usable until
    * the new one is complete (and stays, if the download fails — it is tried
    * again the next time the chapter is looked up). One at a time, so a
    * queue of a whole book does not open dozens of downloads at once.
+   * `wifiOnly` checks the connection again at the head of the queue, so a
+   * download that was waiting does not start after the device left Wi-Fi.
    */
-  private refreshIfStale(track: Track, key: string): void {
+  private refreshIfStale(track: Track, key: string, wifiOnly = false): void {
     if (!track.id || !this.isStale(track, key)) return;
     if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
     if (this.refreshing.has(track.id) || this.inFlight.has(track.id)) return;
@@ -369,6 +389,8 @@ export class AudioDownloaderService {
     this.refreshQueue = this.refreshQueue.then(async () => {
       try {
         if (!this.isStale(track, key)) return;
+        if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+        if (wifiOnly && !(await onWifi())) return;
         await audioStorage.download(track.id, track.url);
         setStoredRev(track.id, track.rev);
         if (key !== track.id) {
