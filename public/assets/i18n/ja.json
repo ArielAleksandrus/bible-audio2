@@ -96,11 +96,16 @@
     "download": "ダウンロードを管理",
     "coming_soon": "その他のオプションは近日公開予定...",
     "credits": {
-      "title": "本文の出典",
+      "title": "クレジット",
       "text": "このアプリの聖書本文は、CC BY-SA 4.0 ライセンスで公開されている Open Translation Bible（OTB）です。",
       "changes": "このアプリでは、本文に変更を加えています（句読点の調整と翻訳の見直し）。",
       "site": "OTB のサイト",
-      "license": "ライセンスを見る"
+      "license": "ライセンスを見る",
+      "otb_github": "Open Translation Bible",
+      "otb_github_label": "GitHub の Open Translation Bible",
+      "app": "bible-audio2",
+      "app_label": "GitHub の bible-audio2 プロジェクト",
+      "website": "biblia.nlabs.live"
     },
     "storage": {
       "title": "ストレージ",

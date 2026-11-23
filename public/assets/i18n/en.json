@@ -96,11 +96,16 @@
     "download": "Manage Downloads",
     "coming_soon": "More options coming soon...",
     "credits": {
-      "title": "Text credits",
+      "title": "Credits",
       "text": "The Bible text in this app is the Open Translation Bible (OTB), published under the CC BY-SA 4.0 licence.",
       "changes": "In this app, the text has been adapted (punctuation and translation review).",
       "site": "OTB website",
-      "license": "View the licence"
+      "license": "View the licence",
+      "otb_github": "Open Translation Bible",
+      "otb_github_label": "Open Translation Bible on GitHub",
+      "app": "bible-audio2",
+      "app_label": "bible-audio2 project on GitHub",
+      "website": "biblia.nlabs.live"
     },
     "storage": {
       "title": "Storage",

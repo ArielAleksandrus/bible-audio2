@@ -96,11 +96,16 @@
     "download": "管理下载",
     "coming_soon": "更多选项即将推出...",
     "credits": {
-      "title": "经文出处",
+      "title": "致谢",
       "text": "本应用的圣经经文来自 Open Translation Bible（OTB），以 CC BY-SA 4.0 许可协议发布。",
       "changes": "本应用对经文作了修改（标点调整和译文修订）。",
       "site": "OTB 网站",
-      "license": "查看许可协议"
+      "license": "查看许可协议",
+      "otb_github": "Open Translation Bible",
+      "otb_github_label": "GitHub 上的 Open Translation Bible",
+      "app": "bible-audio2",
+      "app_label": "GitHub 上的 bible-audio2 项目",
+      "website": "biblia.nlabs.live"
     },
     "storage": {
       "title": "存储空间",

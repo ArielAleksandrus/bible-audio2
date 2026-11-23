@@ -274,13 +274,27 @@
         <p class="language-info">{{ 'settings.credits.text' | translate }}</p>
         <p class="language-note">{{ 'settings.credits.changes' | translate }}</p>
         <div class="credit-links">
+          <a href="https://github.com/OpenTranslationBible/open-bible" target="_blank" rel="noopener noreferrer"
+             [attr.aria-label]="'settings.credits.otb_github_label' | translate">
+            <ion-icon name="logo-github" aria-hidden="true"></ion-icon>
+            {{ 'settings.credits.otb_github' | translate }}
+          </a>
           <a href="https://openbible.uk" target="_blank" rel="noopener noreferrer">
             {{ 'settings.credits.site' | translate }}
-            <ion-icon name="open-outline"></ion-icon>
+            <ion-icon name="open-outline" aria-hidden="true"></ion-icon>
           </a>
           <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">
             {{ 'settings.credits.license' | translate }}
-            <ion-icon name="open-outline"></ion-icon>
+            <ion-icon name="open-outline" aria-hidden="true"></ion-icon>
+          </a>
+          <a href="https://github.com/ArielAleksandrus/bible-audio2" target="_blank" rel="noopener noreferrer"
+             [attr.aria-label]="'settings.credits.app_label' | translate">
+            <ion-icon name="logo-github" aria-hidden="true"></ion-icon>
+            {{ 'settings.credits.app' | translate }}
+          </a>
+          <a href="https://biblia.nlabs.live" target="_blank" rel="noopener noreferrer">
+            {{ 'settings.credits.website' | translate }}
+            <ion-icon name="open-outline" aria-hidden="true"></ion-icon>
           </a>
         </div>
       </ion-card-content>
