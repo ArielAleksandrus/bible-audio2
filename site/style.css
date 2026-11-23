@@ -80,14 +80,16 @@ h2 { font-size: clamp(1.4rem, 3.5vw, 1.9rem); }
 .hero h1 { font-size: clamp(2.3rem, 6vw, 3.6rem); color: var(--primary); margin-bottom: .3em; }
 .tagline { font-size: clamp(1.1rem, 2.4vw, 1.3rem); color: var(--muted); max-width: 32em; margin: 0 0 28px; }
 .hero-icon { width: 100%; max-width: 320px; justify-self: center; border-radius: 22%; box-shadow: 0 24px 60px rgb(15 61 62 / .25); }
-.stores { display: flex; flex-wrap: wrap; gap: 12px; }
+.stores { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .store { display: inline-block; line-height: 0; border-radius: 9px; transition: opacity .15s; }
 .store img { height: 54px; width: auto; }
 .store:hover { opacity: .85; }
-.web-link {
-  display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
-  color: var(--primary); font-weight: 600; text-underline-offset: 3px;
+.store.online {
+  display: inline-flex; align-items: center; gap: 8px; height: 54px; padding: 0 16px;
+  background: #000; color: #fff; font-weight: 600; font-size: 15px; line-height: 1.15;
+  text-decoration: none; white-space: nowrap;
 }
+.store.online svg { width: 20px; height: 20px; }
 
 /* Narration status + samples */
 .narration { padding-top: 40px; padding-bottom: 8px; }

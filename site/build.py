@@ -141,8 +141,8 @@ def page(lang: str) -> str:
           <div class="stores">
             <a class="store" href="{PLAY_URL}" rel="noopener"><img src="../assets/badges/google-play-{lang}.png" alt="{e(t['get_it_on'])} Google Play" height="54"></a>
             <a class="store" href="{IOS_URL}" rel="noopener"><img src="../assets/badges/app-store-{lang}.svg" alt="{e(t['download_on'])} App Store" height="54"></a>
+            <a class="store online" href="{WEB_URL}" rel="noopener">{ICON_WEB}{e(t['use_web'])}</a>
           </div>
-          <a class="web-link" href="{WEB_URL}" rel="noopener">{ICON_WEB}{e(t['use_web'])}</a>
         </div>
         <img class="hero-icon" src="../assets/icon-512.png" alt="" width="512" height="512">
       </div>
