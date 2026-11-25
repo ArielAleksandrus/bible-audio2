@@ -32,6 +32,24 @@ describe('CatalogService', () => {
     Reflect.deleteProperty(navigator, 'connection');
   });
 
+  it('shares one check with a caller that arrives while it is running', async () => {
+    let release: (body: unknown) => void = () => {};
+    fetchMock.mockReturnValue(new Promise(resolve => { release = resolve; }));
+    const first = service.refresh();
+    const waiting = service.whenReady();
+    let settled = false;
+    void waiting.then(() => { settled = true; });
+    await Promise.resolve();
+    expect(settled).toBe(false);
+
+    release({ ok: true, json: async () => ({ bibles: [...FIVE, otb] }) });
+    expect(await first).toBe(true);
+    await waiting;
+    expect(settled).toBe(true);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(versionsForLanguage('pt').map(e => e.version)).toEqual(['ara', 'otb']);
+  });
+
   it('takes a new version and narrators from the CDN, with no app update', async () => {
     serve({ bibles: [...FIVE, otb] });
     expect(await service.refresh()).toBe(true);

@@ -1,5 +1,10 @@
 <div class="ion-padding">
-  @if (!language) {
+  @if (waiting) {
+    <h2 class="title">Escolha o idioma da Bíblia</h2>
+    <div class="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  } @else if (!language) {
     <h2 class="title">Escolha o idioma da Bíblia</h2>
 
     <ion-list lines="full" class="language-list">

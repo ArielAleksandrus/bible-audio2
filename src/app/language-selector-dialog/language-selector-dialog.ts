@@ -1,6 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BibleCatalogEntry, LanguageOption, languageOptions } from '../data/bible-catalog';
+import { CatalogService } from '../services/catalog.service';
 import { IonButton, IonItem, IonLabel, IonList, IonSpinner, ModalController } from '@ionic/angular';
+
+/** How long the picker waits for catalog.json before offering the bundled list. */
+const CATALOG_WAIT_MS = 5000;
 
 /**
  * Texts of the version step, in the language just chosen: the app's
@@ -18,6 +23,10 @@ const VERSION_STEP: Readonly<Record<string, { title: string; back: string }>> = 
  * First-run (and "reset language") picker. The language comes first; a
  * language with two or more versions then asks which one. Dismisses with
  * e.g. `'pt-ara'`, and only once a version is chosen.
+ *
+ * The list stays hidden until catalog.json has been tried, so a first open
+ * does not offer only the bundled language. If that check fails or takes
+ * too long, the bundled list is the fallback; a late reply still replaces it.
  */
 @Component({
   selector: 'app-language-selector-dialog',
@@ -27,17 +36,45 @@ const VERSION_STEP: Readonly<Record<string, { title: string; back: string }>> = 
 })
 export class LanguageSelectorDialog {
   private modalCtrl = inject(ModalController);
+  private catalog = inject(CatalogService);
+  private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   loading = false;
 
+  /** Spinner: the CDN list is not in yet, and the fallback is not offered yet. */
+  waiting = true;
+
   /** Languages with at least one version that is not hidden. */
-  readonly options = languageOptions();
+  options: LanguageOption[] = [];
 
   /** The language whose versions are being shown; undefined on the language step. */
   language?: LanguageOption;
 
+  constructor() {
+    this.catalog.changed$.pipe(takeUntilDestroyed()).subscribe(() => this.apply());
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<void>(resolve => {
+      timer = setTimeout(resolve, CATALOG_WAIT_MS);
+    });
+    this.destroyRef.onDestroy(() => clearTimeout(timer));
+    void Promise.race([this.catalog.whenReady(), timeout]).then(() => {
+      clearTimeout(timer);
+      if (this.destroyRef.destroyed) return;
+      this.waiting = false;
+      this.apply();
+    });
+  }
+
   get versionStep() {
     return VERSION_STEP[this.language?.lang ?? ''] ?? VERSION_STEP['en'];
+  }
+
+  /** Re-read the catalog. A language that disappeared returns to the first step. */
+  private apply() {
+    this.options = languageOptions();
+    if (this.language) this.language = this.options.find(o => o.lang === this.language!.lang);
+    this.cdr.markForCheck();
   }
 
   chooseLanguage(option: LanguageOption) {

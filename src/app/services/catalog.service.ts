@@ -33,7 +33,8 @@ export class CatalogService {
   readonly changed$ = new Subject<void>();
 
   private readonly downloader = inject(AudioDownloaderService);
-  private checking = false;
+  /** The check currently talking to the CDN. A second caller waits for this one. */
+  private inflight: Promise<boolean> | null = null;
   private lastCheck = 0;
 
   listen(): void {
@@ -46,10 +47,26 @@ export class CatalogService {
     watchWifi(() => void this.prefetchUpdates());
   }
 
-  /** Resolves true when the list in use changed. */
-  async refresh(): Promise<boolean> {
-    if (this.checking) return false;
-    this.checking = true;
+  /**
+   * Resolves when the catalog check in progress has finished, starting one
+   * if none is running. The language picker waits on this so the list on
+   * screen is the CDN's; the bundled list is what remains if the check fails.
+   */
+  whenReady(): Promise<void> {
+    return (this.inflight ?? this.refresh()).then(() => undefined);
+  }
+
+  /** Resolves true when the list in use changed. Callers share one check. */
+  refresh(): Promise<boolean> {
+    if (this.inflight) return this.inflight;
+    const run = this.load().finally(() => {
+      this.inflight = null;
+    });
+    this.inflight = run;
+    return run;
+  }
+
+  private async load(): Promise<boolean> {
     try {
       const remote = parseCatalog(await this.fetchCatalog());
       this.lastCheck = Date.now();
@@ -68,8 +85,6 @@ export class CatalogService {
     } catch {
       // Offline or the CDN is unreachable: try again on the next occasion.
       return false;
-    } finally {
-      this.checking = false;
     }
   }
 
