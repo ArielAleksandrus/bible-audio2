@@ -47,7 +47,7 @@ APPLE_LOCALES = {
 }
 APPLE_CAMPOS = {"Nome": "name", "Subtítulo": "subtitle", "Texto promocional": "promotionalText",
                 "Palavras-chave": "keywords", "Descrição": "description",
-                "Novidades (3.1.0)": "whatsNew"}
+                "Novidades (3.3.1)": "whatsNew"}
 APPLE_LIMITES = {"name": 30, "subtitle": 30, "promotionalText": 170, "keywords": 100, "description": 4000, "whatsNew": 4000}
 PLAY_CAMPOS = {"App name": "title", "Short description": "shortDescription", "Full description": "fullDescription"}
 PLAY_LIMITES = {"title": 30, "shortDescription": 80, "fullDescription": 4000}
