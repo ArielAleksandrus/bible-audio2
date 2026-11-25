@@ -86,9 +86,11 @@ workflows:
         distribution_type: app_store
         bundle_identifier: live.nlabs.bible
       node: 24
-      # Apple rejects an upload built with an older SDK. Keep this on the
-      # newest Xcode Codemagic offers; do not pin a version. Since 2026-04-28
-      # that means Xcode 26 and the iOS 26 SDK. From April 2027, the iOS 27 SDK.
+      # ITMS-90725: 3.3.1 build 1 shipped with the iOS 26.5 SDK and was
+      # accepted. Starting April 2027, App Store Connect rejects an upload
+      # that is not built with the iOS 27 SDK (Xcode 27 or later). Keep
+      # `latest`; do not pin 26. When Codemagic offers Xcode 27, the next
+      # store build must use it.
       xcode: latest
       vars:
         # Apple ID of the app in App Store Connect (App Information > Apple ID).
