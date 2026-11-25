@@ -86,7 +86,9 @@ workflows:
         distribution_type: app_store
         bundle_identifier: live.nlabs.bible
       node: 24
-      # Package.swift uses swift-tools-version 6.1 -> Xcode 16.3 or newer.
+      # Apple rejects an upload built with an older SDK. Keep this on the
+      # newest Xcode Codemagic offers; do not pin a version. Since 2026-04-28
+      # that means Xcode 26 and the iOS 26 SDK. From April 2027, the iOS 27 SDK.
       xcode: latest
       vars:
         # Apple ID of the app in App Store Connect (App Information > Apple ID).
